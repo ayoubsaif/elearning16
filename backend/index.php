@@ -1,21 +1,23 @@
 <?php
-session_start();
-require_once("database.php");
 
-	
-	echo "<h3>Bienvenidos a nuestro proyecto!</h3>";
-	echo "<form method ='post' action='login.php'>
-		Usuario:<input type='text' name='username'><br/>
-		Contraseña:<input type='password' name='password'><br/>
-		<input type='submit' value='Entrar'>
-	</form>";
+/*
+Show errors
+*/
+ini_set('display_errors', 1);
+ini_set("log_errors", 1);
+ini_set("error_log", "./logs/error.log");
 
-	echo "<a href='registrar_usuario.php'>REGÍSTRATE</a>";
+header('Access-Control-Allow-Origin: *');
+header("Access-Control-Allow-Methods: GET, POST, OPTIONS");
+header("Access-Control-Allow-Headers: Content-Type, Authorization");
+header('Content-Type: application/json; charset=utf-8');
 
-	if(isset($_SESSION['error_login'])){
-		echo $_SESSION['error_login'];
-		unset($_SESSION['error_login']);
-	}
+# DB Connection
+require_once "app/config/database.php";
+# Routes controller
+require_once "app/controllers/RoutesController.php";
 
-	
+$index = new RoutesController();
+$index -> index();
+
 ?>

@@ -1,0 +1,20 @@
+[11-Mar-2023 18:48:06 Europe/Berlin] PHP Fatal error:  Uncaught TypeError: json_encode(): Argument #2 ($flags) must be of type int, string given in C:\Users\ayoub\Documents\Proyectos\Linkia\G16\backend\app\controllers\UserController.php:69
+Stack trace:
+#0 C:\Users\ayoub\Documents\Proyectos\Linkia\G16\backend\app\controllers\UserController.php(69): json_encode(Object(stdClass), 'password')
+#1 C:\Users\ayoub\Documents\Proyectos\Linkia\G16\backend\app\routes\routes.php(15): UserController->login()
+#2 C:\Users\ayoub\Documents\Proyectos\Linkia\G16\backend\app\controllers\RoutesController.php(6): include('C:\\Users\\ayoub\\...')
+#3 C:\Users\ayoub\Documents\Proyectos\Linkia\G16\backend\index.php(17): RoutesController->index()
+#4 {main}
+  thrown in C:\Users\ayoub\Documents\Proyectos\Linkia\G16\backend\app\controllers\UserController.php on line 69
+[12-Mar-2023 18:39:57 Europe/Berlin] PHP Warning:  Undefined array key "lastname" in C:\Users\ayoub\Documents\Proyectos\Linkia\G16\backend\app\models\UserModel.php on line 67
+[12-Mar-2023 18:44:26 Europe/Berlin] PHP Warning:  Undefined array key "lastname" in C:\Users\ayoub\Documents\Proyectos\Linkia\G16\backend\app\models\UserModel.php on line 67
+[12-Mar-2023 18:45:03 Europe/Berlin] PHP Warning:  Undefined array key "lastname" in C:\Users\ayoub\Documents\Proyectos\Linkia\G16\backend\app\models\UserModel.php on line 67
+[12-Mar-2023 18:54:52 Europe/Berlin] PHP Fatal error:  Uncaught PDOException: SQLSTATE[HY093]: Invalid parameter number: number of bound variables does not match number of tokens in C:\Users\ayoub\Documents\Proyectos\Linkia\G16\backend\app\models\UserModel.php:43
+Stack trace:
+#0 C:\Users\ayoub\Documents\Proyectos\Linkia\G16\backend\app\models\UserModel.php(43): PDOStatement->execute()
+#1 C:\Users\ayoub\Documents\Proyectos\Linkia\G16\backend\app\controllers\UserController.php(25): UserModel->create()
+#2 C:\Users\ayoub\Documents\Proyectos\Linkia\G16\backend\app\routes\routes.php(10): UserController->register()
+#3 C:\Users\ayoub\Documents\Proyectos\Linkia\G16\backend\app\controllers\RoutesController.php(8): include('C:\\Users\\ayoub\\...')
+#4 C:\Users\ayoub\Documents\Proyectos\Linkia\G16\backend\index.php(21): RoutesController->index()
+#5 {main}
+  thrown in C:\Users\ayoub\Documents\Proyectos\Linkia\G16\backend\app\models\UserModel.php on line 43

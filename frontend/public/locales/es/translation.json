@@ -1,0 +1,32 @@
+{
+    "company_name": "eLearning 16",
+    "app_name": "eLearning 16",
+
+    "spanish": "Español",
+    "english": "Inglés",
+
+    "home": "Inicio",
+    "about": "Acerca de",
+    "contact": "Contacto",
+
+    "login": "Iniciar sesión",
+    "logout": "Cerrar sesión",
+    "register": "Registrarse",
+    "sign_up": "Registrarse",
+    "name": "Nombre",
+    "lastname": "Apellido",
+    "loginSuccess": "Has iniciado sesión correctamente",
+    "logoutSuccess": "Has cerrado sesión",
+    "loginError": "Error al iniciar sesión",
+    
+    "email": "Correo electrónico",
+    "password": "Contraseña",
+
+    "remember_me": "Recuérdame",
+    "forgot_password": "¿Olvidaste tu contraseña?",
+    "dont_have_an_account": "¿No tienes una cuenta?",
+
+    "not_found": "Página no encontrada",
+    "not_found_message": "La página que estás buscando no existe o ha sido eliminada.",
+    "back_to_home": "Volver al inicio"
+}
