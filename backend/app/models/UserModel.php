@@ -24,6 +24,7 @@ class UserModel
                 SET
                     name=:name,
                     email=:email,
+                    lastname=:lastname,
                     password=:password";
 
         $stmt = $this->conn->prepare($query);

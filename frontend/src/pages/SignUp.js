@@ -10,16 +10,16 @@ import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { useTranslation } from 'react-i18next';
 
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from "react-router-dom";
 import Layout from '../Layout';
 import AuthService from '../services/AuthService';
 
-export default function SignUp( props ) {
+export default function SignUp({ props }) {
   const { t } = useTranslation();
   const navigate = useNavigate();
 
   React.useEffect(() => {
-    // Check if is logget
+    // Check if is logged
     if (sessionStorage.getItem('token')) {
       navigate('/');
     }
@@ -42,8 +42,9 @@ export default function SignUp( props ) {
       data.get('password')
     )
       .then((response) => {
-        if (response.status === 200) {
-          props.history.push('/login');
+        console.log(response);
+        if (response.status === 201) {
+          navigate('/');
         }
       })
       .catch((error) => {

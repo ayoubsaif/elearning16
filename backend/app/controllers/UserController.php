@@ -9,7 +9,7 @@ class UserController {
     public function register() {
         if($_SERVER['REQUEST_METHOD'] == 'POST') {
             $data = json_decode(file_get_contents("php://input"));
-
+            
             $user = new UserModel();
             $user->name = $data->name;
             $user->lastname = $data->lastname;

@@ -20,7 +20,7 @@ const register = async (name, lastname, email, password) => {
       email,
       password,
     });
-    return response.data;
+    return response;
   } catch (error) {
     throw new Error("Register failed");
   }
