@@ -99,4 +99,30 @@ class commentsModel
 
         return false;
     }
+
+    function getAll()
+    {
+        $query = "SELECT * FROM " . $this->table_name;
+        $stmt = $this->conn->prepare($query);
+        $stmt->execute();
+
+        $comments = array();
+
+        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+            extract($row);
+
+            $comment_item = array(
+                "id" => $id,
+                "course" => $course,
+                "user" => $user,
+                "parent_comment" => $parent_comment,
+                "create_date" => $create_date,
+                "create_uid" => $create_uid
+            );
+
+            array_push($comments, $comment_item);
+        }
+
+        return $comments;
+    }
 }

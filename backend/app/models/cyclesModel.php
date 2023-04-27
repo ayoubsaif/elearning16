@@ -16,7 +16,7 @@ class cyclesModel
     public $end_date;
     public $create_date;
     public $create_uid;
-    
+
 
     public function __construct()
     {
@@ -115,6 +115,62 @@ class cyclesModel
         $stmt->bindParam(":create_date", $this->create_date);
         $stmt->bindParam(":create_uid", $this->create_uid);
         if ($stmt->execute()) {
+            return true;
+        }
+
+        return false;
+    }
+
+    function getAll()
+    {
+        $query = "SELECT * FROM " . $this->table_name;
+        $stmt = $this->conn->prepare($query);
+
+        $stmt->execute();
+        $cycles_arr = array();
+
+        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+            extract($row);
+
+            $cycle_item = array(
+                "id" => $id,
+                "name" => $name,
+                "slug" => $slug,
+                "description" => $description,
+                "teacher" => $teacher,
+                "start_date" => $start_date,
+                "end_date" => $end_date,
+                "create_date" => $create_date,
+                "create_uid" => $create_uid
+            );
+
+            array_push($cycles_arr, $cycle_item);
+        }
+
+        return $cycles_arr;
+    }
+
+    function getOne($id)
+    {
+        $query = "SELECT * FROM " . $this->table_name . " WHERE id = :id";
+        $stmt = $this->conn->prepare($query);
+
+        $id = htmlspecialchars(strip_tags($id));
+        $stmt->bindParam(":id", $id);
+
+        if ($stmt->execute()) {
+            $row = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            $this->id = $row['id'];
+            $this->name = $row['name'];
+            $this->slug = $row['slug'];
+            $this->description = $row['description'];
+            $this->teacher = $row['teacher'];
+            $this->start_date = $row['start_date'];
+            $this->end_date = $row['end_date'];
+            $this->create_date = $row['create_date'];
+            $this->create_uid = $row['create_uid'];
+
             return true;
         }
 

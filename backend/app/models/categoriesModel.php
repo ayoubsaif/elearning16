@@ -114,4 +114,57 @@ class categoriesModel
 
         return false;
     }
+
+    function getAll()
+    {
+        $query = "SELECT * FROM " . $this->table_name;
+        $stmt = $this->conn->prepare($query);
+        $stmt->execute();
+
+        $categories_arr = array();
+
+        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+            extract($row);
+
+            $category_item = array(
+                "id" => $id,
+                "name" => $name,
+                "slug" => $slug,
+                "description" => $description,
+                "image_url" => $image_url,
+                "parent_cat" => $parent_cat,
+                "keywords" => $keywords,
+                "create_uid" => $create_uid
+            );
+
+            array_push($categories_arr, $category_item);
+        }
+
+        return $categories_arr;
+    }
+
+
+    function getOne($id)
+    {
+        $query = "SELECT * FROM " . $this->table_name . " WHERE id = :id";
+        $stmt = $this->conn->prepare($query);
+
+        $id = htmlspecialchars(strip_tags($id));
+        $stmt->bindParam(":id", $id);
+
+        if ($stmt->execute()) {
+            $row = $stmt->fetch(PDO::FETCH_ASSOC);
+            $this->id = $row['id'];
+            $this->name = $row['name'];
+            $this->slug = $row['slug'];
+            $this->description = $row['description'];
+            $this->image_url = $row['image_url'];
+            $this->parent_cat = $row['parent_cat'];
+            $this->keywords = $row['keywords'];
+            $this->create_uid = $row['create_uid'];
+            return true;
+        }
+
+        return false;
+    }
 }

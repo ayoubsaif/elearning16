@@ -104,4 +104,44 @@ class coursesListsModel
 
         return false;
     }
+
+    function getAll()
+    {
+        $query = "SELECT * FROM " . $this->table_name;
+        $stmt = $this->conn->prepare($query);
+
+        $stmt->execute();
+
+        $courses = array();
+        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+            $courses[] = $row;
+        }
+
+        return $courses;
+    }
+
+    function getOne($id)
+    {
+        $query = "SELECT * FROM " . $this->table_name . " WHERE id = :id";
+        $stmt = $this->conn->prepare($query);
+
+        $id = htmlspecialchars(strip_tags($id));
+        $stmt->bindParam(":id", $id);
+
+        if ($stmt->execute()) {
+            $row = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            $this->id = $row['id'];
+            $this->name = $row['name'];
+            $this->slug = $row['slug'];
+            $this->description = $row['description'];
+            $this->create_date = $row['create_date'];
+            $this->create_uid = $row['create_uid'];
+            $this->thumbnail_url = $row['thumbnail_url'];
+
+            return true;
+        }
+
+        return false;
+    }
 }
