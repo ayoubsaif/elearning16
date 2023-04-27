@@ -140,4 +140,69 @@ class coursesModel
 
         return false;
     }
+
+    function getAll()
+    {
+        $query = "SELECT * FROM " . $this->table_name;
+
+        $stmt = $this->conn->prepare($query);
+
+        $stmt->execute();
+
+        $courses_arr = array();
+
+        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+            extract($row);
+
+            $course_item = array(
+                "id" => $id,
+                "name" => $name,
+                "slug" => $slug,
+                "description" => $description,
+                "iframe" => $iframe,
+                "thumbnail_url" => $thumbnail_url,
+                "teacher" => $teacher,
+                "category" => $category,
+                "course_list" => $course_list,
+                "keywords" => $keywords,
+                "create_date" => $create_date,
+                "create_uid" => $create_uid
+            );
+
+            array_push($courses_arr, $course_item);
+        }
+
+        return $courses_arr;
+    }
+
+
+    function getOne($id)
+    {
+        $query = "SELECT * FROM " . $this->table_name . " WHERE id = :id";
+        $stmt = $this->conn->prepare($query);
+
+        $id = htmlspecialchars(strip_tags($id));
+        $stmt->bindParam(":id", $id);
+
+        if ($stmt->execute()) {
+            $course = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            $this->id = $course['id'];
+            $this->name = $course['name'];
+            $this->slug = $course['slug'];
+            $this->description = $course['description'];
+            $this->iframe = $course['iframe'];
+            $this->thumbnail_url = $course['thumbnail_url'];
+            $this->teacher = $course['teacher'];
+            $this->category = $course['category'];
+            $this->course_list = $course['course_list'];
+            $this->keywords = $course['keywords'];
+            $this->create_date = $course['create_date'];
+            $this->create_uid = $course['create_uid'];
+
+            return true;
+        }
+
+        return false;
+    }
 }
