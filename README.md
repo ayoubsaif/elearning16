@@ -21,7 +21,7 @@ eLearning consist in a application for schools, teams or companys to organize th
 
 
     ```bash
-    cd ./backend && composer
+    cd ./backend && composer install
     ```
     Remove comments in your Apache server in `php.ini` for the next values:
     ```ini
