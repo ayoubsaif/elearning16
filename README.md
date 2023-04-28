@@ -21,7 +21,7 @@ eLearning consist in a application for schools, teams or companys to organize th
 
 
     ```bash
-    cd ./backend && composer
+    cd ./backend && composer install
     ```
 
 2. Install the requirements for frontend application
