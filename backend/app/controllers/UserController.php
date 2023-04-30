@@ -1,9 +1,10 @@
 <?php
 
 require_once 'app/models/UserModel.php';
-require_once 'vendor/firebase/php-jwt/src/JWT.php';
 
-use Firebase\JWT\JWT;
+require 'vendor/autoload.php';
+use \Firebase\JWT\JWT;
+use \Firebase\JWT\Key;
 
 class UserController {
     public function register() {
@@ -11,7 +12,7 @@ class UserController {
             $data = json_decode(file_get_contents("php://input"));
             
             $user = new UserModel();
-            $user->name = $data->name;
+            $user->firstname = $data->firstname;
             $user->lastname = $data->lastname;
             $user->email = $data->email;
             $user->password = $data->password;
@@ -55,7 +56,7 @@ class UserController {
                 "exp" => time() + 3600,
                 "data" => array(
                     "id" => $user->id,
-                    "name" => $user->name,
+                    "name" => $user->display_name,
                     "email" => $user->email
                 )
             );
@@ -63,7 +64,7 @@ class UserController {
             $jwt = JWT::encode($token, getenv("JWT_KEY"),"HS256");
 
             http_response_code(200);
-            echo json_encode(array("message" => "Login successful.", "jwt" => $jwt, "user"=>array("id" => $user->id, "name" => $user->name)));
+            echo json_encode(array("message" => "Login successful.", "jwt" => $jwt, "user"=>array("id" => $user->id, "name" => $user->display_name)));
 
         }else{
             http_response_code(405);
@@ -94,7 +95,7 @@ class UserController {
             $user->getOne($id);
             $user_arr = array(
                 "id" => $user->id,
-                "name" => $user->name,
+                "name" => $user->firstname,
                 "email" => $user->email
             );
             http_response_code(200);
@@ -104,6 +105,20 @@ class UserController {
             http_response_code(401);
             echo json_encode(array("message" => "Unauthorized."));
             return;
+        }
+    }
+
+    public function validateToken($token) {
+        try {
+            $key = new Key(getenv("JWT_KEY"), 'HS256');
+            $decoded_token = JWT::decode($token, $key);
+            $user_id = $decoded_token->data->id;
+            $user = new UserModel();
+            $user->id = $user_id;
+            $user->getOne($user_id);
+            return $user;
+        } catch (Exception $e) {
+            return false;
         }
     }
 }
