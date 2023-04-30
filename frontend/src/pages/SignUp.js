@@ -8,6 +8,7 @@ import Box from '@mui/material/Box';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
+
 import { useTranslation } from 'react-i18next';
 
 import { useNavigate } from "react-router-dom";
@@ -28,13 +29,6 @@ export default function SignUp({ props }) {
   const handleSubmit = (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
-    console.log({
-      name: data.get('firstName'),
-      lastname: data.get('lastName'),
-      email: data.get('email'),
-      password: data.get('password'),
-    });
-
     AuthService.register(
       data.get('firstName'),
       data.get('lastName'),
