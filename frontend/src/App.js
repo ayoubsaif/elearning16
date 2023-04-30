@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import Home from './pages/Home';
 import NotFound from './pages/NotFound';
 import SignUp from './pages/SignUp';
+import LogIn from './pages/LogIn';
 
 export const UserContext = createContext();
 
@@ -30,6 +31,10 @@ function App() {
     {
       path: '/',
       element: <Home />,
+    },
+    {
+      path: '/login',
+      element: <LogIn />,
     },
     {
       path: '/signup',
