@@ -1,15 +1,13 @@
 <?php
 
-require_once 'app/config/database_23-04-2023.php';
+require_once 'app/config/database.php';
 
 class CourseContentModel
 {
     private $conn;
-    private $table_name = "courses";
 
     public $id;
     public $name;
-    public $slug;
     public $description;
     public $iframe;
     public $thumbnail_url;
@@ -27,7 +25,6 @@ class CourseContentModel
         $query = "INSERT INTO course_content
                 SET
                     name=:name,
-                    slug=:slug,
                     description=:description,
                     iframe=:iframe,
                     thumbnail_url=:thumbnail_url,
@@ -38,7 +35,6 @@ class CourseContentModel
         $stmt = $this->conn->prepare($query);
 
         $this->name = htmlspecialchars(strip_tags($this->name));
-        $this->slug = htmlspecialchars(strip_tags($this->slug));
         $this->description = htmlspecialchars(strip_tags($this->description));
         $this->iframe = htmlspecialchars(strip_tags($this->iframe));
         $this->thumbnail_url = htmlspecialchars(strip_tags($this->thumbnail_url));
@@ -47,7 +43,6 @@ class CourseContentModel
         $this->create_uid = htmlspecialchars(strip_tags($this->create_uid));
 
         $stmt->bindParam(":name", $this->name);
-        $stmt->bindParam(":slug", $this->slug);
         $stmt->bindParam(":description", $this->description);
         $stmt->bindParam(":iframe", $this->iframe);
         $stmt->bindParam(":thumbnail_url", $this->thumbnail_url);
@@ -83,7 +78,6 @@ class CourseContentModel
         $query = "UPDATE course_content
             SET
             name=:name,
-            slug=:slug,
             description=:description,
             iframe=:iframe,
             thumbnail_url=:thumbnail_url,
@@ -96,7 +90,6 @@ class CourseContentModel
         $stmt = $this->conn->prepare($query);
 
         $this->name = htmlspecialchars(strip_tags($this->name));
-        $this->slug = htmlspecialchars(strip_tags($this->slug));
         $this->description = htmlspecialchars(strip_tags($this->description));
         $this->iframe = htmlspecialchars(strip_tags($this->iframe));
         $this->thumbnail_url = htmlspecialchars(strip_tags($this->thumbnail_url));
@@ -105,7 +98,6 @@ class CourseContentModel
         $this->create_uid = htmlspecialchars(strip_tags($this->create_uid));
 
         $stmt->bindParam(":name", $this->name);
-        $stmt->bindParam(":slug", $this->slug);
         $stmt->bindParam(":description", $this->description);
         $stmt->bindParam(":iframe", $this->iframe);
         $stmt->bindParam(":thumbnail_url", $this->thumbnail_url);
@@ -120,12 +112,19 @@ class CourseContentModel
         return false;
     }
 
-    function getAll()
+    function getAll($from_record_num = 0, $records_per_page = 10)
     {
-        $query = "SELECT * FROM course_content";
+        $query = "SELECT * 
+            FROM course_content
+            WHERE course = ?
+            ORDER BY id DESC
+            LIMIT ?, ?";
 
         $stmt = $this->conn->prepare($query);
 
+        $stmt->bindParam(1, $this->course, PDO::PARAM_INT);
+        $stmt->bindParam(2, $from_record_num, PDO::PARAM_INT);
+        $stmt->bindParam(3, $records_per_page, PDO::PARAM_INT);
         $stmt->execute();
 
         $courses_arr = array();
@@ -136,13 +135,8 @@ class CourseContentModel
             $course_item = array(
                 "id" => $id,
                 "name" => $name,
-                "slug" => $slug,
-                "description" => $description,
-                "iframe" => $iframe,
                 "thumbnail_url" => $thumbnail_url,
-                "course" => $course,
-                "create_date" => $create_date,
-                "create_uid" => $create_uid
+                "create_date" => $create_date
             );
 
             array_push($courses_arr, $course_item);
@@ -163,7 +157,6 @@ class CourseContentModel
 
             $this->id = $course['id'];
             $this->name = $course['name'];
-            $this->slug = $course['slug'];
             $this->description = $course['description'];
             $this->iframe = $course['iframe'];
             $this->thumbnail_url = $course['thumbnail_url'];
