@@ -5,7 +5,6 @@ require_once 'app/config/database_23-04-2023.php';
 class siteConfigModel
 {
     private $conn;
-    private $table_name = "site_config";
 
     public $id;
     public $hero_action;
@@ -20,7 +19,7 @@ class siteConfigModel
 
     function create()
     {
-        $query = "INSERT INTO " . $this->table_name . "
+        $query = "INSERT INTO select_config
                 SET
                     hero_action=:hero_action,
                     menu=:menu,
@@ -49,7 +48,7 @@ class siteConfigModel
 
     function delete($id)
     {
-        $query = "DELETE FROM " . $this->table_name . " WHERE id = :id";
+        $query = "DELETE FROM select_config WHERE id = :id";
         $stmt = $this->conn->prepare($query);
 
         $id = htmlspecialchars(strip_tags($id));
@@ -64,7 +63,7 @@ class siteConfigModel
 
     function update()
     {
-        $query = "UPDATE " . $this->table_name . "
+        $query = "UPDATE site_config
             SET
                 hero_action=:hero_action,
                 menu=:menu,
@@ -90,4 +89,25 @@ class siteConfigModel
 
         return false;
     }
+
+    function getOne($id)
+    {
+        $query = "SELECT * FROM site_config WHERE id = :id";
+        $stmt = $this->conn->prepare($query);
+        $id = htmlspecialchars(strip_tags($id));
+        $stmt->bindParam(":id", $id);
+
+        if ($stmt->execute()) {
+            $row = $stmt->fetch(PDO::FETCH_ASSOC);
+            $this->id = $row['id'];
+            $this->hero_action = $row['hero_action'];
+            $this->menu = $row['menu'];
+            $this->create_uid = $row['create_uid'];
+            $this->logo_url = $row['logo_url'];
+            return true;
+        }
+
+        return false;
+    }
+    
 }
