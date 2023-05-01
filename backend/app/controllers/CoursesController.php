@@ -21,7 +21,7 @@ class CoursesController
         $course->slug = $data->slug;
         $course->description = $data->description;
         $course->category = $data->category;
-        $course->teacher = $data->teacher;
+        $course->teacher = $UserPermmited->id;
         $course->keywords = implode(",", $data->keywords);
         $course->create_date = date('Y-m-d H:i:s');
         $course->create_uid = $UserPermmited->id;
