@@ -2,6 +2,7 @@
 
 require_once 'app/config/database.php';
 require_once 'app/models/UserModel.php';
+require_once 'app/models/CourseContentModel.php';
 require_once 'app/models/CategoryModel.php';
 
 class CourseModel
@@ -18,6 +19,7 @@ class CourseModel
     public $create_uid;
     public $thumbnail_url;
     public $keywords;
+    public $courseContents;
 
     public function __construct()
     {
@@ -140,7 +142,7 @@ class CourseModel
         return $data;
     }
 
-    # Get one course, query by slug
+    # Get one course, query by slug-id
     function getOne()
     {
         $query = "SELECT * FROM courses WHERE id = :id LIMIT 1";
@@ -155,6 +157,9 @@ class CourseModel
             $Teacher->getOne($data[0]['teacher']);
             $Category = new CategoryModel();
             $Category->getOne($data[0]['category']);
+            $CourseContent = new CourseContentModel();
+            $CourseContent->course = $this->id;
+            
             $this->id = $data[0]['id'];
             $this->name = $data[0]['name'];
             $this->description = $data[0]['description'];
@@ -170,6 +175,7 @@ class CourseModel
                 'name' => $Category->name,
                 'slug' => $Category->slug,
             ) : null;
+            $this->courseContents = $CourseContent->getAll();
             $this->keywords = explode(",",$data[0]['keywords']);
             $this->create_date = $data[0]['create_date'];
             $this->create_uid = $data[0]['create_uid'];

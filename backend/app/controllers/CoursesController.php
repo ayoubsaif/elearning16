@@ -29,11 +29,11 @@ class CoursesController
 
         if ($course->create()) {
             http_response_code(201);
-            echo json_encode(array("message" => "Course was created."));
+            echo json_encode(array("message" => "Course was created"));
             return;
         } else {
             http_response_code(503);
-            echo json_encode(array("message" => "Unable to create course."));
+            echo json_encode(array("message" => "Unable to create course"));
             return;
         }
     }
@@ -60,17 +60,16 @@ class CoursesController
                 return;
             } else {
                 http_response_code(404);
-                echo json_encode(array("message" => "No courses found."));
+                echo json_encode(array("message" => "No courses found"));
                 return;
             }
         }
     }
 
-    public function getOne()
+    public function getOne($slug)
     {
         try {
             $course = new CourseModel();
-            $slug = $_GET['slug'];
             $slugArray = explode("-", $slug);
             $courseId = end($slugArray);
             $course->id = $courseId;
@@ -83,6 +82,7 @@ class CoursesController
                     "teacher" => $course->teacher,
                     "category" => $course->category,
                     "keywords" => $course->keywords,
+                    "courseContents" => $course->courseContents,
                     "create_date" => $course->create_date,
                     "create_uid" => $course->create_uid,
                     "thumbnail_url" => $course->thumbnail_url
@@ -91,13 +91,25 @@ class CoursesController
                 return;
             } else {
                 http_response_code(404);
-                echo json_encode(array("message" => "Course not found."));
+                echo json_encode(array("message" => "Course not found"));
                 return;
             }
         } catch (Exception $e) {
             http_response_code(404);
-            echo json_encode(array("message" => "Course not found."));
+            echo json_encode(array("message" => "Course not found"));
             return;
+        }
+    }
+
+    public function checkIfExists($CourseId)
+    {
+        $course = new CourseModel();
+        $course->id = $CourseId;
+
+        if ($course->getOne()) {
+            return true;
+        } else {
+            return false;
         }
     }
 }
