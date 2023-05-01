@@ -5,7 +5,6 @@ require_once 'app/config/database_23-04-2023.php';
 class CourseContentModel
 {
     private $conn;
-    private $table_name = "courses";
 
     public $id;
     public $name;

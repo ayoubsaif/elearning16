@@ -5,7 +5,6 @@ require_once 'app/config/database.php';
 class CategoryModel
 {
     private $conn;
-    private $table_name = "categories";
 
     public $id;
     public $name;
@@ -23,7 +22,7 @@ class CategoryModel
 
     function create()
     {
-        $query = "INSERT INTO " . $this->table_name . "
+        $query = "INSERT INTO categories
                 SET
                     name=:name,
                     slug=:slug,
@@ -61,7 +60,7 @@ class CategoryModel
 
     function delete($id)
     {
-        $query = "DELETE FROM " . $this->table_name . " WHERE id = :id";
+        $query = "DELETE FROM categories WHERE id = :id";
         $stmt = $this->conn->prepare($query);
 
         $id = htmlspecialchars(strip_tags($id));
@@ -76,7 +75,7 @@ class CategoryModel
 
     function update()
     {
-        $query = "UPDATE " . $this->table_name . "
+        $query = "UPDATE categories
             SET
                 name=:name,
                 slug=:slug,
@@ -117,7 +116,7 @@ class CategoryModel
 
     function getAll()
     {
-        $query = "SELECT * FROM " . $this->table_name;
+        $query = "SELECT * FROM categories";
         $stmt = $this->conn->prepare($query);
         $stmt->execute();
 
@@ -146,7 +145,7 @@ class CategoryModel
 
     function getOne($id)
     {
-        $query = "SELECT * FROM " . $this->table_name . " WHERE id = :id LIMIT 1";
+        $query = "SELECT * FROM categories WHERE id = :id LIMIT 1";
         $stmt = $this->conn->prepare($query);
 
         $id = htmlspecialchars(strip_tags($id));

@@ -2,10 +2,9 @@
 
 require_once 'app/config/database_23-04-2023.php';
 
-class commentsModel
+class CommentModel
 {
     private $conn;
-    private $table_name = "comments";
 
     public $id;
     public $course;
@@ -21,7 +20,7 @@ class commentsModel
 
     function create()
     {
-        $query = "INSERT INTO " . $this->table_name . "
+        $query = "INSERT INTO comments
                 SET
                     course=:course,
                     user=:user,
@@ -53,7 +52,7 @@ class commentsModel
 
     function delete($id)
     {
-        $query = "DELETE FROM " . $this->table_name . " WHERE id = :id";
+        $query = "DELETE FROM comments WHERE id = :id";
         $stmt = $this->conn->prepare($query);
 
         $id = htmlspecialchars(strip_tags($id));
@@ -68,7 +67,7 @@ class commentsModel
 
     function update()
     {
-        $query = "UPDATE " . $this->table_name . "
+        $query = "UPDATE comments
             SET
             course=:course,
             user=:user,
@@ -102,7 +101,7 @@ class commentsModel
 
     function getAll()
     {
-        $query = "SELECT * FROM " . $this->table_name;
+        $query = "SELECT * FROM comments";
         $stmt = $this->conn->prepare($query);
         $stmt->execute();
 
@@ -124,5 +123,5 @@ class commentsModel
         }
 
         return $comments;
-    }
+    }  
 }
