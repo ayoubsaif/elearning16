@@ -25,15 +25,15 @@ class UserController {
 
             if($user->create()) {
                 http_response_code(201);
-                echo json_encode(array("message" => "User was created."));
+                echo json_encode(array("message" => "User was created"));
                 return;
             }
 
             http_response_code(503);
-            echo json_encode(array("message" => "Unable to create user."));
+            echo json_encode(array("message" => "Unable to create user"));
         }else{
             http_response_code(405);
-            echo json_encode(array("message" => "Method not allowed."));
+            echo json_encode(array("message" => "Method not allowed"));
         }
     }
 
@@ -46,7 +46,7 @@ class UserController {
 
             if(!$user->emailExists() || !$user->validatePassword($data->password)) {
                 http_response_code(401);
-                echo json_encode(array("message" => "Login failed."));
+                echo json_encode(array("message" => "Login failed"));
                 return;
             }
 
@@ -64,11 +64,11 @@ class UserController {
             $jwt = JWT::encode($token, getenv("JWT_KEY"),"HS256");
 
             http_response_code(200);
-            echo json_encode(array("message" => "Login successful.", "jwt" => $jwt, "user"=>array("id" => $user->id, "name" => $user->display_name)));
+            echo json_encode(array("message" => "Login successful", "jwt" => $jwt, "user"=>array("id" => $user->id, "name" => $user->display_name)));
 
         }else{
             http_response_code(405);
-            echo json_encode(array("message" => "Method not allowed."));
+            echo json_encode(array("message" => "Method not allowed"));
         }
     }
 
@@ -85,7 +85,7 @@ class UserController {
             if ($user_id != $id) {
                 // Return a 403 Forbidden response if the authenticated user is not authorized to access the requested user's information
                 http_response_code(403);
-                echo json_encode(array("message" => "Forbidden."));
+                echo json_encode(array("message" => "Forbidden"));
                 return;
             }
             // Retrieve the user's information from the database and return it
@@ -103,7 +103,7 @@ class UserController {
         } catch (Exception $e) {
             // Return a 401 Unauthorized response if the token is invalid
             http_response_code(401);
-            echo json_encode(array("message" => "Unauthorized."));
+            echo json_encode(array("message" => "Unauthorized"));
             return;
         }
     }
@@ -122,5 +122,3 @@ class UserController {
         }
     }
 }
-
-?>
