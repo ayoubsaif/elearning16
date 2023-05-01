@@ -10,6 +10,7 @@ class UserModel
     public $display_name;
     public $firstname;
     public $lastname;
+    public $username;
     public $email;
     public $password;
     public $create_date;
@@ -29,14 +30,16 @@ class UserModel
             $query = "INSERT INTO users
                     SET
                         firstname=:firstname,
-                        email=:email,
                         lastname=:lastname,
+                        username=:username,
+                        email=:email,
                         password=:password";
 
             $stmt = $this->conn->prepare($query);
 
             $this->firstname = htmlspecialchars(strip_tags($this->firstname));
             $this->lastname = htmlspecialchars(strip_tags($this->lastname));
+            $this->username = htmlspecialchars(strip_tags($this->username));
             $this->email = htmlspecialchars(strip_tags($this->email));
             $this->password = htmlspecialchars(strip_tags($this->password));
 
@@ -44,6 +47,7 @@ class UserModel
 
             $stmt->bindParam(":firstname", $this->firstname);
             $stmt->bindParam(":lastname", $this->lastname);
+            $stmt->bindParam(":username", $this->username);
             $stmt->bindParam(":email", $this->email);
             $stmt->bindParam(":password", $password_hash);
 
