@@ -1,6 +1,6 @@
 <?php
 
-require_once 'app/config/database_23-04-2023.php';
+require_once 'app/config/database.php';
 
 class CommentModel
 {
