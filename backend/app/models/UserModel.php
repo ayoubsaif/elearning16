@@ -123,4 +123,41 @@ class UserModel
             return false;
         }
     }
+
+    function update() {
+        try{
+            $query = "UPDATE users
+                    SET
+                        firstname=:firstname,
+                        lastname=:lastname,
+                        username=:username,
+                        email=:email,
+                        avatar_url=:avatar_url
+                    WHERE id = :id";
+
+            $stmt = $this->conn->prepare($query);
+
+            $this->firstname = htmlspecialchars(strip_tags($this->firstname));
+            $this->lastname = htmlspecialchars(strip_tags($this->lastname));
+            $this->username = htmlspecialchars(strip_tags($this->username));
+            $this->email = htmlspecialchars(strip_tags($this->email));
+            $this->avatar_url = htmlspecialchars(strip_tags($this->avatar_url));
+            $this->id = htmlspecialchars(strip_tags($this->id));
+
+            $stmt->bindParam(":firstname", $this->firstname);
+            $stmt->bindParam(":lastname", $this->lastname);
+            $stmt->bindParam(":username", $this->username);
+            $stmt->bindParam(":email", $this->email);
+            $stmt->bindParam(":avatar_url", $this->avatar_url);
+            $stmt->bindParam(":id", $this->id);
+
+            if ($stmt->execute()) {
+                return true;
+            }
+
+            return false;
+        }catch(Exception $e){
+            return false;
+        }
+    }
 }
