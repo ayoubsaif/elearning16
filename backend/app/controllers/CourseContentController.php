@@ -75,7 +75,24 @@ class CourseContentController
         }
     }
 
-    public function getOne(){
+    public function getOne($id){
+        try {
+            $PermissionMiddleware = new PermissionMiddleware();
+            $allowed = array('admin','teacher','student');
+            $UserPermmited = $PermissionMiddleware->handle($allowed);
+            if (!$UserPermmited) {
+                return;
+            }
+
+            $courseContent = new CourseContentModel();
+            $courseContent->id = $id;
+            $courseContent->getOne($id);
+            http_response_code(200);
+            echo json_encode($courseContent);
+        } catch (Exception $e) {
+            http_response_code(401);
+            echo json_encode(array("message" => "Unauthorized"));
+        }
 
     }
 
