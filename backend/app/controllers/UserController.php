@@ -15,6 +15,7 @@ class UserController {
             $user = new UserModel();
             $user->firstname = $data->firstname;
             $user->lastname = $data->lastname;
+            $user->username = $data->username;
             $user->email = $data->email;
             $user->password = $data->password;
     
