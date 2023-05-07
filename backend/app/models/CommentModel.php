@@ -7,7 +7,7 @@ class CommentModel
     private $conn;
 
     public $id;
-    public $course;
+    public $course_content;
     public $user;
     public $parent_comment;
     public $create_date;
@@ -22,7 +22,7 @@ class CommentModel
     {
         $query = "INSERT INTO comments
                 SET
-                    course=:course,
+                    course_content=:course_content,
                     user=:user,
                     parent_comment=:parent_comment,
                     create_date=:create_date,
@@ -30,13 +30,13 @@ class CommentModel
 
         $stmt = $this->conn->prepare($query);
 
-        $this->course = htmlspecialchars(strip_tags($this->course));
+        $this->course_content = htmlspecialchars(strip_tags($this->course_content));
         $this->user = htmlspecialchars(strip_tags($this->user));
         $this->parent_comment = htmlspecialchars(strip_tags($this->parent_comment));
         $this->create_date = htmlspecialchars(strip_tags($this->create_date));
         $this->create_uid = htmlspecialchars(strip_tags($this->create_uid));
 
-        $stmt->bindParam(":course", $this->course);
+        $stmt->bindParam(":course_content", $this->course_content);
         $stmt->bindParam(":user", $this->user);
         $stmt->bindParam(":parent_comment", $this->parent_comment);
         $stmt->bindParam(":create_date", $this->create_date);
@@ -69,7 +69,7 @@ class CommentModel
     {
         $query = "UPDATE comments
             SET
-            course=:course,
+            course_content=:course_content,
             user=:user,
             parent_comment=:parent_comment,
             create_date=:create_date,
@@ -79,13 +79,13 @@ class CommentModel
 
         $stmt = $this->conn->prepare($query);
 
-        $this->course = htmlspecialchars(strip_tags($this->course));
+        $this->course_content = htmlspecialchars(strip_tags($this->course_content));
         $this->user = htmlspecialchars(strip_tags($this->user));
         $this->parent_comment = htmlspecialchars(strip_tags($this->parent_comment));
         $this->create_date = htmlspecialchars(strip_tags($this->create_date));
         $this->create_uid = htmlspecialchars(strip_tags($this->create_uid));
 
-        $stmt->bindParam(":course", $this->course);
+        $stmt->bindParam(":course_content", $this->course_content);
         $stmt->bindParam(":user", $this->user);
         $stmt->bindParam(":parent_comment", $this->parent_comment);
         $stmt->bindParam(":create_date", $this->create_date);
@@ -112,7 +112,7 @@ class CommentModel
 
             $comment_item = array(
                 "id" => $id,
-                "course" => $course,
+                "course_content" => $course_content,
                 "user" => $user,
                 "parent_comment" => $parent_comment,
                 "create_date" => $create_date,
@@ -123,5 +123,33 @@ class CommentModel
         }
 
         return $comments;
-    }  
+    }
+
+    function getAllByCourseContent() {
+        $query = "SELECT * FROM comments WHERE course_content = :course_content";
+        $stmt = $this->conn->prepare($query);
+
+        $stmt->bindParam(":course_content", $this->course_content);
+
+        $stmt->execute();
+
+        $comments = array();
+
+        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+            extract($row);
+
+            $comment_item = array(
+                "id" => $id,
+                "course_content" => $course_content,
+                "user" => $user,
+                "parent_comment" => $parent_comment,
+                "create_date" => $create_date,
+                "create_uid" => $create_uid
+            );
+
+            array_push($comments, $comment_item);
+        }
+
+        return $comments;
+    }
 }

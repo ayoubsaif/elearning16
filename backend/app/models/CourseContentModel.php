@@ -1,6 +1,7 @@
 <?php
 
 require_once 'app/config/database.php';
+require_once 'app/models/CommentModel.php';
 
 class CourseContentModel
 {
@@ -12,6 +13,7 @@ class CourseContentModel
     public $iframe;
     public $thumbnail_url;
     public $course;
+    public $comments;
     public $create_date;
     public $create_uid;
 
@@ -161,6 +163,7 @@ class CourseContentModel
             $this->iframe = $course['iframe'];
             $this->thumbnail_url = $course['thumbnail_url'];
             $this->course = $course['course'];
+            $this->comments = (new CommentModel())->getAllByCourseContent($this->id);
             $this->create_date = $course['create_date'];
             $this->create_uid = $course['create_uid'];
 
