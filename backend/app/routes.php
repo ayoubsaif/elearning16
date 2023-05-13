@@ -2,6 +2,7 @@
 
 # SiteConfig
 $router->get('/api/site-config', 'SiteConfigController@get');
+$router->put('/api/site-config', 'SiteConfigController@update');
 
 # Auth
 $router->post('/api/login', 'UserController@login');
@@ -16,6 +17,13 @@ $router->get('/api/courses', 'CoursesController@getAll');
 
 $router->get('/api/course/:slug', 'CoursesController@getOne');
 $router->post('/api/course', 'CoursesController@create');
+
+# Course Categories
+$router->get('/api/categories', 'CategoriesController@getAll');
+$router->get('/api/category', 'CategoriesController@getOne');
+
+$router->put('/api/category/:id', 'CategoriesController@update');
+$router->post('/api/category', 'CategoriesController@create');
 
 # Course Content
 $router->post('/api/course-content', 'CourseContentController@create');
