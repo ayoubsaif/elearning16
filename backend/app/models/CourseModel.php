@@ -130,16 +130,38 @@ class CourseModel
     }
 
     # Read all courses, query limit and offset
-    function getAll($from_record_num = 0, $records_per_page = 10)
+    function getAll($currentPage = 0, $records_per_page = 10)
     {
-        $query = "SELECT id, name, thumbnail_url, slug 
-            FROM courses ORDER BY create_date DESC, id DESC LIMIT {$from_record_num}, {$records_per_page}";
+        $query = "SELECT id, name, description, thumbnail_url, slug
+            FROM courses ORDER BY create_date DESC, id DESC LIMIT {$currentPage}, {$records_per_page}";
 
         $stmt = $this->conn->prepare($query);
         $stmt->execute();
         $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $pagesCount = $this->getPagesCount($records_per_page);
+        if ($data){
+            return array(
+                'courses' => $data,
+                'pagination' => array(
+                    'currentPage' => $currentPage,
+                    'pagesCount' => $pagesCount,
+                    'recordsPerPage' => $records_per_page,
+                )
+            );
+        }
 
         return $data;
+    }
+
+    function getPagesCount($records_per_page)
+    {
+        $query = "SELECT COUNT(*) as total_rows FROM courses";
+        $stmt = $this->conn->prepare($query);
+        $stmt->execute();
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        $total_rows = $row['total_rows'];
+        $pagesCount = ceil($total_rows / $records_per_page);
+        return $pagesCount;
     }
 
     # Get one course, query by slug-id

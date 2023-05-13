@@ -45,15 +45,9 @@ class CoursesController
 
             $course = new CourseModel();
 
-            if (isset($_GET['offset']) && isset($_GET['limit'])) {
-                $from_record_num = $_GET['offset'];
-                $records_per_page = $_GET['limit'];
-            } else {
-                $from_record_num = 0;
-                $records_per_page = 10;
-            }
-            $courses = $course->getAll($from_record_num, $records_per_page);
-
+            $currentPage = isset($_GET['currentPage']) ? $_GET['currentPage'] : 1;
+            $records_per_page = isset($_GET['limit']) ? $_GET['limit'] : 10;
+            $courses = $course->getAll($currentPage, $records_per_page);
             if ($courses) {
                 http_response_code(200);
                 echo json_encode($courses);
