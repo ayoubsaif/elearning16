@@ -11,6 +11,7 @@ import { useEffect } from "react";
 
 export default function WithBackgroundImage() {
   const AppName = 'eLearning';
+  
   return (
     <>
       <Head>
