@@ -5,7 +5,7 @@ import styles from '@/styles/Home.module.css'
 
 const inter = Inter({ subsets: ['latin'] })
 
-export default function Home() {
+export default function Register() {
   return (
     <>
       <Head>
@@ -16,7 +16,7 @@ export default function Home() {
       </Head>
       <main className={`${styles.main} ${inter.className}`}>
         <div className={styles.description}>
-            <h1>COURSES PAGE</h1>
+            <h1>REGISTER PAGE</h1>
         </div>
       </main>
     </>

@@ -9,21 +9,29 @@ import {
     Link,
     Stack,
     Image,
+    useColorModeValue,
   } from '@chakra-ui/react';
+import { useRef } from 'react';
   
-  export default function SplitScreen() {
+  export default function Login() {
+    const email = useRef("");
+    const password = useRef("");
+
     return (
       <Stack minH={'100vh'} direction={{ base: 'column', md: 'row' }}>
         <Flex p={8} flex={1} align={'center'} justify={'center'}>
           <Stack spacing={4} w={'full'} maxW={'md'}>
-            <Heading fontSize={'2xl'}>Sign in to your account</Heading>
-            <FormControl id="email">
-              <FormLabel>Email address</FormLabel>
-              <Input type="email" />
+            <Heading fontSize={'2xl'}>Iniciar sesión en su cuenta</Heading>
+            <FormControl>
+              <FormLabel>Correo electrónico</FormLabel>
+              <Input type="email" onChange={(e) => (email.current = e.target.value)}/>
             </FormControl>
-            <FormControl id="password">
-              <FormLabel>Password</FormLabel>
-              <Input type="password" />
+            <FormControl>
+              <FormLabel>Contraseña</FormLabel>
+              <Input
+                rounded={'sm'}
+                type="password"
+                onChange={(e) => (password.current = e.target.value)}/>
             </FormControl>
             <Stack spacing={6}>
               <Stack
@@ -32,7 +40,7 @@ import {
                 justify={'space-between'}>
               </Stack>
               <Button colorScheme={'blue'} variant={'solid'}>
-                Sign in
+                Iniciar sesión
               </Button>
             </Stack>
           </Stack>
