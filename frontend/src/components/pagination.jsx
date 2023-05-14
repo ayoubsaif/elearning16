@@ -1,6 +1,4 @@
-import {
-  useColorModeValue,
-} from '@chakra-ui/react';
+import { useColorModeValue } from "@chakra-ui/react";
 import {
   Pagination,
   PaginationNext,
@@ -9,9 +7,26 @@ import {
   PaginationContainer,
   PaginationPageGroup,
 } from "@ajna/pagination";
+import { BsArrowLeft, BsIndent, BsArrowRight } from "react-icons/bs";
+import { isMobile } from "react-device-detect";
 
 export default function ChakraPagination(props) {
   const { pages, currentPage, setCurrentPage, pagesCount } = props;
+  let pagesToShow = isMobile ? 3 : 9;
+  let start = currentPage - 2;
+  let maxPages = start + pagesToShow;
+
+  console.log(maxPages);
+  if (maxPages > pagesCount) {
+    maxPages = pagesCount;
+    start = Math.max(maxPages - pagesToShow, 1);
+  } else if (start < 1) {
+    start = 1;
+    maxPages = Math.min(start + pagesToShow, pagesCount);
+  }
+
+  const hasFirst = start > 1;
+  const hasLast = maxPages < pagesCount;
 
   return (
     <Pagination
@@ -21,43 +36,145 @@ export default function ChakraPagination(props) {
     >
       <PaginationContainer>
         <PaginationPrevious
-          rounded={'sm'}
-          bg="white"
-          border={'1px'}
+          rounded={".25rem"}
+          border={"1px"}
           borderColor="black"
-          boxShadow={useColorModeValue('6px 6px 0 black', '6px 6px 0 cyan')}
-        >Atras</PaginationPrevious>
-        <PaginationPageGroup spacing={4}>
-          {pages.map((page) => (
+          bg="white"
+          _hover={{
+            transform: `translate(-.25rem, -.25rem)`,
+            boxShadow: ".25rem .25rem 0 black",
+          }}
+          _active={{
+            transform: `none`,
+            boxShadow: "none",
+          }}
+          mr=".50em"
+        >
+          {isMobile ? (
+              <BsArrowLeft />
+          ) : (
+            <>
+              <BsArrowLeft />
+              {"Atras"}
+            </>
+          )}
+        </PaginationPrevious>
+        <PaginationPageGroup spacing={2} alignItems={"center"}>
+          {hasFirst && (
+            <>
+              <PaginationPage
+                minWidth="2.5em"
+                rounded={".25rem"}
+                border={"1px"}
+                borderColor="black"
+                bg="white"
+                _hover={{
+                  transform: `translate(-.25rem, -.25rem)`,
+                  boxShadow: ".25rem .25rem 0 black",
+                }}
+                _active={{
+                  transform: `none`,
+                  boxShadow: "none",
+                }}
+                _current={{
+                  w: 7,
+                  bg: "blue.300",
+                  color: "white",
+                  _hover: {
+                    bg: "blue.500",
+                    color: "white",
+                  },
+                }}
+                key="pagination_page_first"
+                page={1}
+              />
+              <BsIndent />
+            </>
+          )}
+          {pages.slice(start - 1, maxPages).map((page) => (
             <PaginationPage
-              _hover={{ bg: 'gray.100' }}
+              minWidth="2.5em"
+              rounded={".25rem"}
+              border={"1px"}
+              borderColor="black"
+              bg="white"
+              _hover={{
+                transform: `translate(-.25rem, -.25rem)`,
+                boxShadow: ".25rem .25rem 0 black",
+              }}
+              _active={{
+                transform: `none`,
+                boxShadow: "none",
+              }}
               _current={{
                 w: 7,
-                bg: "black",
+                bg: "blue.300",
                 color: "white",
-                fontSize: "sm",
                 _hover: {
-                  bg: "gray.300",
-                  color: "black",
+                  bg: "blue.500",
+                  color: "white",
                 },
               }}
-              w="m"
-              rounded={'sm'}
-              bg="white"
-              border={'1px'}
-              px={4}
-              mx={[0, 2]}
-              key={`pagination_page_${page}`} 
-              page={page} />
+              key={`pagination_page_${page}`}
+              page={page}
+            />
           ))}
+          {hasLast && (
+            <>
+              <BsIndent />
+              <PaginationPage
+                minWidth="2.5em"
+                rounded={".25rem"}
+                border={"1px"}
+                borderColor="black"
+                bg="white"
+                _hover={{
+                  transform: `translate(-.25rem, -.25rem)`,
+                  boxShadow: ".25rem .25rem 0 black",
+                }}
+                _active={{
+                  transform: `none`,
+                  boxShadow: "none",
+                }}
+                _current={{
+                  w: 7,
+                  bg: "blue.300",
+                  color: "white",
+                  _hover: {
+                    bg: "blue.500",
+                    color: "white",
+                  },
+                }}
+                key="pagination_page_last"
+                page={pagesCount}
+              />
+            </>
+          )}
         </PaginationPageGroup>
         <PaginationNext
-          rounded={'sm'}
-          bg="white"
-          border={'1px'}
+          rounded={".25rem"}
+          border={"1px"}
           borderColor="black"
-          boxShadow={useColorModeValue('6px 6px 0 black', '6px 6px 0 cyan')}
-        >Siguiente</PaginationNext>
+          bg="white"
+          _hover={{
+            transform: `translate(-.25rem, -.25rem)`,
+            boxShadow: ".25rem .25rem 0 black",
+          }}
+          _active={{
+            transform: `none`,
+            boxShadow: "none",
+          }}
+          ml=".50em"
+        >
+          {isMobile ? (
+            <BsArrowRight />
+          ) : (
+            <>
+              {"Siguiente"}
+              <BsArrowRight />
+            </>
+          )}
+        </PaginationNext>
       </PaginationContainer>
     </Pagination>
   );
