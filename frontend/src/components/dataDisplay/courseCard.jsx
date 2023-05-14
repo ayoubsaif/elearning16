@@ -5,8 +5,7 @@ import {
   Text,
   Img,
   Flex,
-  Center,
-  useColorModeValue,
+  AspectRatio,
   HStack,
 } from "@chakra-ui/react";
 import { BsArrowUpRight } from "react-icons/bs";
@@ -17,7 +16,7 @@ export default function CourseCard(props) {
     <Box
       w={"full"}
       minWidth={"250px"}
-      rounded={"sm"}
+      rounded={".25em"}
       overflow={"hidden"}
       bg="white"
       border={"1px"}
@@ -29,17 +28,17 @@ export default function CourseCard(props) {
       }}
     >
       <NextLink href={`/course/${slug}-${id}`}>
-        <Box h={"200px"} borderBottom={"1px"} borderColor="black">
+        <AspectRatio maxW='400px' ratio={16 / 9}>
           <Img
             src={thumbnail_url}
-            roundedTop={"sm"}
+            roundedTop={".25em"}
             objectFit="cover"
             h="full"
             w="full"
             alt={"Blog Image"}
           />
-        </Box>
-        <Box p={4}>
+        </AspectRatio>
+        <Box p={4} minHeight={"8em"} maxHeight="10em">
           <Heading color={"black"} fontSize={"2xl"} noOfLines={1}>
             {name}
           </Heading>
@@ -55,6 +54,7 @@ export default function CourseCard(props) {
             roundedBottom={"sm"}
             cursor={"pointer"}
             w="full"
+            h="4em"
           >
             <Text fontSize={"md"} fontWeight={"semibold"}>
               Ver más
