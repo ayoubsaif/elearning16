@@ -77,6 +77,12 @@
   box-sizing: border-box;
   padding: 0;
   margin: 0;
+  text-rendering: optimizeLegibility;
+}
+
+::selection { 
+  color:white;
+  background: var(--chakra-colors-blue-300);
 }
 
 html,
