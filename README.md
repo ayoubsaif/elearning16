@@ -35,7 +35,7 @@ eLearning consist in a application for schools, teams or companys to organize th
     cd ./frontend && yarn install
     ```
 
-3. Import database using the file ```database.sql``` at root of this project
+3. Import database using the file ```elearning_16.sql``` at root of this project
    1. Import it using PhpMyAdmin: [http://localhost/phpmyadmin]("http://localhost/phpmyadmin")
     ![]("word/phpmyadmin_import_sql.png")
 
