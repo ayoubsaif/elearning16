@@ -129,16 +129,22 @@ class CourseModel
         return false;
     }
 
-    # Read all courses, query limit and offset
-    function getAll($currentPage = 0, $records_per_page = 10)
+    function getAll($currentPage = 1, $records_per_page = 10)
     {
+        // Calculate the offset value based on the current page number and the number of records per page
+        $offset = ($currentPage - 1) * $records_per_page;
+    
         $query = "SELECT id, name, description, thumbnail_url, slug
-            FROM courses ORDER BY create_date DESC, id DESC LIMIT {$currentPage}, {$records_per_page}";
-
+            FROM courses ORDER BY id DESC LIMIT {$offset}, {$records_per_page}";
+    
         $stmt = $this->conn->prepare($query);
         $stmt->execute();
         $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
-        $pagesCount = $this->getPagesCount($records_per_page);
+    
+        // Calculate the total number of pages
+        $totalRecords = $this->getTotalRecords();
+        $pagesCount = ceil($totalRecords / $records_per_page);
+    
         if ($data){
             return array(
                 'courses' => $data,
@@ -149,9 +155,20 @@ class CourseModel
                 )
             );
         }
-
+    
         return $data;
     }
+
+    function getTotalRecords()
+    {
+        $query = "SELECT COUNT(*) as total_rows FROM courses";
+        $stmt = $this->conn->prepare($query);
+        $stmt->execute();
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        $total_rows = $row['total_rows'];
+        return $total_rows;
+    }
+    
 
     function getPagesCount($records_per_page)
     {
