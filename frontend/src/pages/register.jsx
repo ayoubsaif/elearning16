@@ -1,68 +1,102 @@
 import Head from 'next/head'
 import Image from 'next/image'
 import { Inter } from 'next/font/google'
-import styles from '@/styles/Home.module.css'
+//import styles from '@/styles/Home.module.css'
 
 import {
-  FormControl,
-  FormLabel,
-  FormErrorMessage,
-  FormHelperText,
-  Input,
-  RadioGroup,
-  HStack,
-  Radio,
   Flex,
-  Button,
+  Box,
+  FormControl,
+  Input,
+  InputGroup,
+  HStack,
+  InputRightElement,
   Stack,
-  Heading
-} from '@chakra-ui/react'
+  Heading,
+  Text,
+  useColorModeValue,
+  Link,
+} from '@chakra-ui/react';
+import { useState } from 'react';
+import { ViewIcon, ViewOffIcon } from '@chakra-ui/icons';
+import Button from "@/components/forms/Button";
 
-const inter = Inter({ subsets: ['latin'] })
+const backgroundImageUrl = "https://cdn.pixabay.com/photo/2017/09/05/10/20/business-2717066_1280.jpg";
 
-export default function Register() {
+export default function SignupCard() {
+  const [showPassword, setShowPassword] = useState(false);
+
   return (
-    <Stack minH={'100vh'} direction={{ base: 'column', md: 'row' }}>
-      <Flex p={8} flex={1} align={'center'} justify={'center'}>
-        <Stack spacing={4} w={'full'} maxW={'md'}>
-          <Heading fontSize={'2xl'}>Iniciar sesión en su cuenta</Heading>
-
-          <FormControl isRequired>
-            <FormLabel>Nombre</FormLabel>
-            <Input placeholder='Nombre' />
-          </FormControl>
-
-          <FormControl isRequired>
-            <FormLabel>Apellidos</FormLabel>
-            <Input placeholder='Apellidos ' />
-          </FormControl>
-
-          <FormControl isRequired>
-            <FormLabel>Email address</FormLabel>
-            <Input type="email" onChange={(e) => (email.current = e.target.value)} placeholder='Email' />
-          </FormControl>
-
-          <FormControl isRequired>
-            <FormLabel>Contraseña</FormLabel>
-            <Input placeholder='Contraseña' />
-          </FormControl>
-
-          <FormControl isRequired>
-            <FormLabel>Confirma contraseña</FormLabel>
-            <Input placeholder='ConfirmaContraseña' />
-          </FormControl>
-
-          <Button colorScheme={'blue'} variant={'solid'}>
-            REGISTRARSE
-          </Button>
-
-    
-
+    <Flex
+      minH={'100vh'}
+      align={'center'}
+      justify={'center'}
+      bgImage={`url(${backgroundImageUrl})`}
+      bgSize="cover"
+      bgPosition="center">
+      <Stack spacing={8} mx={'auto'} maxW={'lg'} py={12} px={6}>
+        <Stack align={'center'}>
+          <Heading fontSize={'4xl'} textAlign={'center'} color={'white'}>
+            REGISTRO
+          </Heading>
         </Stack>
-      </Flex>
-    </Stack>
-
-
-
+        <Box
+          rounded={'lg'}
+          bg={useColorModeValue('rgba(200,209,217,0.94)', 'gray.700')}
+          boxShadow={'lg'}
+          p={8}>
+          <Stack spacing={4}>
+            <HStack>
+              <Box>
+                <FormControl id="firstName" isRequired>
+                  <Input type="text" placeholder='Nombre'/>
+                </FormControl>
+              </Box>
+              <Box>
+                <FormControl id="lastName" isRequired>
+                  <Input type="text" placeholder='Apellidos'/>
+                </FormControl>
+              </Box>
+            </HStack>
+            <FormControl id="email" isRequired>
+              <Input type="email" placeholder='Email'/>
+            </FormControl>
+            <FormControl id="password" isRequired>
+              <InputGroup>
+                <Input type={showPassword ? 'text' : 'password'} placeholder='Contraseña'/>
+                <InputRightElement h={'full'}>
+                  <Button
+                    variant={'ghost'}
+                    onClick={() =>
+                      setShowPassword((showPassword) => !showPassword)
+                    }>
+                    {showPassword ? <ViewIcon /> : <ViewOffIcon />}
+                  </Button>
+                </InputRightElement>
+              </InputGroup>
+            </FormControl>
+            <Stack spacing={10} pt={2}>
+            <Button
+              bg="black"
+              color="white"
+              _hover={{
+                color: "white",
+                bg: "blue.300",
+              }}
+            >
+              REGÍSTRATE
+            </Button>
+            </Stack>
+            <Stack pt={6}>
+              <Text align={'center'}>
+                ¿Ya eres usuario? <Link color={'blue.400'}>Inicia sesión</Link>
+              </Text>
+            </Stack>
+          </Stack>
+        </Box>
+      </Stack>
+    </Flex>
   );
 }
+
+
