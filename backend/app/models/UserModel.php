@@ -16,7 +16,7 @@ class UserModel
     public $create_date;
     public $create_uid;
     public $avatar_url;
-    public $permissionType;
+    public $role;
 
     public function __construct()
     {
@@ -64,7 +64,7 @@ class UserModel
     function emailExists()
     {
         try{
-            $query = "SELECT id, firstname, lastname, password
+            $query = "SELECT id, firstname, lastname, password, role
                         FROM users
                         WHERE email = ?
                         LIMIT 0,1";
@@ -82,6 +82,7 @@ class UserModel
                 $this->lastname = $row['lastname'];
                 $this->display_name = $this->firstname . " " . $this->lastname;
                 $this->password = $row['password'];
+                $this->role = $row['role'];
                 return true;
             }
             return false;
@@ -97,7 +98,7 @@ class UserModel
 
     function getOne($id){
         try{
-            $query = "SELECT id, firstname, lastname, email, avatar_url, permission_type
+            $query = "SELECT id, firstname, lastname, email, avatar_url, role
             FROM users
             WHERE id = ?
             LIMIT 1";
@@ -115,7 +116,7 @@ class UserModel
                 $this->display_name = $this->firstname . " " . $this->lastname;
                 $this->email = $row['email'];
                 $this->avatar_url = $row['avatar_url'];
-                $this->permissionType = $row['permission_type'];
+                $this->role = $row['role'];
                 return true;
             }
             return false;
