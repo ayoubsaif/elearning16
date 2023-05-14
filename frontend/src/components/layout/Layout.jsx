@@ -3,12 +3,12 @@ import { Box, Flex, Text, IconButton, Button, Stack, Collapse, Icon, Link, Popov
 
 import NavBar from '@/components/layout/NavBar';
 
-export default function layout({ children }) {
+export default function Layout({ children }) {
   return (
     <>
         <NavBar />
-        <Container maxW="container.xl">
-            {children}
+        <Container centerContent maxW="1200px">
+          {children}
         </Container>
     </>
   )
