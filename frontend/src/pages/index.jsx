@@ -47,7 +47,7 @@ export default function Home(props) {
               Bienvenid@ a {siteConfig?.title}
             </Text>
             <Stack direction={"row"}>
-              <NextLink href="/login">
+              <NextLink href="/auth/login">
                 <Button
                   color={"black"}
                   bg={"white"}
@@ -64,7 +64,7 @@ export default function Home(props) {
                   Iniciar sesión
                 </Button>
               </NextLink>    
-              <NextLink href="/register">       
+              <NextLink href="/auth/register">       
                 <Button
                   color={"black"}
                   bg={"whiteAlpha.500"}
