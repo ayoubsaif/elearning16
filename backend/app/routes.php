@@ -5,15 +5,15 @@ $router->get('/api/site-config', 'SiteConfigController@get');
 $router->put('/api/site-config', 'SiteConfigController@update');
 
 # Auth
-$router->post('/api/login', 'UserController@login');
-$router->post('/api/register', 'UserController@register');
+$router->post('/auth/login', 'UserController@login');
+$router->post('/auth/register', 'UserController@register');
 
 # Profile
 $router->get('/api/profile', 'UserController@getMyProfileInfo');
 $router->put('/api/profile', 'UserController@updateMyProfileInfo');
 
 # Courses
-$router->get('/api/courses', 'CoursesController@getAll');
+$router->get('/api/courses', 'CoursesController@getMany');
 
 $router->get('/api/course/:slug', 'CoursesController@getOne');
 $router->post('/api/course', 'CoursesController@create');

@@ -66,7 +66,17 @@ class UserController {
             $jwt = JWT::encode($token, getenv("JWT_KEY"),"HS256");
     
             http_response_code(200);
-            echo json_encode(array("message" => "Login successful", "jwt" => $jwt, "user"=>array("id" => $user->id, "name" => $user->display_name)));
+            echo json_encode(array(
+                "message" => "Login successful", 
+                "jwt" => $jwt, 
+                "user"=>array(
+                    "id" => $user->id, 
+                    "name" => $user->display_name,
+                    "email" => $user->email,
+                    "avatar_url" => $user->avatar_url,
+                    "role" => $user->role
+                )
+                ));
         } catch (Exception $e) {
             http_response_code(401);
             echo json_encode(array("message" => "Unauthorized"));
