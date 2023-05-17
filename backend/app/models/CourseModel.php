@@ -129,7 +129,7 @@ class CourseModel
         return false;
     }
 
-    function getAll($currentPage = 1, $records_per_page = 10)
+    function getMany($currentPage = 1, $records_per_page = 12)
     {
         // Calculate the offset value based on the current page number and the number of records per page
         $offset = ($currentPage - 1) * $records_per_page;

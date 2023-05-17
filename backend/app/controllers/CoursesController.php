@@ -39,15 +39,15 @@ class CoursesController
     }
 
 
-    public function getAll()
+    public function getMany()
     {
         if ($_SERVER['REQUEST_METHOD'] == 'GET') {
 
             $course = new CourseModel();
 
             $currentPage = isset($_GET['currentPage']) ? $_GET['currentPage'] : 1;
-            $records_per_page = isset($_GET['limit']) ? $_GET['limit'] : 10;
-            $courses = $course->getAll($currentPage, $records_per_page);
+            $records_per_page = isset($_GET['limit']) ? $_GET['limit'] : 12;
+            $courses = $course->getMany($currentPage, $records_per_page);
             if ($courses) {
                 http_response_code(200);
                 echo json_encode($courses);
