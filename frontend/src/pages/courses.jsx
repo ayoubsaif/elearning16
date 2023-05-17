@@ -1,6 +1,5 @@
 import { NextSeo } from "next-seo";
 import { useEffect, useState, useRef } from "react";
-import { Inter } from "next/font/google";
 import { Grid, GridItem, Center, SimpleGrid, Heading } from "@chakra-ui/react";
 
 import { getSiteConfig } from "@/services/siteConfig";
@@ -65,7 +64,7 @@ export default function Home(props) {
             Cursos
           </Heading>
           {courses ? (
-            <Grid my="2em" ref={topRef}>
+            <Grid my="1em" ref={topRef}>
               <GridItem my="1em" w={"full"}>
                 <SimpleGrid columns={[1, 2, 2, 4]} spacing='20px'>
                   {courses.map((course) => (
