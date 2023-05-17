@@ -16,7 +16,6 @@ export default function ChakraPagination(props) {
   let start = currentPage - 2;
   let maxPages = start + pagesToShow;
 
-  console.log(maxPages);
   if (maxPages > pagesCount) {
     maxPages = pagesCount;
     start = Math.max(maxPages - pagesToShow, 1);
