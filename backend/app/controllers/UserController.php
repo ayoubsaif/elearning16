@@ -68,14 +68,14 @@ class UserController {
             http_response_code(200);
             echo json_encode(array(
                 "message" => "Login successful", 
-                "jwt" => $jwt, 
                 "user"=>array(
                     "id" => $user->id, 
                     "name" => $user->display_name,
                     "email" => $user->email,
                     "avatar_url" => $user->avatar_url,
                     "role" => $user->role
-                )
+                ),
+                "accessToken" => $jwt, 
                 ));
         } catch (Exception $e) {
             http_response_code(401);
