@@ -4,6 +4,7 @@ import {
   Text,
   IconButton,
   Button,
+  MenuButton,
   Stack,
   Collapse,
   Icon,
@@ -20,9 +21,13 @@ import {
   StackDivider,
 } from "@chakra-ui/react";
 import { GrMenu, GrClose, GrDown, GrFormNextLink } from "react-icons/gr";
+import { useSession, signIn } from "next-auth/react";
+import { useEffect } from "react";
 
 export default function WithSubnavigation() {
   const { isOpen, onToggle } = useDisclosure();
+  const { session } = useSession();
+  console.log(session);
 
   return (
     <Box>
@@ -71,31 +76,56 @@ export default function WithSubnavigation() {
 
           <Spacer />
 
-          <ButtonGroup gap="2">
-            <Button
-              as={"a"}
-              fontSize={"sm"}
-              fontWeight={400}
-              variant={"link"}
-              href={"#"}
-            >
-              Sign In
-            </Button>
-            <Button
-              as={"a"}
-              display={{ base: "none", md: "inline-flex" }}
-              fontSize={"sm"}
-              fontWeight={600}
-              color={"white"}
-              bg={"pink.400"}
-              href={"#"}
-              _hover={{
-                bg: "pink.300",
-              }}
-            >
-              Sign Up
-            </Button>
-          </ButtonGroup>
+          {session?.user ? (
+            <Menu>
+              <MenuButton
+                as={Button}
+                rounded={"full"}
+                variant={"link"}
+                cursor={"pointer"}
+                minW={0}
+              >
+                <Avatar
+                  size={"sm"}
+                  src={
+                    "https://images.unsplash.com/photo-1493666438817-866a91353ca9?ixlib=rb-0.3.5&q=80&fm=jpg&crop=faces&fit=crop&h=200&w=200&s=b616b2c5b373a80ffc9636ba24f7a4a9"
+                  }
+                />
+              </MenuButton>
+              <MenuList>
+                <MenuItem>Link 1</MenuItem>
+                <MenuItem>Link 2</MenuItem>
+                <MenuDivider />
+                <MenuItem>Link 3</MenuItem>
+              </MenuList>
+            </Menu>
+          ) : (
+            <ButtonGroup gap="2">
+              <Button
+                as={"a"}
+                fontSize={"sm"}
+                fontWeight={400}
+                variant={"link"}
+                onClick={() => signIn()}
+              >
+                Iniciar sesión
+              </Button>
+              <Button
+                as={"a"}
+                display={{ base: "none", md: "inline-flex" }}
+                fontSize={"sm"}
+                fontWeight={600}
+                color={"white"}
+                bg={"pink.400"}
+                href={"/auth/register"}
+                _hover={{
+                  bg: "pink.300",
+                }}
+              >
+                Registrarse
+              </Button>
+            </ButtonGroup>
+          )}
         </Flex>
       </Flex>
 
@@ -141,8 +171,14 @@ const DesktopNav = () => {
                 minW={"sm"}
               >
                 <Stack
-                    p={2}
-                    divider={<StackDivider border={"1px 0px"} borderColor='black' my={"0px"} />}
+                  p={2}
+                  divider={
+                    <StackDivider
+                      border={"1px 0px"}
+                      borderColor="black"
+                      my={"0px"}
+                    />
+                  }
                 >
                   {navItem.children.map((child) => (
                     <DesktopSubNav key={child.label} {...child} />
