@@ -1,7 +1,7 @@
 import React from 'react'
 import { Input } from "@chakra-ui/react";
 
-export default function PrimaryInput({ attributes }) {
+export default function PrimaryInput({ ...attributes }) {
   return (
     <Input
         {...attributes}
