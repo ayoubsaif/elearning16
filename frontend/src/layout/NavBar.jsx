@@ -1,10 +1,10 @@
+import NextLink from "next/link";
 import {
   Box,
   Flex,
   Text,
   IconButton,
   Button,
-  MenuButton,
   Stack,
   Collapse,
   Icon,
@@ -19,16 +19,22 @@ import {
   Spacer,
   ButtonGroup,
   StackDivider,
+  Avatar,
+  Menu,
+  MenuButton,
+  MenuList,
+  MenuItem,
+  MenuDivider,
 } from "@chakra-ui/react";
 import { GrMenu, GrClose, GrDown, GrFormNextLink } from "react-icons/gr";
-import { useSession, signIn } from "next-auth/react";
-import { useEffect } from "react";
+import { useSession, signIn, signOut } from "next-auth/react";
 
-export default function WithSubnavigation() {
+import MobileNav from "./navbar/MobileNav";
+
+export default function NavBar({ siteConfig, menuItems }) {
   const { isOpen, onToggle } = useDisclosure();
-  const { session } = useSession();
-  console.log(session);
-
+  const { data: session } = useSession();
+  
   return (
     <Box>
       <Flex
@@ -70,7 +76,7 @@ export default function WithSubnavigation() {
 
           <Center>
             <Flex display={{ base: "none", md: "flex" }} ml={10}>
-              <DesktopNav />
+              <DesktopNav menuItems={menuItems} />
             </Flex>
           </Center>
 
@@ -87,16 +93,25 @@ export default function WithSubnavigation() {
               >
                 <Avatar
                   size={"sm"}
-                  src={
-                    "https://images.unsplash.com/photo-1493666438817-866a91353ca9?ixlib=rb-0.3.5&q=80&fm=jpg&crop=faces&fit=crop&h=200&w=200&s=b616b2c5b373a80ffc9636ba24f7a4a9"
-                  }
+                  src={ session?.user?.image }
                 />
               </MenuButton>
-              <MenuList>
-                <MenuItem>Link 1</MenuItem>
-                <MenuItem>Link 2</MenuItem>
+              <MenuList alignItems={"center"}>
+                <br />
+                <Center>
+                  <Avatar
+                    size={"2xl"}
+                    src={ session?.user?.image }
+                  />
+                </Center>
+                <br />
+                <Center>
+                  <p>{session?.user?.name}</p>
+                </Center>
+                <br />
                 <MenuDivider />
-                <MenuItem>Link 3</MenuItem>
+                <MenuItem as={NextLink} href={"/profile"}>Perfil</MenuItem>
+                <MenuItem onClick={() => signOut()}>Cerrar sesión</MenuItem>
               </MenuList>
             </Menu>
           ) : (
@@ -130,26 +145,27 @@ export default function WithSubnavigation() {
       </Flex>
 
       <Collapse in={isOpen} animateOpacity>
-        <MobileNav />
+        <MobileNav menuItems={menuItems}/>
       </Collapse>
     </Box>
   );
 }
 
-const DesktopNav = () => {
+const DesktopNav = ({menuItems}) => {
   const linkColor = useColorModeValue("black", "gray.200");
   const linkHoverColor = useColorModeValue("gray.800", "white");
   const popoverContentBgColor = useColorModeValue("white", "gray.800");
 
   return (
     <Stack direction={"row"} spacing={4}>
-      {NAV_ITEMS.map((navItem) => (
-        <Box key={navItem.label}>
+      {menuItems?.map((navItem) => (
+        <Box key={navItem?.label}>
           <Popover trigger={"hover"} placement={"bottom-start"}>
             <PopoverTrigger>
               <Link
                 p={2}
-                href={navItem.href ?? "#"}
+                as={NextLink}
+                href={navItem?.url ?? "#"}
                 fontWeight={500}
                 color={linkColor}
                 _hover={{
@@ -157,11 +173,11 @@ const DesktopNav = () => {
                   color: linkHoverColor,
                 }}
               >
-                {navItem.label}
+                {navItem?.label}
               </Link>
             </PopoverTrigger>
 
-            {navItem.children && (
+            {navItem?.children && (
               <PopoverContent
                 borderColor="black"
                 border={"1px"}
@@ -193,10 +209,11 @@ const DesktopNav = () => {
   );
 };
 
-const DesktopSubNav = ({ label, href, subLabel }) => {
+const DesktopSubNav = ({ label, url, subLabel }) => {
   return (
     <Link
-      href={href}
+      as={NextLink}
+      href={url}
       role={"group"}
       display={"block"}
       p={4}
@@ -229,111 +246,3 @@ const DesktopSubNav = ({ label, href, subLabel }) => {
     </Link>
   );
 };
-
-const MobileNav = () => {
-  return (
-    <Stack
-      bg={useColorModeValue("white", "gray.800")}
-      p={4}
-      display={{ md: "none" }}
-    >
-      {NAV_ITEMS.map((navItem) => (
-        <MobileNavItem key={navItem.label} {...navItem} />
-      ))}
-    </Stack>
-  );
-};
-
-const MobileNavItem = ({ label, children, href }) => {
-  const { isOpen, onToggle } = useDisclosure();
-
-  return (
-    <Stack spacing={4} onClick={children && onToggle}>
-      <Flex
-        py={2}
-        as={Link}
-        href={href ?? "#"}
-        justify={"space-between"}
-        align={"center"}
-        _hover={{
-          textDecoration: "none",
-        }}
-      >
-        <Text
-          fontWeight={600}
-          color={useColorModeValue("gray.600", "gray.200")}
-        >
-          {label}
-        </Text>
-        {children && (
-          <Icon
-            as={GrDown}
-            transition={"all .25s ease-in-out"}
-            transform={isOpen ? "rotate(180deg)" : ""}
-            w={6}
-            h={6}
-          />
-        )}
-      </Flex>
-
-      <Collapse in={isOpen} animateOpacity style={{ marginTop: "0!important" }}>
-        <Stack
-          mt={2}
-          pl={4}
-          borderLeft={1}
-          borderStyle={"solid"}
-          borderColor={useColorModeValue("gray.200", "gray.700")}
-          align={"start"}
-        >
-          {children &&
-            children.map((child) => (
-              <Link key={child.label} py={2} href={child.href}>
-                {child.label}
-              </Link>
-            ))}
-        </Stack>
-      </Collapse>
-    </Stack>
-  );
-};
-
-const NAV_ITEMS = [
-  {
-    label: "Inspiration",
-    children: [
-      {
-        label: "Explore Design Work",
-        subLabel: "Trending Design to inspire you",
-        href: "#",
-      },
-      {
-        label: "New & Noteworthy",
-        subLabel: "Up-and-coming Designers",
-        href: "#",
-      },
-    ],
-  },
-  {
-    label: "Find Work",
-    children: [
-      {
-        label: "Job Board",
-        subLabel: "Find your dream design job",
-        href: "#",
-      },
-      {
-        label: "Freelance Projects",
-        subLabel: "An exclusive list for contract work",
-        href: "#",
-      },
-    ],
-  },
-  {
-    label: "Learn Design",
-    href: "#",
-  },
-  {
-    label: "Hire Designers",
-    href: "#",
-  },
-];
