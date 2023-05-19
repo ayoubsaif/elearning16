@@ -1,52 +1,84 @@
+import { useRouter } from "next/router";
 import {
-  Checkbox,
   Flex,
   FormControl,
   FormLabel,
   Heading,
-  Link,
   Stack,
   Image,
-  useColorModeValue,
   FormErrorMessage,
+  Center,
+  Text,
+  Divider,
 } from "@chakra-ui/react";
-import { useEffect, useRef } from "react";
 import { signIn } from "next-auth/react";
 import { Formik, Form, Field } from "formik";
+import { FcGoogle } from "react-icons/fc";
 
 import Button from "@/components/forms/Button";
 import Input from "@/components/forms/Input";
 
 export default function Login() {
-  const email = useRef("");
-  const password = useRef("");
-
+  const router = useRouter();
   const validateEmail = (value) => {
     let error;
     if (!value) {
       error = "Correo electrónico requerido";
     } else if (
-      !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(value) && value !== " "
+      !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(value) &&
+      value !== " "
     ) {
       error = "Correo electrónico inválido";
     }
     return error;
   };
 
+  const handleGoogleSignIn = async () => {
+    const signInStatus = await signIn("google", {
+      callbackUrl: "/courses",
+    });
+    if (signInStatus.error) {
+      console.log(signInStatus.error);
+    } else if (signInStatus.ok) {
+      router.push(signInStatus.callbackUrl);
+    }
+  };
+
   return (
     <Stack minH={"100vh"} direction={{ base: "column", md: "row" }}>
       <Flex p={8} flex={1} align={"center"} justify={"center"}>
         <Stack spacing={4} w={"full"} maxW={"md"}>
-          <Heading fontSize={"2xl"}>Bienvenido de nuevo</Heading>
+          <Heading fontSize={"2xl"}>Bienvenid@ de nuevo</Heading>
+
+          <Stack spacing={6}>
+            <Button
+              bg="white"
+              leftIcon={<FcGoogle />}
+              onClick={handleGoogleSignIn}
+            >
+              <Center>
+                <Text>Inicia sesión con Google</Text>
+              </Center>
+            </Button>
+          </Stack>
+
+          <Divider />
+
           <Formik
-            initialValues={{ email: '', password: '' }}
+            initialValues={{ email: "", password: "" }}
             onSubmit={async (values, actions) => {
-              await signIn("credentials", {
+              const signInStatus = await signIn("credentials", {
                 email: values.email,
                 password: values.password,
-                redirect: true,
                 callbackUrl: "/courses",
               });
+              if (signInStatus.error) {
+                actions.setErrors({
+                  email: "Correo electrónico o contraseña incorrectos",
+                });
+              } else if (signInStatus.ok) {
+                router.push(signInStatus.callbackUrl);
+              }
               actions.setSubmitting(false);
             }}
           >
@@ -54,25 +86,26 @@ export default function Login() {
               <Form>
                 <Field name="email" validate={validateEmail}>
                   {({ field, form }) => (
-                    <FormControl isInvalid={form.errors.email && form.touched.email}>
+                    <FormControl
+                      isInvalid={form.errors.email && form.touched.email}
+                    >
                       <FormLabel>Correo electrónico</FormLabel>
-                      <Input
-                        {...field}
-                      />
+                      <Input {...field} />
                       <FormErrorMessage>{form.errors.email}</FormErrorMessage>
                     </FormControl>
                   )}
                 </Field>
-                
+
                 <Field name="password">
                   {({ field, form }) => (
-                    <FormControl isInvalid={form.errors.password && form.touched.password}>
+                    <FormControl
+                      isInvalid={form.errors.password && form.touched.password}
+                    >
                       <FormLabel>Contraseña</FormLabel>
-                      <Input
-                        {...field}
-                        type="password"
-                      />
-                      <FormErrorMessage>{form.errors.password}</FormErrorMessage>
+                      <Input {...field} type="password" />
+                      <FormErrorMessage>
+                        {form.errors.password}
+                      </FormErrorMessage>
                     </FormControl>
                   )}
                 </Field>
