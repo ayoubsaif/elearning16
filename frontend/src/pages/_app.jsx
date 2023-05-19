@@ -18,8 +18,10 @@ const colors = {
 
 export const theme = extendTheme({ colors });
 
-// 3. Pass the `theme` prop to the `ChakraProvider`
-function MyApp({ Component, pageProps }) {
+export default function App({  
+  Component,  
+  pageProps: { session, ...pageProps },
+}) {  
   return (
     <SessionProvider session={pageProps.session}>
       <ChakraProvider theme={theme}>
@@ -28,5 +30,3 @@ function MyApp({ Component, pageProps }) {
     </SessionProvider>
   );
 }
-
-export default MyApp;
