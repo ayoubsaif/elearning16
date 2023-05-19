@@ -4,9 +4,15 @@
 $router->get('/api/site-config', 'SiteConfigController@get');
 $router->put('/api/site-config', 'SiteConfigController@update');
 
+# Menu
+$router->get('/api/menu', 'MenuController@getMany');
+$router->put('/api/menu', 'MenuController@update');
+
 # Auth
 $router->post('/auth/login', 'UserController@login');
 $router->post('/auth/register', 'UserController@register');
+# Auth > Google
+$router->post('/auth/google', 'UserController@googleAuth');
 
 # Profile
 $router->get('/api/profile', 'UserController@getMyProfileInfo');
