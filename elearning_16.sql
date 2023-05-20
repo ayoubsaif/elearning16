@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 20-05-2023 a las 01:10:00
+-- Tiempo de generación: 20-05-2023 a las 23:57:22
 -- Versión del servidor: 10.4.22-MariaDB
 -- Versión de PHP: 8.1.0
 
@@ -386,6 +386,21 @@ INSERT INTO `course_content` (`id`, `name`, `slug`, `description`, `iframe`, `th
 -- --------------------------------------------------------
 
 --
+-- Estructura de tabla para la tabla `media`
+--
+
+CREATE TABLE `media` (
+  `id` int(11) NOT NULL,
+  `filename` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `filepath` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `filetype` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
 -- Estructura de tabla para la tabla `menu_items`
 --
 
@@ -406,7 +421,8 @@ CREATE TABLE `menu_items` (
 INSERT INTO `menu_items` (`id`, `sequence`, `label`, `subLabel`, `url`, `parent_id`, `order`) VALUES
 (1, 1, 'Cursos', NULL, '/courses', NULL, 1),
 (2, 2, 'Desarrollo', NULL, '/courses?category=desarrollo', NULL, 2),
-(3, 1, 'Diseño 3D', NULL, '/courses?category=diseno-3d', 1, 1);
+(3, 1, 'Diseño 3D', NULL, '/courses?category=diseno-3d', 1, 1),
+(4, 2, 'Diseño de Videojuegos', NULL, '/courses?category=videojuegos', 1, 2);
 
 -- --------------------------------------------------------
 
@@ -445,19 +461,20 @@ CREATE TABLE `users` (
   `role` enum('admin','teacher','student') COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'Permission Type Admin, Teacher or Student',
   `avatar_url` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'Avatar iamge URL',
   `active` tinyint(4) DEFAULT NULL COMMENT 'State of user',
-  `google_id` int(11) DEFAULT NULL
+  `google_id` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'Google User ID',
+  `bio` text COLLATE utf8mb4_unicode_ci DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
 -- Volcado de datos para la tabla `users`
 --
 
-INSERT INTO `users` (`id`, `firstname`, `lastname`, `username`, `email`, `password`, `role`, `avatar_url`, `active`, `google_id`) VALUES
-(13, 'Ayoub', 'Saif', 'ayoubsaif', 'ayoubsaif@gmail.com', '$2y$10$XVBRuKaUqO2lHX5nX0063.UC9r8LwyoBth6PGcu973siHNz5VhDa6', 'admin', 'https://cdn.discordapp.com/guilds/523658173052354570/users/309692199166017548/avatars/d67ffb4857eb4c7b37a4fc7553c988c1.webp?size=128', NULL, NULL),
-(14, 'Fazt', 'Dev', NULL, 'fazt@fazt.com', '$2y$10$XVBRuKaUqO2lHX5nX0063.UC9r8LwyoBth6PGcu973siHNz5VhDa6', 'admin', 'https://yt3.googleusercontent.com/ytc/AGIKgqNhD0TZjRB6ZPa4bWOQ8EAcc-wa73jIJA_LGlD5lw=s176-c-k-c0x00ffffff-no-rj', NULL, NULL),
-(15, 'John', 'Doe', NULL, 'john@example.com', '$2y$10$jgsYgqrW3a8InOhiCzIkNelQa1D9ehYIc3AYJad.4Pu.Hh1oK39Zi', 'admin', NULL, NULL, NULL),
-(16, 'John2', 'Doe', '', 'john2@example.com', '$2y$10$Jidth/NlPbhwxCAH57GcWuyveYuq9vvcJtXz.PD7efxdcaAdH673e', NULL, NULL, NULL, NULL),
-(28, 'John22', 'Doe', 'johndoe', 'john2233@example.com', '$2y$10$zXD9N2UOhAGs.5aQROik4u4oT6rup3JyG2Aexkl5PNymIz8ksQP.S', NULL, NULL, NULL, NULL);
+INSERT INTO `users` (`id`, `firstname`, `lastname`, `username`, `email`, `password`, `role`, `avatar_url`, `active`, `google_id`, `bio`) VALUES
+(13, 'Ayoub', 'Saif', 'ayoubsaif', 'ayoubsaif@gmail.com', '$2y$10$XVBRuKaUqO2lHX5nX0063.UC9r8LwyoBth6PGcu973siHNz5VhDa6', 'admin', 'https://cdn.discordapp.com/guilds/523658173052354570/users/309692199166017548/avatars/d67ffb4857eb4c7b37a4fc7553c988c1.webp?size=128', NULL, '108460731755381611754', 'Soy un estudiante de desarrollo web apasionado de la tecnología moderna y del desarrollo web. Me gusta trabajar con tecnologías front como ReactJS, Next, Express para el backend...'),
+(14, 'Fazt', 'Dev', NULL, 'fazt@fazt.com', '$2y$10$XVBRuKaUqO2lHX5nX0063.UC9r8LwyoBth6PGcu973siHNz5VhDa6', 'admin', 'https://yt3.googleusercontent.com/ytc/AGIKgqNhD0TZjRB6ZPa4bWOQ8EAcc-wa73jIJA_LGlD5lw=s176-c-k-c0x00ffffff-no-rj', NULL, NULL, NULL),
+(15, 'John', 'Doe', NULL, 'john@example.com', '$2y$10$jgsYgqrW3a8InOhiCzIkNelQa1D9ehYIc3AYJad.4Pu.Hh1oK39Zi', 'admin', NULL, NULL, NULL, NULL),
+(16, 'John2', 'Doe', '', 'john2@example.com', '$2y$10$Jidth/NlPbhwxCAH57GcWuyveYuq9vvcJtXz.PD7efxdcaAdH673e', NULL, NULL, NULL, NULL, NULL),
+(28, 'John22', 'Doe', 'johndoe', 'john2233@example.com', '$2y$10$zXD9N2UOhAGs.5aQROik4u4oT6rup3JyG2Aexkl5PNymIz8ksQP.S', NULL, NULL, NULL, NULL, NULL);
 
 --
 -- Índices para tablas volcadas
@@ -507,6 +524,12 @@ ALTER TABLE `course_content`
   ADD KEY `id` (`id`);
 
 --
+-- Indices de la tabla `media`
+--
+ALTER TABLE `media`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Indices de la tabla `menu_items`
 --
 ALTER TABLE `menu_items`
@@ -527,7 +550,8 @@ ALTER TABLE `users`
   ADD PRIMARY KEY (`id`,`email`) USING BTREE,
   ADD UNIQUE KEY `Id` (`id`) USING BTREE COMMENT 'id',
   ADD UNIQUE KEY `Unique email` (`email`) USING BTREE COMMENT 'email',
-  ADD UNIQUE KEY `Unique username` (`username`) USING BTREE COMMENT 'username';
+  ADD UNIQUE KEY `Unique username` (`username`) USING BTREE COMMENT 'username',
+  ADD UNIQUE KEY `Google ID Unique` (`google_id`) USING BTREE COMMENT 'google_id';
 
 --
 -- AUTO_INCREMENT de las tablas volcadas
@@ -564,10 +588,16 @@ ALTER TABLE `course_content`
   MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
+-- AUTO_INCREMENT de la tabla `media`
+--
+ALTER TABLE `media`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
 -- AUTO_INCREMENT de la tabla `menu_items`
 --
 ALTER TABLE `menu_items`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT de la tabla `users`
