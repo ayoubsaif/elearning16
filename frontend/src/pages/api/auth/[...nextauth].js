@@ -15,7 +15,8 @@ export const authOptions = {
           image: profile?.picture,
           google_id: profile?.sub,
         };
-        const res = await axios.post(`${process.env.NEXT_APP_API_HOST}/auth/google`,
+        const res = await axios.post(
+          `${process.env.NEXT_APP_API_HOST}/auth/google`,
           {
             headers: {
               "Content-Type": "application/json",
@@ -23,19 +24,22 @@ export const authOptions = {
             ...data,
           }
         );
-        if (res && res.data?.access_token) {
-          user.name = res.data?.name
-          user.email = res.data?.email
-          user.image = res.data?.image
-          user.access_token = res.data?.access_token
+        if (res && res.data?.accessToken) {
+          user.name = res.data?.name;
+          user.email = res.data?.email;
+          user.image = res.data?.image;
+          user.username = res.data?.username;
+          user.accessToken = res.data?.accessToken;
           return true;
         }
       }
       return true;
     },
-    async jwt({ token, user }) {
-      console.log({ token, user })
-      return { ...token, ...user };
+    async jwt({ token, user, trigger, session }) {
+      if (trigger === "update" && session?.user) {
+        user = {...user, ...session.user};
+      }
+      return { ...token, ...user }
     },
     async session({ session, token }) {
       session.user = {
@@ -43,7 +47,8 @@ export const authOptions = {
         email: token.email,
         picture: token.image,
         image: token.image,
-        accessToken: token.access_token,
+        username: token.username,
+        accessToken: token.accessToken,
       };
       return session;
     },
