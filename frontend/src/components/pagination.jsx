@@ -7,7 +7,7 @@ import {
   PaginationContainer,
   PaginationPageGroup,
 } from "@ajna/pagination";
-import { BsArrowLeft, BsIndent, BsArrowRight } from "react-icons/bs";
+import { BsArrowLeft, BsUnindent, BsIndent, BsArrowRight } from "react-icons/bs";
 import { isMobile } from "react-device-detect";
 
 export default function ChakraPagination(props) {
@@ -87,7 +87,7 @@ export default function ChakraPagination(props) {
                 key="pagination_page_first"
                 page={1}
               />
-              <BsIndent />
+              <BsUnindent />
             </>
           )}
           {pages.slice(start - 1, maxPages).map((page) => (
