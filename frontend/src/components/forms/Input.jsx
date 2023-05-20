@@ -1,13 +1,12 @@
-import React from 'react'
-import { Input } from "@chakra-ui/react";
+import { Input as ChakraInput } from "@chakra-ui/react";
 
-export default function PrimaryInput({ ...attributes }) {
+export default function Input({ ...attributes }) {
   return (
-    <Input
+    <ChakraInput
         {...attributes}
-        rounded={"sm"}
+        rounded={".25em"}
         border={"1px"}
-        borderColor="black"
+        borderColor="gray.300"
         _hover={{
             borderColor: "black",
             boxShadow: "0 0 0 1px blue.300",
