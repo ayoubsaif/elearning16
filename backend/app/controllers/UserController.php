@@ -51,15 +51,15 @@ class UserController {
                 echo json_encode(array("message" => "Login failed"));
                 return;
             }
-    
-            http_response_code(401);
+
             $token = array(
                 "iat" => time(),
                 "exp" => time() + 3600,
                 "data" => array(
                     "id" => $user->id,
                     "name" => $user->display_name,
-                    "email" => $user->email
+                    "email" => $user->email,
+                    "username" => $user->username,
                 )
             );
     
@@ -67,16 +67,66 @@ class UserController {
     
             http_response_code(200);
             echo json_encode(array(
-                "message" => "Login successful", 
-                "user"=>array(
+                "status" => "success",
+                "id" => $user->id, 
+                "name" => $user->display_name,
+                "email" => $user->email,
+                "username" => $user->username,
+                "image" => $user->avatar_url,
+                "role" => $user->role,
+                "accessToken" => $jwt, 
+                ));
+        } catch (Exception $e) {
+            http_response_code(401);
+            echo json_encode(array("message" => "Unauthorized"));
+        }
+    }
+
+    public function googleAuth(){
+        try{
+            $data = json_decode(file_get_contents("php://input"));
+            $user = new UserModel();
+            $user->email = $data->email;
+            $user->firstname = $data->firstname;
+            $user->lastname = $data->lastname;
+            $user->avatar_url = $data->image;
+            $user->google_id = strval($data->google_id);
+            if(!$user->emailExists()) {
+                if($user->create()) {
+                    http_response_code(201);
+                    echo json_encode(array("message" => "User was created"));
+                }else{
+                    http_response_code(503);
+                    echo json_encode(array("message" => "Unable to create user"));
+                }
+            }else{
+                $user->googleIdUpdate();
+                $token = array(
+                    "iat" => time(),
+                    "exp" => time() + 3600,
+                    "data" => array(
+                        "id" => $user->id,
+                        "name" => $user->display_name,
+                        "email" => $user->email,
+                        "username" => $user->username,
+                    )
+                );
+        
+                $jwt = JWT::encode($token, getenv("JWT_KEY"),"HS256");
+
+                http_response_code(200);
+                echo json_encode(array(
+                    "status" => "success",
                     "id" => $user->id, 
                     "name" => $user->display_name,
                     "email" => $user->email,
-                    "avatar_url" => $user->avatar_url,
-                    "role" => $user->role
-                ),
-                "accessToken" => $jwt, 
-                ));
+                    "image" => $user->avatar_url,
+                    "username" => $user->username,
+                    "role" => $user->role,
+                    "access_token" => $jwt, 
+                    "google_id" => $user->google_id
+                    ));
+            }
         } catch (Exception $e) {
             http_response_code(401);
             echo json_encode(array("message" => "Unauthorized"));
@@ -100,11 +150,13 @@ class UserController {
             echo json_encode(array(
                 "id" => $user->id,
                 "name" => $user->display_name,
+                "username" => $user->username,
                 "firstname" => $user->firstname,
                 "lastname" => $user->lastname,
                 "username" => $user->username,
                 "email" => $user->email,
-                "avatar_url" => $user->avatar_url
+                "image" => $user->avatar_url,
+                "bio" => $user->bio,
             ));
         } catch (Exception $e) {
             http_response_code(401);
@@ -129,18 +181,18 @@ class UserController {
             $user->firstname = $data->firstname;
             $user->lastname = $data->lastname;
             $user->username = $data->username;
-            $user->email = $data->email;
-            $user->avatar_url = $data->avatar_url;
-            if($user->update()) {
+            $user->bio = $data->bio;
+            if($user->updateProfile()) {
                 http_response_code(200);
                 echo json_encode(array(
-                    "id" => $user->id,
+                    "id" => intval($user->id),
                     "name" => $user->display_name,
                     "firstname" => $user->firstname,
                     "lastname" => $user->lastname,
                     "username" => $user->username,
+                    "bio" => $user->bio,
                     "email" => $user->email,
-                    "avatar_url" => $user->avatar_url
+                    "image" => $user->avatar_url
                 ));
             }else{
                 http_response_code(503);
