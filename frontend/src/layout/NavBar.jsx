@@ -34,7 +34,7 @@ import MobileNav from "./navbar/MobileNav";
 export default function NavBar({ siteConfig, menuItems }) {
   const { isOpen, onToggle } = useDisclosure();
   const { data: session } = useSession();
-  
+
   return (
     <Box>
       <Flex
@@ -91,26 +91,30 @@ export default function NavBar({ siteConfig, menuItems }) {
                 cursor={"pointer"}
                 minW={0}
               >
-                <Avatar
-                  size={"sm"}
-                  src={ session?.user?.image }
-                />
+                <Avatar size={"sm"} src={session?.user?.image} />
               </MenuButton>
-              <MenuList alignItems={"center"}>
-                <br />
-                <Center>
-                  <Avatar
-                    size={"2xl"}
-                    src={ session?.user?.image }
-                  />
-                </Center>
-                <br />
-                <Center>
-                  <p>{session?.user?.name}</p>
-                </Center>
-                <br />
+              <MenuList
+                rounded={".25em"}
+                overflow={"hidden"}
+                bg="white"
+                border={"1px"}
+                borderColor="black"
+                boxShadow={".25rem .25rem 0 black"}
+                alignItems={"center"}
+              >
+                <Flex direction={"row"} align={"center"} p={2}>
+                  <Center>
+                    <Avatar src={session?.user?.image} />
+                  </Center>
+                  <Box>
+                    <Text ml={2}>{session?.user?.name}</Text>
+                    <Text ml={2} fontSize={"sm"} color={"gray.500"}>{`@${session?.user?.username}`}</Text>
+                  </Box>
+                </Flex>
                 <MenuDivider />
-                <MenuItem as={NextLink} href={"/profile"}>Perfil</MenuItem>
+                <MenuItem as={NextLink} href={"/profile"}>
+                  Perfil
+                </MenuItem>
                 <MenuItem onClick={() => signOut()}>Cerrar sesión</MenuItem>
               </MenuList>
             </Menu>
@@ -145,13 +149,13 @@ export default function NavBar({ siteConfig, menuItems }) {
       </Flex>
 
       <Collapse in={isOpen} animateOpacity>
-        <MobileNav menuItems={menuItems}/>
+        <MobileNav menuItems={menuItems} />
       </Collapse>
     </Box>
   );
 }
 
-const DesktopNav = ({menuItems}) => {
+const DesktopNav = ({ menuItems }) => {
   const linkColor = useColorModeValue("black", "gray.200");
   const linkHoverColor = useColorModeValue("gray.800", "white");
   const popoverContentBgColor = useColorModeValue("white", "gray.800");
@@ -191,7 +195,7 @@ const DesktopNav = ({menuItems}) => {
                   divider={
                     <StackDivider
                       border={"1px 0px"}
-                      borderColor="black"
+                      borderColor="gray.200"
                       my={"0px"}
                     />
                   }
