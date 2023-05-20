@@ -41,22 +41,26 @@ class CoursesController
 
     public function getMany()
     {
-        if ($_SERVER['REQUEST_METHOD'] == 'GET') {
+        // $PermissionMiddleware = new PermissionMiddleware();
+        // $allowed = array('admin','teacher','student');
+        // $UserPermmited = $PermissionMiddleware->handle($allowed);
+        // if (!$UserPermmited) {
+        //     return;
+        // }
 
-            $course = new CourseModel();
+        $course = new CourseModel();
 
-            $currentPage = isset($_GET['currentPage']) ? $_GET['currentPage'] : 1;
-            $records_per_page = isset($_GET['limit']) ? $_GET['limit'] : 12;
-            $courses = $course->getMany($currentPage, $records_per_page);
-            if ($courses) {
-                http_response_code(200);
-                echo json_encode($courses);
-                return;
-            } else {
-                http_response_code(404);
-                echo json_encode(array("message" => "No courses found"));
-                return;
-            }
+        $currentPage = isset($_GET['currentPage']) ? $_GET['currentPage'] : 1;
+        $records_per_page = isset($_GET['limit']) ? $_GET['limit'] : 12;
+        $courses = $course->getMany($currentPage, $records_per_page);
+        if ($courses) {
+            http_response_code(200);
+            echo json_encode($courses);
+            return;
+        } else {
+            http_response_code(404);
+            echo json_encode(array("message" => "No courses found"));
+            return;
         }
     }
 
