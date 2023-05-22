@@ -19,7 +19,6 @@ import {
   Textarea
 } from '@chakra-ui/react';
 
-const backgroundImageUrl = "https://cdn.pixabay.com/photo/2015/06/24/15/45/hands-820272_1280.jpg";
 
 export default function CreateCourse(props) {
   const { siteConfig, menuItems } = props;
@@ -43,7 +42,6 @@ export default function CreateCourse(props) {
           minH={'100vh'}
           align={'center'}
           justify={'center'}
-          bgImage={`url(${backgroundImageUrl})`}
           bgSize="cover"
           bgPosition="center">
 
