@@ -1,4 +1,3 @@
-import Button from "@/components/forms/Button";
 import { NextSeo } from "next-seo";
 import Layout from "@/layout/Layout";
 import { useEffect, useState } from "react";
@@ -19,7 +18,8 @@ import {
     FormLabel,
     Textarea,
     formData,
-    Avatar
+    Avatar,
+    Button
 } from '@chakra-ui/react';
 
 

@@ -1,5 +1,4 @@
 import { NextSeo } from 'next-seo';
-import Button from "@/components/forms/Button";
 import Layout from "@/layout/Layout";
 import {
   Flex,
@@ -17,6 +16,7 @@ import {
   Select,
   FormLabel,
   Textarea,
+  Button,
 } from '@chakra-ui/react';
 
 

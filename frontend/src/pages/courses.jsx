@@ -25,14 +25,15 @@ import { authOptions } from "pages/api/auth/[...nextauth]";
 import { useRouter } from "next/router";
 
 export default function Home(props) {
+  const { siteConfig, menuItems, coursesData, paginationData, params } = props;
+  const { page, search, category } = params;
   const router = useRouter();
-  const { siteConfig, menuItems, coursesItems } = props;
   const topRef = useRef(null);
-  const [courses, setCourses] = useState(coursesItems.courses);
-  const [pagination, setPagination] = useState();
+  const [courses, setCourses] = useState(coursesData);
+  const [pagination, setPagination] = useState(paginationData);
   const { pagesCount, currentPage, setCurrentPage, pages } = usePagination({
     pagesCount: pagination?.pagesCount,
-    initialState: { currentPage: parseInt(coursesItems?.page) || 1 },
+    initialState: { currentPage: page || 1 },
   });
   const [loading, setLoading] = useState(true);
 
@@ -41,6 +42,8 @@ export default function Home(props) {
     const fetchData = async () => {
       if (currentPage) {
         const params = { page: currentPage };
+        if (search){params.search = search};
+        if (category){params.category = category};
         const data = await getCourses(params);
         if (data && data.courses && data.pagination) {
           setCourses(data.courses);
@@ -92,11 +95,13 @@ export default function Home(props) {
           <Grid my="1em" ref={topRef}>
             <Fade in={!loading}>
               <GridItem my="1em" w={"full"}>
-                <SimpleGrid columns={[1, 2, 2, 4]} spacing="20px">
-                  {courses.map((course) => (
-                    <CourseCard course={course} key={course?.id} />
-                  ))}
-                </SimpleGrid>
+                <Center>
+                  <SimpleGrid columns={[1, 2, 2, 4]} spacing="20px">
+                    {courses.map((course) => (
+                      <CourseCard course={course} key={course?.id} />
+                    ))}
+                  </SimpleGrid>
+                </Center>
               </GridItem>
             </Fade>
             <Center>
@@ -121,7 +126,7 @@ export default function Home(props) {
 // get static props with page info from backend
 export async function getServerSideProps({ query, req, res }) {
   const session = await getServerSession(req, res, authOptions);
-  if (!session) {
+  if (!session || session.expires * 1000 < Date.now()) {
     return {
       redirect: {
         destination: "/auth/login",
@@ -132,16 +137,25 @@ export async function getServerSideProps({ query, req, res }) {
   const siteConfig = await getSiteConfig();
   const menuItems = await getMenuItems(session?.user?.accessToken);
 
-  const params = { page: parseInt(query?.page) || 1 };
-  const coursesItems = await getCoursesFromServer(session?.user?.accessToken, params);
+  const { page, search, category } = query;
+  const params = {
+    page: parseInt(page) || 1,
+    search: search || null,
+    category: category || null,
+  };
+
+  const coursesItems = await getCoursesFromServer(
+    session?.user?.accessToken,
+    params
+  );
+
   return {
     props: {
       siteConfig,
       menuItems,
-      coursesItems: {
-        courses: coursesItems?.courses || [],
-        page: query?.page || 1,
-      }
+      coursesData: coursesItems?.courses || [],
+      paginationData: coursesItems?.pagination || {},
+      params,
     },
   };
 }

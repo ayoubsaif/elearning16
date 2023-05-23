@@ -16,10 +16,10 @@ import {
   Text,
   useColorModeValue,
   Link,
+  Button,
 } from '@chakra-ui/react';
 import { useState } from 'react';
 import { ViewIcon, ViewOffIcon } from '@chakra-ui/icons';
-import Button from "@/components/forms/Button";
 
 const backgroundImageUrl = "https://cdn.pixabay.com/photo/2017/09/05/10/20/business-2717066_1280.jpg";
 
@@ -77,12 +77,6 @@ export default function SignupCard() {
             </FormControl>
             <Stack spacing={10} pt={2}>
             <Button
-              bg="black"
-              color="white"
-              _hover={{
-                color: "white",
-                bg: "blue.300",
-              }}
             >
               REGÍSTRATE
             </Button>

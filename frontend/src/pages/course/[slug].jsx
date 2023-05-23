@@ -12,11 +12,11 @@ import {
   BreadcrumbItem,
   useBreakpointValue,
   Grid,
+  Button,
 } from "@chakra-ui/react";
 import { ChevronRightIcon } from "@chakra-ui/icons";
 
 import Layout from "@/layout/Layout";
-import Button from "@/components/forms/Button";
 import CourseContentCard from "@/components/dataDisplay/CourseContentCard";
 
 import { getServerSession } from "next-auth/next";

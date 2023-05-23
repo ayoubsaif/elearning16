@@ -14,6 +14,7 @@ import {
   InputGroup,
   InputLeftElement,
   useToast,
+  Button,
 } from "@chakra-ui/react";
 import { NextSeo } from "next-seo";
 
@@ -21,21 +22,23 @@ import { authOptions } from "pages/api/auth/[...nextauth]";
 import { useSession } from "next-auth/react";
 import { getServerSession } from "next-auth/next";
 
-import Button from "@/components/forms/button";
 import Input from "@/components/forms/input";
 
 import { getSiteConfig } from "@/services/siteConfig";
 import { getMenuItems } from "@/services/menuItems";
 import { getProfile, updateProfile } from "@/services/profile";
-import Layout from "@/layout/Layout";
 
-import { Formik, Form, useFormik } from "formik";
+import Layout from "@/layout/Layout";
+import CropImageModal from "@/components/modals/cropImageModal";
+
+import { useFormik } from "formik";
 
 export default function Profile(props) {
   const { siteConfig, menuItems, profileInfo } = props;
   const [profile, setProfile] = useState(profileInfo);
   const [editMode, setEditMode] = useState(false);
   const { data: session, update } = useSession();
+  const [selectedAvatarFile, setSelectedAvatarFile] = useState(null);
 
   const toast = useToast({
     containerStyle: {
@@ -68,15 +71,16 @@ export default function Profile(props) {
     onSubmit: async (values) => {
       try {
         const formData = new FormData();
-        formData.append("image", values.avatar); // Append the avatar file to the form data
-
-        // Append other fields to the form data
+        formData.append("image", values.avatar);
         formData.append("firstname", values.firstname);
         formData.append("lastname", values.lastname);
         formData.append("username", values.username);
         formData.append("bio", values.bio);
 
-        const updatedProfile = await updateProfile(formData, session?.user?.accessToken);
+        const updatedProfile = await updateProfile(
+          formData,
+          session?.user?.accessToken
+        );
         if (updatedProfile) {
           setProfile({
             ...profile,
@@ -85,11 +89,13 @@ export default function Profile(props) {
             lastname: updatedProfile?.lastname,
             username: updatedProfile?.username,
             bio: updatedProfile?.bio,
+            image: updatedProfile?.image,
           });
           update({
             user: {
               name: updatedProfile?.name,
               username: updatedProfile?.username,
+              image: updatedProfile?.image,
             },
           });
           toast({
@@ -107,8 +113,11 @@ export default function Profile(props) {
     },
   });
 
-  const handleAvatarChange = (event) => {
-    const file = event.target.files[0];
+  const handleAvatarChange = (e) => {
+    setSelectedAvatarFile(e.target.files[0]);
+  };
+
+  const handleAvatarSave = (croppedImage) => {
     const reader = new FileReader();
     reader.onload = (e) => {
       const imageSrc = e.target.result;
@@ -117,8 +126,9 @@ export default function Profile(props) {
         image: imageSrc, // Update the avatar field in the profile state
       }));
     };
-    reader.readAsDataURL(file);
-    formik.setFieldValue("avatar", file);
+    reader.readAsDataURL(croppedImage);
+    formik.setFieldValue("avatar", croppedImage);
+    setSelectedAvatarFile(null);
   };
 
   const handleAvatarButtonClick = () => {
@@ -159,18 +169,28 @@ export default function Profile(props) {
                       name={profile?.name}
                       src={profile?.image}
                     />
-                    <FormControl>
+                    <FormControl isInvalid={formik.errors.avatar}>
                       <FormLabel htmlFor="avatar">Avatar</FormLabel>
                       <div>
                         <input
                           id="avatar"
                           type="file"
                           accept=".jpg,.jpeg,.png"
-                          onChange={handleAvatarChange}
+                          onChange={(e) => {
+                            handleAvatarChange(e);
+                            formik.setFieldValue(
+                              "avatar",
+                              e.currentTarget.files[0]
+                            );
+                          }}
                           style={{ display: "none" }}
                         />
 
-                        <Button onClick={handleAvatarButtonClick}>
+                        <Button
+                          onClick={() =>
+                            document.getElementById("avatar").click()
+                          }
+                        >
                           Seleccione una imagen...
                         </Button>
                       </div>
@@ -179,6 +199,12 @@ export default function Profile(props) {
                       </FormErrorMessage>
                     </FormControl>
                   </HStack>
+                  <CropImageModal
+                    isOpen={Boolean(selectedAvatarFile)}
+                    onClose={() => setSelectedAvatarFile(null)}
+                    onSave={(croppedImage) => handleAvatarSave(croppedImage)}
+                    selectedAvatarFile={selectedAvatarFile}
+                  />
                 </Stack>
               ) : (
                 <Avatar size="xl" name={profile?.name} src={profile?.image} />

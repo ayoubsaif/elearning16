@@ -9,9 +9,9 @@ export const authOptions = {
     async signIn({ user, account, profile }) {
       if (account.provider == "google" && profile.email_verified == true) {
         const data = {
-          email: profile?.email,
           firstname: profile?.given_name,
           lastname: profile?.family_name,
+          email: profile?.email,
           image: profile?.picture,
           google_id: profile?.sub,
         };
@@ -25,6 +25,7 @@ export const authOptions = {
           }
         );
         if (res && res.data?.accessToken) {
+          user.firstname = res.data?.firstname;
           user.name = res.data?.name;
           user.email = res.data?.email;
           user.image = res.data?.image;
@@ -36,14 +37,17 @@ export const authOptions = {
       return true;
     },
     async jwt({ token, user, trigger, session }) {
+      if (user) {
+        token.accessToken = user.accessToken;
+      }  
       if (trigger === "update" && session?.user) {
         user = {...user, ...session.user};
       }
       return { ...token, ...user }
     },
     async session({ session, token }) {
-      session.expires = Date.now() + 3600;
       session.user = {
+        firstname: token.firstname,
         name: token.name,
         email: token.email,
         picture: token.image,

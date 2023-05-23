@@ -68,7 +68,7 @@ export default function NavBar({ siteConfig, menuItems }) {
               fontFamily={"heading"}
               color={useColorModeValue("gray.800", "white")}
             >
-              Logo
+              {siteConfig?.title}
             </Text>
           </Center>
 
@@ -85,13 +85,13 @@ export default function NavBar({ siteConfig, menuItems }) {
           {session?.user ? (
             <Menu>
               <MenuButton
-                as={Button}
                 rounded={"full"}
                 variant={"link"}
                 cursor={"pointer"}
                 minW={0}
               >
                 <Avatar size={"sm"} src={session?.user?.image} />
+                <Text ml={2}>{session?.user?.firstname}</Text>
               </MenuButton>
               <MenuList
                 rounded={".25em"}
@@ -104,11 +104,15 @@ export default function NavBar({ siteConfig, menuItems }) {
               >
                 <Flex direction={"row"} align={"center"} p={2}>
                   <Center>
-                    <Avatar src={session?.user?.image} />
+                    <Avatar size={"lg"} src={session?.user?.image} />
                   </Center>
                   <Box>
                     <Text ml={2}>{session?.user?.name}</Text>
-                    <Text ml={2} fontSize={"sm"} color={"gray.500"}>{`@${session?.user?.username}`}</Text>
+                    <Text
+                      ml={2}
+                      fontSize={"sm"}
+                      color={"gray.500"}
+                    >{`@${session?.user?.username}`}</Text>
                   </Box>
                 </Flex>
                 <MenuDivider />

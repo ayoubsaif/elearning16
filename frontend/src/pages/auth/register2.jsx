@@ -18,6 +18,7 @@ import {
 } from "@chakra-ui/react";
 import { Formik, Form, Field } from "formik";
 import { FcGoogle } from "react-icons/fc";
+
 import Input from "@/components/forms/input";
 
 import { getSiteConfig } from "@/services/siteConfig";
@@ -116,6 +117,18 @@ export default function Login(props) {
             >
               {(props) => (
                 <Form>
+                  <HStack>
+                    <Box>
+                      <FormControl id="firstName" isRequired>
+                        <Input type="text" placeholder="Nombre" />
+                      </FormControl>
+                    </Box>
+                    <Box>
+                      <FormControl id="lastName" isRequired>
+                        <Input type="text" placeholder="Apellidos" />
+                      </FormControl>
+                    </Box>
+                  </HStack>
                   <Field name="email" validate={validateEmail}>
                     {({ field, form }) => (
                       <FormControl
@@ -143,6 +156,7 @@ export default function Login(props) {
                       </FormControl>
                     )}
                   </Field>
+
                   <Stack spacing={6}>
                     <Stack
                       direction={{ base: "column", sm: "row" }}
@@ -150,16 +164,21 @@ export default function Login(props) {
                       justify={"space-between"}
                     ></Stack>
                     <Button
-                      variant={"primary"}
+                      bg="black"
+                      color="white"
+                      _hover={{
+                        color: "white",
+                        bg: "blue.300",
+                      }}
                       isLoading={props.isSubmitting}
                       type="submit"
                     >
-                      Iniciar Sesión
+                      Crear cuenta
                     </Button>
                     <Text align={"center"}>
-                      ¿No tienes cuenta?{" "}
-                      <Link color={"blue.400"} href={"/auth/register"}>
-                        ¡Registrate ahora!
+                      ¿Ya tienes cuenta?{" "}
+                      <Link color={"blue.400"} href={"/auth/login"}>
+                        Inicia sesión
                       </Link>
                     </Text>
                   </Stack>
