@@ -6,6 +6,8 @@
 Options All -Indexes
 Options -MultiViews
 
+# Exclude uploads directory from rewrite rules
+RewriteCond %{REQUEST_URI} !^/uploads/.*$
 # RewriteEngine
 RewriteEngine On
 RewriteBase /
@@ -18,8 +20,10 @@ RewriteCond %{REQUEST_METHOD} (.+)
 # End
 
 # Enviroment variables
+SetEnv APP_ENV development
 SetEnv DB_HOST localhost
 SetEnv DB_USER backend_user
 SetEnv DB_PASS KgBsyo4wQJqu3X
 SetEnv DB_NAME elearning_16
 SetEnv JWT_KEY 6f6c6c6568616d5f6b6579
+SetEnv HOST http://localhost/
