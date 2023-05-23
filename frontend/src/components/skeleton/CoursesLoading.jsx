@@ -1,13 +1,9 @@
 import {
-  Center,
   Grid,
   GridItem,
   SimpleGrid,
   Skeleton,
   Box,
-  Heading,
-  Text,
-  Img,
   Flex,
   AspectRatio,
   HStack,
