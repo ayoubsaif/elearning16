@@ -93,7 +93,7 @@ export default function ChakraPagination(props) {
           {pages.slice(start - 1, maxPages).map((page) => (
             <PaginationPage
               minWidth="2.5em"
-              rounded={".25rem"}
+              rounded={"md"}
               border={"1px"}
               borderColor="black"
               bg="white"
