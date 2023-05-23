@@ -13,6 +13,7 @@ import {
   HStack,
   InputGroup,
   InputLeftElement,
+  useToast,
 } from "@chakra-ui/react";
 import { NextSeo } from "next-seo";
 
@@ -34,7 +35,16 @@ export default function Profile(props) {
   const { siteConfig, menuItems, profileInfo } = props;
   const [profile, setProfile] = useState(profileInfo);
   const [editMode, setEditMode] = useState(false);
-  const { data:session, update } = useSession();
+  const { data: session, update } = useSession();
+
+  const toast = useToast({
+    containerStyle: {
+      borderColor: "black",
+      border: "1px",
+      borderRadius: "md",
+      boxShadow: ".25rem .25rem 0 black",
+    },
+  });
 
   // Formik initialization
   const formik = useFormik({
@@ -43,6 +53,7 @@ export default function Profile(props) {
       lastname: profile?.lastname || "",
       username: profile?.username || "",
       bio: profile?.bio || "",
+      avatar: null, // Add the avatar field with initial value as null
     },
     validationSchema: Yup.object({
       firstname: Yup.string()
@@ -56,7 +67,16 @@ export default function Profile(props) {
     }),
     onSubmit: async (values) => {
       try {
-        const updatedProfile = await updateProfile(values);
+        const formData = new FormData();
+        formData.append("image", values.avatar); // Append the avatar file to the form data
+
+        // Append other fields to the form data
+        formData.append("firstname", values.firstname);
+        formData.append("lastname", values.lastname);
+        formData.append("username", values.username);
+        formData.append("bio", values.bio);
+
+        const updatedProfile = await updateProfile(formData, session?.user?.accessToken);
         if (updatedProfile) {
           setProfile({
             ...profile,
@@ -66,14 +86,19 @@ export default function Profile(props) {
             username: updatedProfile?.username,
             bio: updatedProfile?.bio,
           });
-          console.log("Session:", session)
           update({
             user: {
               name: updatedProfile?.name,
               username: updatedProfile?.username,
-            }
+            },
           });
-          console.log("Session updated:", session)
+          toast({
+            title: "Perfil actualizado",
+            description: "Hemos modificado tu perfil.",
+            status: "success",
+            duration: 3000,
+            isClosable: true,
+          });
         }
         setEditMode(false);
       } catch (error) {
@@ -81,6 +106,26 @@ export default function Profile(props) {
       }
     },
   });
+
+  const handleAvatarChange = (event) => {
+    const file = event.target.files[0];
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const imageSrc = e.target.result;
+      setProfile((prevProfile) => ({
+        ...prevProfile,
+        image: imageSrc, // Update the avatar field in the profile state
+      }));
+    };
+    reader.readAsDataURL(file);
+    formik.setFieldValue("avatar", file);
+  };
+
+  const handleAvatarButtonClick = () => {
+    // Trigger the hidden file input when the button is clicked
+    const fileInput = document.getElementById("avatar");
+    fileInput.click();
+  };
 
   return (
     <>
@@ -100,12 +145,44 @@ export default function Profile(props) {
           mx="auto"
           border={"1px"}
           borderColor={"black"}
-          rounded={".25em"}
+          rounded={"md"}
+          overflow={"hidden"}
           my={5}
         >
           <form onSubmit={formik.handleSubmit}>
             <Box p={4} bg={"blue.100"}>
-              <Avatar size="xl" name={profile?.name} src={profile?.image} />
+              {editMode ? (
+                <Stack spacing={4}>
+                  <HStack>
+                    <Avatar
+                      size="xl"
+                      name={profile?.name}
+                      src={profile?.image}
+                    />
+                    <FormControl>
+                      <FormLabel htmlFor="avatar">Avatar</FormLabel>
+                      <div>
+                        <input
+                          id="avatar"
+                          type="file"
+                          accept=".jpg,.jpeg,.png"
+                          onChange={handleAvatarChange}
+                          style={{ display: "none" }}
+                        />
+
+                        <Button onClick={handleAvatarButtonClick}>
+                          Seleccione una imagen...
+                        </Button>
+                      </div>
+                      <FormErrorMessage>
+                        {formik.errors.avatar}
+                      </FormErrorMessage>
+                    </FormControl>
+                  </HStack>
+                </Stack>
+              ) : (
+                <Avatar size="xl" name={profile?.name} src={profile?.image} />
+              )}
             </Box>
             <Box p={4}>
               <Flex
