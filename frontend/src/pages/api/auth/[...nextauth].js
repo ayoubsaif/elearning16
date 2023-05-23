@@ -16,7 +16,7 @@ export const authOptions = {
           google_id: profile?.sub,
         };
         const res = await axios.post(
-          `${process.env.NEXT_APP_API_HOST}/auth/google`,
+          `${process.env.NEXT_PUBLIC_API}/auth/google`,
           {
             headers: {
               "Content-Type": "application/json",
@@ -42,6 +42,7 @@ export const authOptions = {
       return { ...token, ...user }
     },
     async session({ session, token }) {
+      session.expires = Date.now() + 3600;
       session.user = {
         name: token.name,
         email: token.email,
@@ -62,7 +63,7 @@ export default NextAuth({
       credentials: {},
       async authorize(credentials, req) {
         const res = await axios.post(
-          `${process.env.NEXT_APP_API_HOST}/auth/login`,
+          `${process.env.NEXT_PUBLIC_API}/auth/login`,
           {
             headers: {
               "Content-Type": "application/json",
