@@ -140,28 +140,18 @@ class UserModel
         }
     }
 
-    function updateProfile() {
+    function updateProfile($updateProfileValues) {
         try{
+            if (count($updateProfileValues) === 0) {
+                return true;
+            }
+            
             $query = "UPDATE users
-                    SET
-                        firstname=:firstname,
-                        lastname=:lastname,
-                        username=:username,
-                        bio=:bio
+                    SET ".implode(", ", $updateProfileValues)."
                     WHERE id = :id";
-
             $stmt = $this->conn->prepare($query);
-
-            $this->firstname = htmlspecialchars(strip_tags($this->firstname));
-            $this->lastname = htmlspecialchars(strip_tags($this->lastname));
-            $this->username = htmlspecialchars(strip_tags($this->username));
-            $this->bio = htmlspecialchars(strip_tags($this->bio));
-
+            
             $stmt->bindParam(":id", $this->id);
-            $stmt->bindParam(":firstname", $this->firstname);
-            $stmt->bindParam(":lastname", $this->lastname);
-            $stmt->bindParam(":username", $this->username);
-            $stmt->bindParam(":bio", $this->bio);
             $this->display_name = $this->firstname . " " . $this->lastname;
 
             if ($stmt->execute()) {

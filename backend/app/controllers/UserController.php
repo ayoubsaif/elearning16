@@ -3,34 +3,39 @@
 require_once 'app/models/UserModel.php';
 require_once 'app/middleware/PermissionMiddleware.php';
 
+require_once 'app/controllers/MediaController.php';
+
 require 'vendor/autoload.php';
+
 use \Firebase\JWT\JWT;
 use \Firebase\JWT\Key;
 
-class UserController {
-    public function register() {
-        try{
+class UserController
+{
+    public function register()
+    {
+        try {
             $data = json_decode(file_get_contents("php://input"));
-        
+
             $user = new UserModel();
             $user->firstname = $data->firstname;
             $user->lastname = $data->lastname;
             $user->username = $data->username;
             $user->email = $data->email;
             $user->password = $data->password;
-    
-            if($user->emailExists()) {
+
+            if ($user->emailExists()) {
                 http_response_code(400);
                 echo json_encode(array("message" => "Email already exists"));
                 return;
             }
-    
-            if($user->create()) {
+
+            if ($user->create()) {
                 http_response_code(201);
                 echo json_encode(array("message" => "User was created"));
                 return;
             }
-    
+
             http_response_code(503);
             echo json_encode(array("message" => "Unable to create user"));
         } catch (Exception $e) {
@@ -39,51 +44,30 @@ class UserController {
         }
     }
 
-    public function login() {
-        try{
+    public function login()
+    {
+        try {
             $data = json_decode(file_get_contents("php://input"));
 
             $user = new UserModel();
             $user->email = $data->email;
-    
-            if(!$user->emailExists() || !$user->validatePassword($data->password)) {
+
+            if (!$user->emailExists() || !$user->validatePassword($data->password)) {
                 http_response_code(401);
                 echo json_encode(array("message" => "Login failed"));
                 return;
             }
 
-            $token = array(
-                "iat" => time(),
-                "exp" => time() + 3600,
-                "data" => array(
-                    "id" => $user->id,
-                    "name" => $user->display_name,
-                    "email" => $user->email,
-                    "username" => $user->username,
-                )
-            );
-    
-            $jwt = JWT::encode($token, getenv("JWT_KEY"),"HS256");
-    
-            http_response_code(200);
-            echo json_encode(array(
-                "status" => "success",
-                "id" => $user->id, 
-                "name" => $user->display_name,
-                "email" => $user->email,
-                "username" => $user->username,
-                "image" => $user->avatar_url,
-                "role" => $user->role,
-                "accessToken" => $jwt, 
-                ));
+            $this->successAuthResponse($user);
         } catch (Exception $e) {
             http_response_code(401);
             echo json_encode(array("message" => "Unauthorized"));
         }
     }
 
-    public function googleAuth(){
-        try{
+    public function googleAuth()
+    {
+        try {
             $data = json_decode(file_get_contents("php://input"));
             $user = new UserModel();
             $user->email = $data->email;
@@ -91,41 +75,17 @@ class UserController {
             $user->lastname = $data->lastname;
             $user->avatar_url = $data->image;
             $user->google_id = strval($data->google_id);
-            if(!$user->emailExists()) {
-                if($user->create()) {
+            if (!$user->emailExists()) {
+                if ($user->create()) {
                     http_response_code(201);
                     echo json_encode(array("message" => "User was created"));
-                }else{
+                } else {
                     http_response_code(503);
                     echo json_encode(array("message" => "Unable to create user"));
                 }
-            }else{
+            } else {
                 $user->googleIdUpdate();
-                $token = array(
-                    "iat" => time(),
-                    "exp" => time() + 3600,
-                    "data" => array(
-                        "id" => $user->id,
-                        "name" => $user->display_name,
-                        "email" => $user->email,
-                        "username" => $user->username,
-                    )
-                );
-        
-                $jwt = JWT::encode($token, getenv("JWT_KEY"),"HS256");
-
-                http_response_code(200);
-                echo json_encode(array(
-                    "status" => "success",
-                    "id" => $user->id, 
-                    "name" => $user->display_name,
-                    "email" => $user->email,
-                    "image" => $user->avatar_url,
-                    "username" => $user->username,
-                    "role" => $user->role,
-                    "access_token" => $jwt, 
-                    "google_id" => $user->google_id
-                    ));
+                $this->successAuthResponse($user);
             }
         } catch (Exception $e) {
             http_response_code(401);
@@ -133,15 +93,45 @@ class UserController {
         }
     }
 
-    public function getMyProfileInfo() {
+    public function successAuthResponse($user)
+    {
+        $key = getenv("JWT_KEY");
+        $token = array(
+            "iat" => time(),
+            "exp" => time() + 3600,
+            "data" => array(
+                "id" => $user->id,
+                "name" => $user->display_name,
+                "email" => $user->email,
+                "username" => $user->username,
+            )
+        );
+
+        $jwt = JWT::encode($token, $key, "HS256");
+
+        http_response_code(200);
+        echo json_encode(array(
+            "status" => "success",
+            "id" => $user->id,
+            "name" => $user->display_name,
+            "email" => $user->email,
+            "username" => $user->username,
+            "image" => $user->avatar_url,
+            "role" => $user->role,
+            "accessToken" => $jwt,
+        ));
+    }
+
+    public function getMyProfileInfo()
+    {
         try {
             $PermissionMiddleware = new PermissionMiddleware();
-            $allowed = array('admin','teacher','student');
+            $allowed = array('admin', 'teacher', 'student');
             $UserPermmited = $PermissionMiddleware->handle($allowed);
             if (!$UserPermmited) {
                 return;
             }
-            
+
             $user_id = $UserPermmited->id;
             $user = new UserModel();
             $user->id = $user_id;
@@ -164,25 +154,39 @@ class UserController {
         }
     }
 
-    public function updateMyProfileInfo() {
+    public function updateMyProfileInfo()
+    {
         try {
             $PermissionMiddleware = new PermissionMiddleware();
-            $allowed = array('admin','teacher','student');
+            $allowed = array('admin', 'teacher', 'student');
             $UserPermmited = $PermissionMiddleware->handle($allowed);
             if (!$UserPermmited) {
                 return;
             }
-            
+
             $user_id = $UserPermmited->id;
             $user = new UserModel();
             $user->id = $user_id;
             $user->getOne($user_id);
             $data = json_decode(file_get_contents("php://input"));
-            $user->firstname = $data->firstname;
-            $user->lastname = $data->lastname;
-            $user->username = $data->username;
-            $user->bio = $data->bio;
-            if($user->updateProfile()) {
+            $updateProfileValues = [];
+            if ($data->firstname !== $user->firstname) {
+                $user->firstname = htmlspecialchars(strip_tags($data->firstname));
+                $updateProfileValues[] = "firstname = '{$user->firstname}'";
+            }
+            if ($data->lastname !== $user->lastname) {
+                $user->lastname = htmlspecialchars(strip_tags($data->lastname));
+                $updateProfileValues[] = "lastname = '{$user->lastname}'";
+            }
+            if ($data->username !== $user->username) {
+                $user->username = htmlspecialchars(strip_tags($data->username));
+                $updateProfileValues[] = "username = '{$user->username}'";
+            }
+            if ($data->bio !== $user->bio) {
+                $user->bio = htmlspecialchars(strip_tags($data->bio));
+                $updateProfileValues[] = "bio = '{$user->bio}'";
+            }
+            if ($user->updateProfile($updateProfileValues)) {
                 http_response_code(200);
                 echo json_encode(array(
                     "id" => intval($user->id),
@@ -194,7 +198,7 @@ class UserController {
                     "email" => $user->email,
                     "image" => $user->avatar_url
                 ));
-            }else{
+            } else {
                 http_response_code(503);
                 echo json_encode(array("message" => "Unable to update user info"));
             }
@@ -203,44 +207,79 @@ class UserController {
             echo json_encode(array("message" => "Unauthorized"));
         }
     }
-
-    public function getUserByToken($id) {
-        // Get the JWT token from the Authorization header
-        $auth_header = $_SERVER['HTTP_AUTHORIZATION'];
-        $token = str_replace('Bearer ', '', $auth_header);
-
-        // Verify and decode the token
+    public function updateMyProfileV2()
+    {
         try {
-            $decoded_token = JWT::decode($token, getenv("JWT_KEY"), array('HS256'));
-            $user_id = $decoded_token->data->id;
-            // Check if the authenticated user ID matches the requested user ID
-            if ($user_id != $id) {
-                // Return a 403 Forbidden response if the authenticated user is not authorized to access the requested user's information
-                http_response_code(403);
-                echo json_encode(array("message" => "Forbidden"));
+            $PermissionMiddleware = new PermissionMiddleware();
+            $allowed = array('admin', 'teacher', 'student');
+            $UserPermmited = $PermissionMiddleware->handle($allowed);
+            if (!$UserPermmited) {
                 return;
             }
-            // Retrieve the user's information from the database and return it
-            
+    
+            $user_id = $UserPermmited->id;
             $user = new UserModel();
-            $user->id = $id;
-            $user->getOne($id);
-            $user_arr = array(
-                "id" => $user->id,
-                "name" => $user->firstname,
-                "email" => $user->email
-            );
-            http_response_code(200);
-            echo json_encode($user_arr);
+            $user->id = $user_id;
+            $user->getOne($user_id);
+    
+            $data = $_POST;
+            if (empty($data)) {
+                http_response_code(400);
+                echo json_encode(array("message" => "No data provided"));
+                return;
+            }
+            $updateProfileValues = [];
+
+            if (isset($_FILES["image"])) {
+                $Media = new MediaController(new MediaModel());
+                $avatar = $Media->uploadAvatar($_FILES["image"], $user->id);
+                if ($avatar) {
+                    $user->avatar_url = $avatar;
+                    $updateProfileValues[] = "avatar_url = '{$user->avatar_url}'";
+                }
+            }
+
+            if ($data['firstname'] !== $user->firstname) {
+                $user->firstname = htmlspecialchars(strip_tags($data['firstname']));
+                $updateProfileValues[] = "firstname = '{$user->firstname}'";
+            }
+            if ($data['lastname'] !== $user->lastname) {
+                $user->lastname = htmlspecialchars(strip_tags($data['lastname']));
+                $updateProfileValues[] = "lastname = '{$user->lastname}'";
+            }
+            if ($data['username'] !== $user->username) {
+                $user->username = htmlspecialchars(strip_tags($data['username']));
+                $updateProfileValues[] = "username = '{$user->username}'";
+            }
+            if ($data['bio'] !== $user->bio) {
+                $user->bio = htmlspecialchars(strip_tags($data['bio']));
+                $updateProfileValues[] = "bio = '{$user->bio}'";
+            }
+    
+            if ($user->updateProfile($updateProfileValues)) {
+                http_response_code(200);
+                echo json_encode(array(
+                    "id" => intval($user->id),
+                    "name" => $user->display_name,
+                    "firstname" => $user->firstname,
+                    "lastname" => $user->lastname,
+                    "username" => $user->username,
+                    "bio" => $user->bio,
+                    "email" => $user->email,
+                    "image" => $user->avatar_url
+                ));
+            } else {
+                http_response_code(503);
+                echo json_encode(array("message" => "Unable to update user info"));
+            }
         } catch (Exception $e) {
-            // Return a 401 Unauthorized response if the token is invalid
             http_response_code(401);
-            echo json_encode(array("message" => "Unauthorized"));
-            return;
+            echo json_encode(array("message" => "Unauthorized", "error" => $e->getMessage()));
         }
     }
 
-    public function validateToken($token) {
+    public function validateToken($token)
+    {
         try {
             $key = new Key(getenv("JWT_KEY"), 'HS256');
             $decoded_token = JWT::decode($token, $key);
