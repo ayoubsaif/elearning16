@@ -83,8 +83,8 @@ export default NextAuth({
       },
     }),
     GoogleProvider({
-      clientId: process.env.NEXT_APP_GOOGLE_CLIENT_ID,
-      clientSecret: process.env.NEXT_APP_GOOGLE_CLIENT_SECRET,
+      clientId: process.env.NEXTAUTH_GOOGLE_CLIENT_ID,
+      clientSecret: process.env.NEXTAUTH_GOOGLE_CLIENT_SECRET,
     }),
   ],
   session: {
