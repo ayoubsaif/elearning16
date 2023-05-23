@@ -1,7 +1,7 @@
 import axios from "axios";
 import PropTypes from "prop-types";
 
-const API_URL = process.env.NEXT_APP_API_HOST || "http://localhost";
+const API_URL = process.env.NEXT_PUBLIC_API || "http://localhost";
 
 export async function getSiteConfig() {
   try {
