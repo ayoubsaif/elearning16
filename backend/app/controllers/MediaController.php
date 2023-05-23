@@ -1,12 +1,14 @@
 <?php
 
+require_once 'app/models/MediaModel.php';
+
 class MediaController
 {
     private $mediaModel;
 
-    public function __construct(Media $mediaModel)
+    public function __construct()
     {
-        $this->mediaModel = $mediaModel;
+        $this->mediaModel = new MediaModel();
     }
 
     public function uploadMedia($file)
@@ -38,6 +40,71 @@ class MediaController
         } else {
             return 'Error uploading the file.';
         }
+    }
+
+    public function uploadAvatar($FILE, $user_id)
+    {
+        $imageFile = $FILE["tmp_name"];
+        $this->mediaModel->filename = uniqid().'_'.$FILE["name"];
+        $this->mediaModel->model = 'user';
+        $this->mediaModel->model_id = $user_id;
+
+        $target_dir = "uploads/avatar";
+        $this->mediaModel->filepath = $target_dir . '/' . $this->mediaModel->filename;
+        $this->mediaModel->filetype = strtolower(pathinfo($this->mediaModel->filepath, PATHINFO_EXTENSION));
+
+        if (getimagesize($imageFile) === false) {
+            http_response_code(503);
+            echo json_encode(array("message" => "File is not an image."));
+            return;
+        }
+
+        if ($FILE["size"] > 500000) {
+            http_response_code(503);
+            echo json_encode(array("message" => "Sorry, your file is too large."));
+            return;
+        }
+
+        if ($this->mediaModel->filetype != "jpg" && $this->mediaModel->filetype != "jpeg" && $this->mediaModel->filetype != "png") {
+            http_response_code(503);
+            echo json_encode(array("message" => "Sorry, only JPG, JPEG, PNG files are allowed."));
+            return;
+        }
+
+        // Create a resized image
+        $resizedImage = imagecreatetruecolor(128, 128);
+        if ($this->mediaModel->filetype == "jpg" || $this->mediaModel->filetype == "jpeg") {
+            $originalImage = imagecreatefromjpeg($imageFile);
+        } elseif ($this->mediaModel->filetype == "png") {
+            $originalImage = imagecreatefrompng($imageFile);
+        }
+
+        // Resize the original image to the new dimensions
+        imagecopyresampled($resizedImage, $originalImage, 0, 0, 0, 0, 128, 128, imagesx($originalImage), imagesy($originalImage));
+
+        if (!imagejpeg($resizedImage, $this->mediaModel->filepath)) {
+            http_response_code(503);
+            echo json_encode(array("message" => "Sorry, there was an error uploading your file."));
+            return;
+        }
+        imagedestroy($originalImage);
+        imagedestroy($resizedImage);
+
+        // check if there a file in directory before remove
+        $oldFilename = $this->mediaModel->getOneByModel('user', $user_id)['filepath'];
+        echo file_exists($oldFilename);
+        if (file_exists($oldFilename) === true){
+            unlink($oldFilename);
+        }else{
+            echo $oldFilename;
+            echo 'File not found.';
+        }
+
+        if ($this->mediaModel->uploadMedia())
+        {   
+            return getenv("HOST").$this->mediaModel->filepath;
+        }
+
     }
 
     public function getAllMedia()
