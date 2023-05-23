@@ -11,7 +11,7 @@ import {
 
 import { getSiteConfig } from "@/services/siteConfig";
 import { getMenuItems } from "@/services/menuItems";
-import { getCourses } from "@/services/courses";
+import { getCourses, getCoursesFromServer } from "@/services/courses";
 
 import Layout from "@/layout/Layout";
 import CourseCard from "@/components/dataDisplay/courseCard";
@@ -22,33 +22,35 @@ import { usePagination } from "@ajna/pagination";
 
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "pages/api/auth/[...nextauth]";
-import { useSession } from "next-auth/react";
+import { useRouter } from "next/router";
 
 export default function Home(props) {
-  const { siteConfig, menuItems } = props;
+  const router = useRouter();
+  const { siteConfig, menuItems, coursesItems } = props;
   const topRef = useRef(null);
-  const [courses, setCourses] = useState();
+  const [courses, setCourses] = useState(coursesItems.courses);
   const [pagination, setPagination] = useState();
   const { pagesCount, currentPage, setCurrentPage, pages } = usePagination({
     pagesCount: pagination?.pagesCount,
-    initialState: { currentPage: 1 },
+    initialState: { currentPage: parseInt(coursesItems?.page) || 1 },
   });
   const [loading, setLoading] = useState(true);
 
-  const { data: session } = useSession();
-  const accessToken = session?.user?.accessToken;
-
   useEffect(() => {
-    setLoading(true);
     let timeoutId;
     const fetchData = async () => {
-      if (currentPage && accessToken) {
-        const params = { currentPage };
-        const data = await getCourses(accessToken, params);
+      if (currentPage) {
+        const params = { page: currentPage };
+        const data = await getCourses(params);
         if (data && data.courses && data.pagination) {
           setCourses(data.courses);
           setPagination(data.pagination);
           setLoading(false);
+
+          router.replace({
+            pathname: router.pathname,
+            query: { ...params },
+          });
         }
       }
     };
@@ -57,7 +59,7 @@ export default function Home(props) {
     }
     timeoutId = setTimeout(fetchData, 200);
     return () => clearTimeout(timeoutId);
-  }, [currentPage, accessToken]);
+  }, [currentPage]);
 
   return (
     <>
@@ -81,7 +83,7 @@ export default function Home(props) {
         }}
       />
       <Layout siteConfig={siteConfig} menuItems={menuItems}>
-        <Heading as="h1" size="2xl" textAlign="center" my="1em">
+        <Heading as="h1" size="2xl" textAlign="center" my={1}>
           Cursos
         </Heading>
         {loading ? (
@@ -117,8 +119,8 @@ export default function Home(props) {
 }
 
 // get static props with page info from backend
-export async function getServerSideProps(context) {
-  const session = await getServerSession(context.req, context.res, authOptions);
+export async function getServerSideProps({ query, req, res }) {
+  const session = await getServerSession(req, res, authOptions);
   if (!session) {
     return {
       redirect: {
@@ -129,10 +131,17 @@ export async function getServerSideProps(context) {
   }
   const siteConfig = await getSiteConfig();
   const menuItems = await getMenuItems(session?.user?.accessToken);
+
+  const params = { page: parseInt(query?.page) || 1 };
+  const coursesItems = await getCoursesFromServer(session?.user?.accessToken, params);
   return {
     props: {
-      siteConfig: siteConfig,
-      menuItems: menuItems,
+      siteConfig,
+      menuItems,
+      coursesItems: {
+        courses: coursesItems?.courses || [],
+        page: query?.page || 1,
+      }
     },
   };
 }
