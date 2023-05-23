@@ -22,7 +22,7 @@ export default function Layout({ children, siteConfig, menuItems }) {
       </GridItem>
 
       <GridItem area={"footer"}>
-        <Footer />
+        <Footer siteConfig={siteConfig} />
       </GridItem>
     </Grid>
   );
