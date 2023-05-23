@@ -41,18 +41,18 @@ class CoursesController
 
     public function getMany()
     {
-        // $PermissionMiddleware = new PermissionMiddleware();
-        // $allowed = array('admin','teacher','student');
-        // $UserPermmited = $PermissionMiddleware->handle($allowed);
-        // if (!$UserPermmited) {
-        //     return;
-        // }
+        $PermissionMiddleware = new PermissionMiddleware();
+        $allowed = array('admin','teacher','student');
+        $UserPermmited = $PermissionMiddleware->handle($allowed);
+        if (!$UserPermmited) {
+            return;
+        }
 
         $course = new CourseModel();
 
-        $currentPage = isset($_GET['currentPage']) ? $_GET['currentPage'] : 1;
+        $page = isset($_GET['page']) ? $_GET['page'] : 1;
         $records_per_page = isset($_GET['limit']) ? $_GET['limit'] : 12;
-        $courses = $course->getMany($currentPage, $records_per_page);
+        $courses = $course->getMany($page, $records_per_page);
         if ($courses) {
             http_response_code(200);
             echo json_encode($courses);

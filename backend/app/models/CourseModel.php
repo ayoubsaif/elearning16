@@ -204,10 +204,10 @@ class CourseModel
             $this->description = $data[0]['description'];
             $this->teacher = !is_null($Teacher->id) ? array(
                 'id' => $Teacher->id,
-                'display_name' => $Teacher->display_name,
+                'name' => $Teacher->display_name,
                 'firstname' => $Teacher->firstname,
                 'lastname' => $Teacher->lastname,
-                'avatar_url' => $Teacher->avatar_url,
+                'image' => $Teacher->avatar_url,
             ) : null;
             $this->category = !is_null($Category->id) ? array(
                 'id' => $Category->id,
