@@ -163,59 +163,6 @@ class UserController
             if (!$UserPermmited) {
                 return;
             }
-
-            $user_id = $UserPermmited->id;
-            $user = new UserModel();
-            $user->id = $user_id;
-            $user->getOne($user_id);
-            $data = json_decode(file_get_contents("php://input"));
-            $updateProfileValues = [];
-            if ($data->firstname !== $user->firstname) {
-                $user->firstname = htmlspecialchars(strip_tags($data->firstname));
-                $updateProfileValues[] = "firstname = '{$user->firstname}'";
-            }
-            if ($data->lastname !== $user->lastname) {
-                $user->lastname = htmlspecialchars(strip_tags($data->lastname));
-                $updateProfileValues[] = "lastname = '{$user->lastname}'";
-            }
-            if ($data->username !== $user->username) {
-                $user->username = htmlspecialchars(strip_tags($data->username));
-                $updateProfileValues[] = "username = '{$user->username}'";
-            }
-            if ($data->bio !== $user->bio) {
-                $user->bio = htmlspecialchars(strip_tags($data->bio));
-                $updateProfileValues[] = "bio = '{$user->bio}'";
-            }
-            if ($user->updateProfile($updateProfileValues)) {
-                http_response_code(200);
-                echo json_encode(array(
-                    "id" => intval($user->id),
-                    "name" => $user->display_name,
-                    "firstname" => $user->firstname,
-                    "lastname" => $user->lastname,
-                    "username" => $user->username,
-                    "bio" => $user->bio,
-                    "email" => $user->email,
-                    "image" => $user->avatar_url
-                ));
-            } else {
-                http_response_code(503);
-                echo json_encode(array("message" => "Unable to update user info"));
-            }
-        } catch (Exception $e) {
-            http_response_code(401);
-            echo json_encode(array("message" => "Unauthorized"));
-        }
-    }
-    public function updateMyProfileV2()
-    {
-        try {
-            $PermissionMiddleware = new PermissionMiddleware();
-            $allowed = array('admin', 'teacher', 'student');
-            $UserPermmited = $PermissionMiddleware->handle($allowed);
-            if (!$UserPermmited) {
-                return;
-            }
     
             $user_id = $UserPermmited->id;
             $user = new UserModel();
@@ -291,5 +238,11 @@ class UserController
         } catch (Exception $e) {
             return false;
         }
+    }
+
+    public function getSuccessResponse()
+    {
+        http_response_code(200);
+        echo json_encode(array("message" => "Success"));
     }
 }

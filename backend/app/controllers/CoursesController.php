@@ -1,6 +1,8 @@
 <?php
 
 require_once 'app/models/CourseModel.php';
+require_once 'app/models/CategoryModel.php';
+
 require_once 'app/middleware/PermissionMiddleware.php';
 
 class CoursesController
@@ -49,16 +51,26 @@ class CoursesController
         }
 
         $course = new CourseModel();
-
+        $args = array();
         $page = isset($_GET['page']) ? $_GET['page'] : 1;
+        $category = isset($_GET['category']) ? (new CategoryModel)->getIdBySlug($_GET['category']) : null;
+        $search = isset($_GET['search']) ? $_GET['search'] : null;
+
+        if ($category) {
+            $args[] = "category = '{$category}'";
+        }
+        if ($search) {
+            $args[] = "name LIKE '%{$search}%'";
+        }
+
         $records_per_page = isset($_GET['limit']) ? $_GET['limit'] : 12;
-        $courses = $course->getMany($page, $records_per_page);
+        $courses = $course->getMany($args, $page, $records_per_page);
         if ($courses) {
             http_response_code(200);
             echo json_encode($courses);
             return;
         } else {
-            http_response_code(404);
+            http_response_code(204);
             echo json_encode(array("message" => "No courses found"));
             return;
         }

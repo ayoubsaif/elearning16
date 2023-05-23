@@ -72,7 +72,7 @@ class MediaController
         }
 
         // Create a resized image
-        $resizedImage = imagecreatetruecolor(128, 128);
+        $resizedImage = imagecreatetruecolor(500, 500);
         if ($this->mediaModel->filetype == "jpg" || $this->mediaModel->filetype == "jpeg") {
             $originalImage = imagecreatefromjpeg($imageFile);
         } elseif ($this->mediaModel->filetype == "png") {
@@ -80,7 +80,7 @@ class MediaController
         }
 
         // Resize the original image to the new dimensions
-        imagecopyresampled($resizedImage, $originalImage, 0, 0, 0, 0, 128, 128, imagesx($originalImage), imagesy($originalImage));
+        imagecopyresampled($resizedImage, $originalImage, 0, 0, 0, 0, 500, 500, imagesx($originalImage), imagesy($originalImage));
 
         if (!imagejpeg($resizedImage, $this->mediaModel->filepath)) {
             http_response_code(503);
@@ -92,12 +92,9 @@ class MediaController
 
         // check if there a file in directory before remove
         $oldFilename = $this->mediaModel->getOneByModel('user', $user_id)['filepath'];
-        echo file_exists($oldFilename);
-        if (file_exists($oldFilename) === true){
+               
+        if (!getimagesize($imageFile) === false) {
             unlink($oldFilename);
-        }else{
-            echo $oldFilename;
-            echo 'File not found.';
         }
 
         if ($this->mediaModel->uploadMedia())

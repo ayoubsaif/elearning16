@@ -15,9 +15,10 @@ $router->post('/auth/register', 'UserController@register');
 $router->post('/auth/google', 'UserController@googleAuth');
 
 # Profile
+$router->options('/api/profile', 'UserController@getSuccessResponse');
+
 $router->get('/api/profile', 'UserController@getMyProfileInfo');
 $router->post('/api/profile', 'UserController@updateMyProfileInfo');
-$router->post('/api/profile/v2', 'UserController@updateMyProfileV2');
 
 # Courses
 $router->get('/api/courses', 'CoursesController@getMany');

@@ -129,23 +129,29 @@ class CourseModel
         return false;
     }
 
-    function getMany($currentPage = 1, $records_per_page = 12)
+    function getMany($args, $currentPage = 1, $records_per_page = 12)
     {
         // Calculate the offset value based on the current page number and the number of records per page
         $offset = ($currentPage - 1) * $records_per_page;
-    
+        $whereClouse = "";
+        if (count($args) > 0) {
+            $whereClouse = "WHERE ".implode("AND ", $args)."";
+        }
+
         $query = "SELECT id, name, description, thumbnail_url, slug
-            FROM courses ORDER BY id DESC LIMIT {$offset}, {$records_per_page}";
-    
+            FROM courses 
+            $whereClouse
+            ORDER BY id DESC LIMIT {$offset}, {$records_per_page}";
+
         $stmt = $this->conn->prepare($query);
         $stmt->execute();
         $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
-    
+
         // Calculate the total number of pages
-        $totalRecords = $this->getTotalRecords();
+        $totalRecords = $this->getTotalRecords($whereClouse);
         $pagesCount = ceil($totalRecords / $records_per_page);
-    
-        if ($data){
+
+        if ($data) {
             return array(
                 'courses' => $data,
                 'pagination' => array(
@@ -155,20 +161,20 @@ class CourseModel
                 )
             );
         }
-    
+
         return $data;
     }
 
-    function getTotalRecords()
+    function getTotalRecords($whereClouse)
     {
-        $query = "SELECT COUNT(*) as total_rows FROM courses";
+        $query = "SELECT COUNT(*) as total_rows FROM courses $whereClouse";
         $stmt = $this->conn->prepare($query);
         $stmt->execute();
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
         $total_rows = $row['total_rows'];
         return $total_rows;
     }
-    
+
 
     function getPagesCount($records_per_page)
     {
@@ -191,14 +197,14 @@ class CourseModel
         $stmt->execute();
         $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-        if (!empty($data[0])){
+        if (!empty($data[0])) {
             $Teacher = new UserModel();
             $Teacher->getOne($data[0]['teacher']);
             $Category = new CategoryModel();
             $Category->getOne($data[0]['category']);
             $CourseContent = new CourseContentModel();
             $CourseContent->course = $this->id;
-            
+
             $this->id = $data[0]['id'];
             $this->name = $data[0]['name'];
             $this->description = $data[0]['description'];
@@ -215,13 +221,13 @@ class CourseModel
                 'slug' => $Category->slug,
             ) : null;
             $this->courseContents = $CourseContent->getAll();
-            $this->keywords = explode(",",$data[0]['keywords']);
+            $this->keywords = explode(",", $data[0]['keywords']);
             $this->create_date = $data[0]['create_date'];
             $this->create_uid = $data[0]['create_uid'];
             $this->thumbnail_url = $data[0]['thumbnail_url'];
             return true;
         }
-        
+
         return False;
     }
 

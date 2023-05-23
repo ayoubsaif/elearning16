@@ -131,14 +131,10 @@ class CategoriesController
 
         try {
             $category = new CategoryModel();
-            $slugArray = explode("-", $slug);
-            $categoryId = end($slugArray);
-            $category->id = $categoryId;
-
             if ($category->getOne($slug)) {
                 http_response_code(200);
-                $returnArray = array(
-
+                echo json_encode(array(
+                    "id" => $category->id,
                     "name" => $category->name,
                     "slug" => $category-> slug,
                     "description" => $category-> description,
@@ -146,8 +142,7 @@ class CategoriesController
                     "parent_cat" => $category-> parent_cat,
                     "keywords" => $category-> keywords,
                     "create_uid" => $category-> create_uid
-                );
-                echo json_encode($returnArray);
+                ));
                 return;
             } else {
                 http_response_code(404);

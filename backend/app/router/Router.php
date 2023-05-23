@@ -24,6 +24,11 @@ class Router
         $this->routes['DELETE'][$path] = $controller;
     }
 
+    public function options($path, $controller)
+    {
+        $this->routes['OPTIONS'][$path] = $controller;
+    }
+
     protected function callController($controller, $params)
     {
         list($controllerClass, $method) = explode('@', $controller);

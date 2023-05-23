@@ -68,7 +68,7 @@ class MediaModel
 
     public function getOneByModel($model, $model_id)
     {
-        $query = "SELECT * FROM media WHERE model=:model AND model_id=:id LIMIT 1";
+        $query = "SELECT * FROM media WHERE model=:model AND model_id=:id ORDER BY ID DESC LIMIT 1";
 
         $stmt = $this->conn->prepare($query);
         

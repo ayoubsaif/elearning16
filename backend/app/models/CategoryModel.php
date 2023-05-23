@@ -143,13 +143,13 @@ class CategoryModel
     }
 
 
-    function getOne($id)
+    function getOne($slug)
     {
-        $query = "SELECT * FROM categories WHERE id = :id LIMIT 1";
+        $query = "SELECT * FROM categories WHERE slug = :slug LIMIT 1";
         $stmt = $this->conn->prepare($query);
 
-        $id = htmlspecialchars(strip_tags($id));
-        $stmt->bindParam(":id", $id);
+        $slug = htmlspecialchars(strip_tags($slug));
+        $stmt->bindParam(":slug", $slug);
 
         $stmt->execute();
         $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -164,6 +164,24 @@ class CategoryModel
             $this->keywords = $data[0]['keywords'];
             $this->create_uid = $data[0]['create_uid'];
             return true;
+        }
+
+        return false;
+    }
+
+    function getIdBySlug($slug)
+    {
+        $query = "SELECT id FROM categories WHERE slug = :slug LIMIT 1";
+        $stmt = $this->conn->prepare($query);
+
+        $slug = htmlspecialchars(strip_tags($slug));
+        $stmt->bindParam(":slug", $slug);
+
+        $stmt->execute();
+        $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        if (!empty($data[0])){
+            return intval($data[0]['id']);
         }
 
         return false;
