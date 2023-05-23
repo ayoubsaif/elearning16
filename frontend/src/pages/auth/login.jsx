@@ -13,12 +13,13 @@ import {
   Center,
   Text,
   Divider,
+  useToast,
 } from "@chakra-ui/react";
 import { Formik, Form, Field } from "formik";
 import { FcGoogle } from "react-icons/fc";
 
-import Button from "@/components/forms/Button";
-import Input from "@/components/forms/Input";
+import Button from "@/components/forms/button";
+import Input from "@/components/forms/input";
 
 import { getSiteConfig } from "@/services/siteConfig";
 import { Link } from "@chakra-ui/next-js";
@@ -26,6 +27,14 @@ import { Link } from "@chakra-ui/next-js";
 export default function Login(props) {
   const router = useRouter();
   const { siteConfig, signInProviders } = props;
+  const toast = useToast({
+    containerStyle: {
+      borderColor: "black",
+      border: "1px",
+      borderRadius: "md",
+      boxShadow: ".25rem .25rem 0 black",
+    },
+  });
 
   const validateEmail = (value) => {
     let error;
@@ -45,7 +54,13 @@ export default function Login(props) {
       callbackUrl: "/courses",
     });
     if (signInStatus.error) {
-      console.log(signInStatus.error);
+      toast({
+        title: "Error al iniciar sesión con Google",
+        description: "Hemos modificado tu perfil.",
+        status: "warning",
+        duration: 3000,
+        isClosable: true,
+      });
     } else if (signInStatus.ok) {
       router.push(signInStatus.callbackUrl);
     }
