@@ -16,7 +16,7 @@ export default function CourseCard(props) {
     <Box
       w={"full"}
       width={"275px"}
-      rounded={".25em"}
+      rounded={"md"}
       overflow={"hidden"}
       bg="white"
       border={"1px"}

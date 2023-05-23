@@ -3,7 +3,7 @@ import { Button as ChakraButton } from "@chakra-ui/react";
 export default function Button({ children, ...buttonProps }) {
   return (
     <ChakraButton
-      rounded={".25rem"}
+      rounded={"md"}
       border={"1px"}
       borderColor="black"
       {...buttonProps}
