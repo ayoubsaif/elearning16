@@ -144,6 +144,14 @@ export default function Home(props) {
 
 export async function getServerSideProps({ query, req, res }) {
   const session = await getServerSession(req, res, authOptions);
+  if (!session || session.expires * 1000 < Date.now()) {
+    return {
+      redirect: {
+        destination: "/auth/login",
+        permanent: false,
+      },
+    };
+  }
   const siteConfig = await getSiteConfig();
   if (session) {
     const menuItems = await getMenuItems(session?.user?.accessToken);

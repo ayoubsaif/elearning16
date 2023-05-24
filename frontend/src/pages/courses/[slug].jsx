@@ -11,7 +11,7 @@ import {
 
 import { getSiteConfig } from "@/services/siteConfig";
 import { getMenuItems } from "@/services/menuItems";
-import { getCourses, getCoursesFromServer } from "@/services/courses";
+import { getCoursesByCategory, getCoursesFromServer } from "@/services/courses";
 
 import Layout from "@/layout/Layout";
 import CourseCard from "@/components/dataDisplay/courseCard";
@@ -25,7 +25,7 @@ import { authOptions } from "pages/api/auth/[...nextauth]";
 import { useRouter } from "next/router";
 
 export default function Home(props) {
-  const { siteConfig, menuItems, coursesData, paginationData, params } = props;
+  const { siteConfig, menuItems, coursesData, paginationData, params, category } = props;
   const { page, search } = params;
   const router = useRouter();
   const topRef = useRef(null);
@@ -42,8 +42,9 @@ export default function Home(props) {
     const fetchData = async () => {
       if (currentPage) {
         const params = {};
-        if (currentPage && currentPage != 1){params.page = currentPage};
-        if (search){params.search = search};
+        if (currentPage && currentPage != 1) {
+          params.page = currentPage;
+        }
         const data = await getCourses(params);
         if (data && data.courses && data.pagination) {
           setCourses(data.courses);
@@ -52,7 +53,7 @@ export default function Home(props) {
 
           router.replace({
             pathname: router.pathname,
-            query: { ...params },
+            query: { ...router.query, ...params },
           });
         }
       }
@@ -60,7 +61,6 @@ export default function Home(props) {
     if (topRef.current) {
       topRef.current.scrollIntoView({ behavior: "smooth" });
     }
-    setLoading(true);
     timeoutId = setTimeout(fetchData, 200);
     return () => clearTimeout(timeoutId);
   }, [currentPage]);
@@ -68,7 +68,7 @@ export default function Home(props) {
   return (
     <>
       <NextSeo
-        title={`Cursos - ${siteConfig?.title}`}
+        title={`Cursos de ${category?.name} - ${siteConfig?.title}`}
         description={siteConfig?.description}
         canonical={siteConfig?.url}
         openGraph={{
@@ -88,7 +88,7 @@ export default function Home(props) {
       />
       <Layout siteConfig={siteConfig} menuItems={menuItems}>
         <Heading as="h1" size="2xl" textAlign="center" my={1}>
-          Cursos
+          Cursos de {category?.name}
         </Heading>
         {loading ? (
           <CoursesLoading />
@@ -138,13 +138,15 @@ export async function getServerSideProps({ query, req, res }) {
   const siteConfig = await getSiteConfig();
   const menuItems = await getMenuItems(session?.user?.accessToken);
 
-  const { page, search } = query;
+  const { page, search, slug: category } = query;
   const params = {
     page: parseInt(page) || 1,
     search: search || null,
+    category: category || null,
   };
 
-  const coursesItems = await getCoursesFromServer(
+  const coursesItems = await getCoursesByCategory(
+    category,
     session?.user?.accessToken,
     params
   );
@@ -154,6 +156,7 @@ export async function getServerSideProps({ query, req, res }) {
       siteConfig,
       menuItems,
       coursesData: coursesItems?.courses || [],
+      category: coursesItems?.category || null,
       paginationData: coursesItems?.pagination || {},
       params,
     },

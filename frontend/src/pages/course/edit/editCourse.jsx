@@ -9,10 +9,7 @@ import {
   HStack,
   Stack,
   Heading,
-  Text,
   useColorModeValue,
-  Link,
-  Description,
   Select,
   FormLabel,
   Textarea,
@@ -79,7 +76,7 @@ export default function CreateCourse(props) {
                 <FormControl id="description">
                   <Textarea type="text" placeholder='Descripción..'
                     id="descripcion"
-                    value={Description}
+                    value={""}
                     style={{ width: "100%" }}
                   />
                 </FormControl>

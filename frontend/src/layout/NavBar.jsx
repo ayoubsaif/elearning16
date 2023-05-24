@@ -26,6 +26,7 @@ import {
   MenuItem,
   MenuDivider,
 } from "@chakra-ui/react";
+
 import { GrMenu, GrClose, GrDown, GrFormNextLink } from "react-icons/gr";
 import { useSession, signIn, signOut } from "next-auth/react";
 
@@ -48,39 +49,39 @@ export default function NavBar({ siteConfig, menuItems }) {
         borderColor={"black"}
         align={"center"}
       >
-        <Flex
-          flex={{ base: 1, md: "auto" }}
-          ml={{ base: -2 }}
-          display={{ base: "flex", md: "none" }}
-        >
-          <IconButton
-            onClick={onToggle}
-            icon={isOpen ? <GrClose w={3} h={3} /> : <GrMenu w={5} h={5} />}
-            variant={"ghost"}
-            aria-label={"Toggle Navigation"}
-          />
-        </Flex>
-
         <Flex flex={{ base: 1 }} justify={{ base: "center", md: "start" }}>
+          <Flex display={{ base: "flex", md: "none" }}>
+            <IconButton
+              onClick={onToggle}
+              icon={isOpen ? <GrClose w={3} h={3} /> : <GrMenu w={5} h={5} />}
+              variant={"ghost"}
+              border={0}
+              aria-label={"Toggle Navigation"}
+            />
+          </Flex>
+
+          <Spacer display={{ base: "block", md: "none" }} />
+
           <Center>
-            <Text
+            <Link
               textAlign={useBreakpointValue({ base: "center", md: "left" })}
               fontFamily={"heading"}
               color={useColorModeValue("gray.800", "white")}
+              href={"/"}
             >
               {siteConfig?.title}
-            </Text>
+            </Link>
           </Center>
 
           <Spacer />
 
-          <Center>
-            <Flex display={{ base: "none", md: "flex" }} ml={10}>
+          <Flex display={{ base: "none", md: "flex" }}>
+            <Center>
               <DesktopNav menuItems={menuItems} />
-            </Flex>
-          </Center>
+            </Center>
+          </Flex>
 
-          <Spacer />
+          <Spacer display={{ base: "none", md: "flex" }} />
 
           {session?.user ? (
             <Menu>

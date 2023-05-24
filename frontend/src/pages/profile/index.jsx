@@ -281,13 +281,12 @@ export default function Profile(props) {
                   )}
                 </Box>
                 {editMode ? (
-                  <Button type="submit" colorScheme="blue">
+                  <Button variant={"primary"} type="submit" colorScheme="blue">
                     Guardar
                   </Button>
                 ) : (
                   <Button
-                    bg={"white"}
-                    color={"black"}
+                    variant={"primary"}
                     onClick={(e) => {
                       e.preventDefault();
                       setEditMode(true);

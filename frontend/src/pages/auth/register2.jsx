@@ -14,7 +14,10 @@ import {
   Text,
   Divider,
   useToast,
-  Button
+  Button,
+  Box,
+  useColorModeValue,
+  HStack,
 } from "@chakra-ui/react";
 import { Formik, Form, Field } from "formik";
 import { FcGoogle } from "react-icons/fc";
@@ -24,9 +27,9 @@ import Input from "@/components/forms/input";
 import { getSiteConfig } from "@/services/siteConfig";
 import { Link } from "@chakra-ui/next-js";
 
-export default function Login(props) {
-  const router = useRouter();
+export default function Register(props) {
   const { siteConfig, signInProviders } = props;
+  const router = useRouter();
   const toast = useToast({
     containerStyle: {
       borderColor: "black",
@@ -69,7 +72,7 @@ export default function Login(props) {
   return (
     <>
       <NextSeo
-        title={`Iniciar Sesión - ${siteConfig?.title}`}
+        title={`Crear cuenta de ${siteConfig?.title}`}
         description={siteConfig?.description}
         openGraph={{
           title: `Iniciar Sesión - ${siteConfig?.title}`,
@@ -77,9 +80,18 @@ export default function Login(props) {
         }}
       />
       <Stack minH={"100vh"} direction={{ base: "column", md: "row" }}>
+        <Flex flex={1}>
+          <Image
+            alt={"Register"}
+            objectFit={"cover"}
+            src={
+              "https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=1352&q=80"
+            }
+          />
+        </Flex>
         <Flex p={8} flex={1} align={"center"} justify={"center"}>
           <Stack spacing={4} w={"full"} maxW={"md"}>
-            <Heading fontSize={"2xl"}>Bienvenid@ de nuevo</Heading>
+            <Heading fontSize={"2xl"}>Crear cuenta nueva</Heading>
             {signInProviders?.google && (
               <Stack spacing={6}>
                 <Button
@@ -88,7 +100,7 @@ export default function Login(props) {
                   onClick={handleGoogleSignIn}
                 >
                   <Center>
-                    <Text>Inicia sesión con Google</Text>
+                    <Text>Registrate con Google</Text>
                   </Center>
                 </Button>
               </Stack>
@@ -99,7 +111,7 @@ export default function Login(props) {
             <Formik
               initialValues={{ email: "", password: "" }}
               onSubmit={async (values, actions) => {
-                const signInStatus = await signIn("credentials", {
+                const signInStatus = await newUser("credentials", {
                   email: values.email,
                   password: values.password,
                   redirect: false,
@@ -119,20 +131,47 @@ export default function Login(props) {
                 <Form>
                   <HStack>
                     <Box>
-                      <FormControl id="firstName" isRequired>
-                        <Input type="text" placeholder="Nombre" />
-                      </FormControl>
+                      <Field name="firstname">
+                        {({ field, form }) => (
+                          <FormControl
+                            isInvalid={
+                              form.errors.firstname && form.touched.firstname
+                            }
+                            isRequired
+                          >
+                            <FormLabel>Nombre</FormLabel>
+                            <Input type="text" />
+                            <FormErrorMessage>
+                              {form.errors.firstname}
+                            </FormErrorMessage>
+                          </FormControl>
+                        )}
+                      </Field>
                     </Box>
                     <Box>
-                      <FormControl id="lastName" isRequired>
-                        <Input type="text" placeholder="Apellidos" />
-                      </FormControl>
+                      <Field name="lastname">
+                        {({ field, form }) => (
+                          <FormControl
+                            isInvalid={
+                              form.errors.lastname && form.touched.lastname
+                            }
+                            isRequired
+                          >
+                            <FormLabel>Apellidos</FormLabel>
+                            <Input type="text" />
+                            <FormErrorMessage>
+                              {form.errors.lastname}
+                            </FormErrorMessage>
+                          </FormControl>
+                        )}
+                      </Field>
                     </Box>
                   </HStack>
                   <Field name="email" validate={validateEmail}>
                     {({ field, form }) => (
                       <FormControl
                         isInvalid={form.errors.email && form.touched.email}
+                        isRequired
                       >
                         <FormLabel>Correo electrónico</FormLabel>
                         <Input {...field} />
@@ -147,6 +186,7 @@ export default function Login(props) {
                         isInvalid={
                           form.errors.password && form.touched.password
                         }
+                        isRequired
                       >
                         <FormLabel>Contraseña</FormLabel>
                         <Input {...field} type="password" />
@@ -186,15 +226,6 @@ export default function Login(props) {
               )}
             </Formik>
           </Stack>
-        </Flex>
-        <Flex flex={1}>
-          <Image
-            alt={"Login Image"}
-            objectFit={"cover"}
-            src={
-              "https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=1352&q=80"
-            }
-          />
         </Flex>
       </Stack>
     </>

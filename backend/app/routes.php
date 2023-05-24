@@ -5,7 +5,8 @@ $router->get('/api/site-config', 'SiteConfigController@get');
 $router->put('/api/site-config', 'SiteConfigController@update');
 
 # Menu
-$router->get('/api/menu', 'MenuController@getMany');
+$router->options('/api/menu', 'MenuController@getSuccessResponse');
+$router->get('/api/menu', 'MenuController@get');
 $router->put('/api/menu', 'MenuController@update');
 
 # Auth
@@ -22,6 +23,7 @@ $router->post('/api/profile', 'UserController@updateMyProfileInfo');
 
 # Courses
 $router->get('/api/courses', 'CoursesController@getMany');
+$router->get('/api/courses/:slug', 'CoursesController@getManyByCategory');
 
 $router->get('/api/course/:slug', 'CoursesController@getOne');
 $router->post('/api/course', 'CoursesController@create');

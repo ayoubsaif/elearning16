@@ -6,7 +6,7 @@ class MenuItemModel {
     private $conn;
  
     public $id;
-    public $sequence;
+    public $order;
     public $label;
     public $subLabel;
     public $url;
@@ -27,7 +27,7 @@ class MenuItemModel {
         while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
             $menuItem = array(
                 "id" => $row['id'],
-                "sequence" => $row['sequence'],
+                "order" => $row['order'],
                 "label" => $row['label'],
                 "subLabel" => $row['subLabel'],
                 "url" => $row['url'],

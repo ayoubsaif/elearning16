@@ -168,22 +168,4 @@ class CategoryModel
 
         return false;
     }
-
-    function getIdBySlug($slug)
-    {
-        $query = "SELECT id FROM categories WHERE slug = :slug LIMIT 1";
-        $stmt = $this->conn->prepare($query);
-
-        $slug = htmlspecialchars(strip_tags($slug));
-        $stmt->bindParam(":slug", $slug);
-
-        $stmt->execute();
-        $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-        if (!empty($data[0])){
-            return intval($data[0]['id']);
-        }
-
-        return false;
-    }
 }

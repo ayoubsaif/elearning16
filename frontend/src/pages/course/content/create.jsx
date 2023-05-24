@@ -75,7 +75,7 @@ export default function CreateCourse(props) {
             <FormControl id="description" isRequired>
               <Textarea type="text" placeholder='Descripción..'
                 id="descripcion"
-                value={Description}
+                value={""}
                 style={{ width: "100%" }}
               />
             </FormControl>

@@ -51,13 +51,18 @@ class CoursesController
         }
 
         $course = new CourseModel();
+        $Category = new CategoryModel();
+
+    
         $args = array();
         $page = isset($_GET['page']) ? $_GET['page'] : 1;
-        $category = isset($_GET['category']) ? (new CategoryModel)->getIdBySlug($_GET['category']) : null;
+        if (isset($_GET['category'])){
+            $Category->getOne($_GET['category']);
+        }
         $search = isset($_GET['search']) ? $_GET['search'] : null;
 
-        if ($category) {
-            $args[] = "category = '{$category}'";
+        if ($Category->id) {
+            $args[] = "category = '{$Category->id}'";
         }
         if ($search) {
             $args[] = "name LIKE '%{$search}%'";
@@ -65,6 +70,50 @@ class CoursesController
 
         $records_per_page = isset($_GET['limit']) ? $_GET['limit'] : 12;
         $courses = $course->getMany($args, $page, $records_per_page);
+        if ($Category->name){
+            $courses['category'] = $Category;
+        }
+        if ($courses) {
+            http_response_code(200);
+            echo json_encode($courses);
+            return;
+        } else {
+            http_response_code(204);
+            echo json_encode(array("message" => "No courses found"));
+            return;
+        }
+    }
+
+    public function getManyByCategory($slug){
+        $PermissionMiddleware = new PermissionMiddleware();
+        $allowed = array('admin','teacher','student');
+        $UserPermmited = $PermissionMiddleware->handle($allowed);
+
+        if (!$UserPermmited) {
+            return;
+        }
+
+        $course = new CourseModel();
+        $Category = new CategoryModel();
+        $args = array();
+        $page = isset($_GET['page']) ? $_GET['page'] : 1;
+        $Category->getOne($slug);
+        if (!$Category->id) {
+            http_response_code(404);
+            echo json_encode(array("message" => "Category not found"));
+            return;
+        }
+        $search = isset($_GET['search']) ? $_GET['search'] : null;
+        
+        if ($search) {
+            $args[] = "name LIKE '%{$search}%'";
+        }
+
+        $records_per_page = isset($_GET['limit']) ? $_GET['limit'] : 12;
+        $courses = $course->getManyByCategory($Category->id, $args, $page, $records_per_page);
+        if ($Category->name){
+            $courses['category'] = $Category;
+        }
         if ($courses) {
             http_response_code(200);
             echo json_encode($courses);

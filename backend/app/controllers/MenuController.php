@@ -34,7 +34,7 @@ class MenuController
     }
 
 
-    public function getMany()
+    public function get()
     {
         $PermissionMiddleware = new PermissionMiddleware();
         $allowed = array('admin','teacher','student');
@@ -88,8 +88,6 @@ class MenuController
 
     public function delete($id)
     {
-        $data = json_decode(file_get_contents("php://input"));
-        
         $PermissionMiddleware = new PermissionMiddleware();
         $allowed = array('admin');
         $UserPermmited = $PermissionMiddleware->handle($allowed);
@@ -109,6 +107,12 @@ class MenuController
             echo json_encode(array("message" => "Unable to delete menu item"));
             return;
         }
+    }
+
+    function getSuccessResponse()
+    {
+        http_response_code(200);
+        return;
     }
     
 }

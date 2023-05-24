@@ -165,6 +165,41 @@ class CourseModel
         return $data;
     }
 
+    function getManyByCategory($category, $args, $currentPage = 1, $records_per_page = 12)
+    {
+        $offset = ($currentPage - 1) * $records_per_page;
+        $whereClouse = "WHERE category = {$category}";
+        if (count($args) > 0) {
+            $whereClouse += " ".implode("AND ", $args)."";
+        }
+
+        $query = "SELECT id, name, description, thumbnail_url, slug
+            FROM courses 
+            $whereClouse
+            ORDER BY id DESC LIMIT {$offset}, {$records_per_page}";
+
+        $stmt = $this->conn->prepare($query);
+        $stmt->execute();
+        $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        // Calculate the total number of pages
+        $totalRecords = $this->getTotalRecords($whereClouse);
+        $pagesCount = ceil($totalRecords / $records_per_page);
+
+        if ($data) {
+            return array(
+                'courses' => $data,
+                'pagination' => array(
+                    'currentPage' => $currentPage,
+                    'pagesCount' => $pagesCount,
+                    'recordsPerPage' => $records_per_page,
+                )
+            );
+        }
+
+        return $data;
+    }
+
     function getTotalRecords($whereClouse)
     {
         $query = "SELECT COUNT(*) as total_rows FROM courses $whereClouse";
