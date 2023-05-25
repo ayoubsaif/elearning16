@@ -1,6 +1,7 @@
 import axios from "axios";
 
 const API_URL = process.env.NEXT_APP_API_HOST;
+const API_PUBLIC_URL = process.env.NEXT_PUBLIC_API;
 
 export async function getCourses(params) {
   try {
@@ -12,9 +13,34 @@ export async function getCourses(params) {
   }
 }
 
-export async function getCoursesByCategory(category, params) {
+export async function getCoursesByCategory(category, accessToken, params) {
   try {
-    const res = await axios.get(`/api/courses/${category}`, { params });
+    const options = {
+      params: {
+        ...params,
+      },
+      headers: { Authorization: `Bearer ${accessToken}` },
+    };
+    const res = await axios.get(`${API_PUBLIC_URL}/api/courses/${category}`, { ...options });
+    return res.data;
+  } catch (error) {
+    console.error(error);
+    if (error.response && error.response.status === 404) {
+      return error.data;
+    }
+    throw error;
+  }
+}
+
+export async function getCoursesFromServer(accessToken, params) {
+  try {
+    const options = {
+      params: {
+        ...params,
+      },
+      headers: { Authorization: `Bearer ${accessToken}` },
+    };
+    const res = await axios.get(`${API_URL}/api/courses`, { ...options });
     return res.data;
   } catch (error) {
     console.error(error);
@@ -30,22 +56,6 @@ export async function getCourse(slug, accessToken) {
     const res = await axios.get(`${API_URL}/api/course/${slug}`, {
       ...options,
     });
-    return res.data;
-  } catch (error) {
-    console.error(error);
-    throw error;
-  }
-}
-
-export async function getCoursesFromServer(accessToken, params) {
-  try {
-    const options = {
-      params: {
-        ...params,
-      },
-      headers: { Authorization: `Bearer ${accessToken}` },
-    };
-    const res = await axios.get(`${API_URL}/api/courses`, { ...options });
     return res.data;
   } catch (error) {
     console.error(error);

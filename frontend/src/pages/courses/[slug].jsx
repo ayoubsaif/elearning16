@@ -1,28 +1,21 @@
 import { NextSeo } from "next-seo";
+import { useRouter } from "next/router";
 import { useEffect, useState, useRef } from "react";
 import {
-  Grid,
-  GridItem,
-  Center,
-  SimpleGrid,
   Heading,
-  Fade,
 } from "@chakra-ui/react";
+import { usePagination } from "@ajna/pagination";
 
 import { getSiteConfig } from "@/services/siteConfig";
 import { getMenuItems } from "@/services/menuItems";
 import { getCoursesByCategory, getCoursesFromServer } from "@/services/courses";
 
 import Layout from "@/layout/Layout";
-import CourseCard from "@/components/dataDisplay/courseCard";
-import ChakraPagination from "@/components/pagination";
-import CoursesLoading from "@/components/skeleton/CoursesLoading";
-
-import { usePagination } from "@ajna/pagination";
+import CoursesGrid from "@/components/courses/CoursesGrid";
 
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "pages/api/auth/[...nextauth]";
-import { useRouter } from "next/router";
+import { useSession } from "next-auth/react";
 
 export default function Home(props) {
   const { siteConfig, menuItems, coursesData, paginationData, params, category } = props;
@@ -36,21 +29,28 @@ export default function Home(props) {
     initialState: { currentPage: page || 1 },
   });
   const [loading, setLoading] = useState(true);
+  const { data: session } = useSession();
 
   useEffect(() => {
     let timeoutId;
+    
     const fetchData = async () => {
-      if (currentPage) {
+      if (currentPage && router.query.slug && session?.user?.accessToken) {
         const params = {};
-        if (currentPage && currentPage != 1) {
+        if (currentPage !== 1) {
           params.page = currentPage;
         }
-        const data = await getCourses(params);
+        if (search) {
+          params.search = search;
+        }
+        
+        const data = await getCoursesByCategory(router.query.slug, session?.user?.accessToken, params);
+        
         if (data && data.courses && data.pagination) {
           setCourses(data.courses);
           setPagination(data.pagination);
           setLoading(false);
-
+          
           router.replace({
             pathname: router.pathname,
             query: { ...router.query, ...params },
@@ -58,12 +58,22 @@ export default function Home(props) {
         }
       }
     };
-    if (topRef.current) {
-      topRef.current.scrollIntoView({ behavior: "smooth" });
-    }
-    timeoutId = setTimeout(fetchData, 200);
+  
+    const scrollIntoView = () => {
+      if (topRef.current) {
+        topRef.current.scrollIntoView({ behavior: "smooth" });
+      }
+    };
+  
+    const fetchDataWithDelay = () => {
+      timeoutId = setTimeout(fetchData, 200);
+    };
+  
+    scrollIntoView();
+    fetchDataWithDelay();
+  
     return () => clearTimeout(timeoutId);
-  }, [currentPage]);
+  }, [currentPage, router.query.slug, session?.user?.accessToken]);
 
   return (
     <>
@@ -87,38 +97,18 @@ export default function Home(props) {
         }}
       />
       <Layout siteConfig={siteConfig} menuItems={menuItems}>
-        <Heading as="h1" size="2xl" textAlign="center" my={1}>
+        <Heading as="h1" size="2xl" textAlign="center" my={4}>
           Cursos de {category?.name}
         </Heading>
-        {loading ? (
-          <CoursesLoading />
-        ) : courses ? (
-          <Grid my="1em" ref={topRef}>
-            <Fade in={!loading}>
-              <GridItem my="1em" w={"full"}>
-                <Center>
-                  <SimpleGrid columns={[1, 2, 2, 4]} spacing="20px">
-                    {courses.map((course) => (
-                      <CourseCard course={course} key={course?.id} />
-                    ))}
-                  </SimpleGrid>
-                </Center>
-              </GridItem>
-            </Fade>
-            <Center>
-              <Fade in={!loading}>
-                <ChakraPagination
-                  pages={pages}
-                  currentPage={currentPage}
-                  pagesCount={pagesCount}
-                  setCurrentPage={setCurrentPage}
-                />
-              </Fade>
-            </Center>
-          </Grid>
-        ) : (
-          <p>No hay cursos</p>
-        )}
+        <CoursesGrid 
+          loading={loading}
+          courses={courses}
+          pages={pages}
+          currentPage={currentPage}
+          pagesCount={pagesCount}
+          setCurrentPage={setCurrentPage}
+          topRef={topRef}
+        />
       </Layout>
     </>
   );
@@ -138,18 +128,24 @@ export async function getServerSideProps({ query, req, res }) {
   const siteConfig = await getSiteConfig();
   const menuItems = await getMenuItems(session?.user?.accessToken);
 
-  const { page, search, slug: category } = query;
+  const { page, search, slug } = query;
   const params = {
     page: parseInt(page) || 1,
     search: search || null,
-    category: category || null,
   };
 
   const coursesItems = await getCoursesByCategory(
-    category,
+    slug,
     session?.user?.accessToken,
     params
   );
+
+  if (!coursesItems) {
+    // Handle the 404 error and redirect to a 404 page
+    return {
+      notFound: true,
+    };
+  }
 
   return {
     props: {
