@@ -23,7 +23,6 @@ import {
 } from '@chakra-ui/react';
 import ChakraTagInput from "@/components/forms/ChakraTagInput";
 import Input from "@/components/forms/input";
-import CropImageModal from "@/components/modals/cropImageModal";
 import { useFormik } from "formik";
 import { createCourse } from "@/services/courses";
 import { getSiteConfig } from "@/services/siteConfig";
@@ -37,7 +36,6 @@ export default function CreateCourse(props) {
   const { siteConfig, menuItems, categories } = props;
   const [course, setCourse] = useState({...Box, image: '/img/empty_course.png'});
   const [tags, setTags] = useState([]);
-  const [selectedImageFile, setSelectedImageFile] = useState(null);
 
   const handleTagsChange = useCallback((event, tags) => {
     setTags(tags)
@@ -75,7 +73,7 @@ export default function CreateCourse(props) {
         formData.append("category", values.category);
         formData.append("keywords", tags);
 
-        const createCourse = await createCourse(
+        const newCourse = await createCourse(
           formData,
           session?.user?.accessToken
         );
@@ -106,7 +104,6 @@ export default function CreateCourse(props) {
 
   const handleImageChange = (e) => {
     e.preventDefault();
-    setSelectedImageFile(e.target.files[0]);
     handleImageSave(e.target.files[0]);
   };
 
@@ -122,7 +119,6 @@ export default function CreateCourse(props) {
     };
     reader.readAsDataURL(croppedImage);
     formik.setFieldValue("thumbnail_url", croppedImage);
-    setSelectedImageFile(null);
   };
 
   return (
