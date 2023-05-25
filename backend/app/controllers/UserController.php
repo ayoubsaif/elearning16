@@ -73,12 +73,14 @@ class UserController
             $user->email = $data->email;
             $user->firstname = $data->firstname;
             $user->lastname = $data->lastname;
+            # generate username from email if not provided removing the domain part
+            $user->username = isset($data->username) ? $data->username : explode("@", $data->email)[0]."_".uniqid();
             $user->avatar_url = $data->image;
             $user->google_id = strval($data->google_id);
             if (!$user->emailExists()) {
                 if ($user->create()) {
                     http_response_code(201);
-                    echo json_encode(array("message" => "User was created"));
+                    $this->successAuthResponse($user);
                 } else {
                     http_response_code(503);
                     echo json_encode(array("message" => "Unable to create user"));

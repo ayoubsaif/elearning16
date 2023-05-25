@@ -38,7 +38,8 @@ class UserModel
                         username=:username,
                         email=:email,
                         role=:role,
-                        password=:password
+                        password=:password,
+                        avatar_url=:avatar_url,
                         google_id=:google_id"
                         ;
 
@@ -48,8 +49,9 @@ class UserModel
             $this->lastname = htmlspecialchars(strip_tags($this->lastname));
             $this->username = htmlspecialchars(strip_tags($this->username));
             $this->email = htmlspecialchars(strip_tags($this->email));
-            $this->role = htmlspecialchars(strip_tags($this->role));
+            $this->role = $this->role ? htmlspecialchars(strip_tags($this->role)) : 'student';
             $this->password = htmlspecialchars(strip_tags($this->password));
+            $this->avatar_url = htmlspecialchars(strip_tags($this->avatar_url));
             $this->google_id = htmlspecialchars(strip_tags($this->google_id));
 
 
@@ -60,6 +62,7 @@ class UserModel
             $stmt->bindParam(":role", $this->role);
             $password_hash = password_hash($this->password, PASSWORD_BCRYPT);
             $stmt->bindParam(":password", $password_hash);
+            $stmt->bindParam(":avatar_url", $this->avatar_url);
             $stmt->bindParam(":google_id", $this->google_id);
 
             if ($stmt->execute()) {
@@ -68,6 +71,7 @@ class UserModel
 
             return false;
         }catch(Exception $e){
+            echo json_encode(array("message" => $e->getMessage()));
             return false;
         }
     }

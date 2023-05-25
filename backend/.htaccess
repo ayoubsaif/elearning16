@@ -25,5 +25,5 @@ SetEnv DB_HOST localhost
 SetEnv DB_USER backend_user
 SetEnv DB_PASS KgBsyo4wQJqu3X
 SetEnv DB_NAME elearning_16
-SetEnv JWT_KEY 6f6c6c6568616d5f6b6579
+SetEnv JWT_KEY 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
 SetEnv HOST http://localhost/
