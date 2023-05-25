@@ -23,7 +23,7 @@ export default function CourseCard(props) {
       borderColor="black"
       transition="all .2s ease-in-out"
       _hover={{
-        transform: `translate(-.25rem, -.25rem,)`,
+        transform: "translate(-.25rem, -.25rem)",
         boxShadow: ".25rem .25rem 0 black",
       }}
     >

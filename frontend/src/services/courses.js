@@ -76,3 +76,18 @@ export async function getCoursesByCategoryFromServer(
 export function getCourseContent(slug) {
   return axios.get(`${API_URL}/api/courses/${slug}/content`);
 }
+
+export async function createCourse(data, accessToken) {
+  try {
+    const res = await axios.get(`/api/courses/`, data,
+      { headers: { 
+        "Content-Type": "multipart/form-data",
+        Authorization: `Bearer ${accessToken}`
+      }}
+    );
+    return res.data;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+}
