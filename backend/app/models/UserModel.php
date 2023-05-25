@@ -51,7 +51,7 @@ class UserModel
             $this->email = htmlspecialchars(strip_tags($this->email));
             $this->role = $this->role ? htmlspecialchars(strip_tags($this->role)) : 'student';
             $this->password = htmlspecialchars(strip_tags($this->password));
-            $this->avatar_url = htmlspecialchars(strip_tags($this->avatar_url));
+            $this->avatar_url = $this->avatar_url ? htmlspecialchars(strip_tags($this->avatar_url)) : null;
             $this->google_id = htmlspecialchars(strip_tags($this->google_id));
 
 
@@ -171,9 +171,9 @@ class UserModel
     function googleIdUpdate(){
         try{
             $query = "UPDATE users
-                        SET 
+                        SET
                             google_id = :google_id
-                        WHERE 
+                        WHERE
                             id = :id AND google_id != :google_id";
             $stmt = $this->conn->prepare($query);
             

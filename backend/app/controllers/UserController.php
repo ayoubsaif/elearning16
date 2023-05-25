@@ -79,8 +79,14 @@ class UserController
             $user->google_id = strval($data->google_id);
             if (!$user->emailExists()) {
                 if ($user->create()) {
-                    http_response_code(201);
-                    $this->successAuthResponse($user);
+                    if ($user->emailExists())
+                    {
+                        http_response_code(201);
+                        $this->successAuthResponse($user);
+                    }else{
+                        http_response_code(503);
+                        echo json_encode(array("message" => "Unable to create user"));
+                    }
                 } else {
                     http_response_code(503);
                     echo json_encode(array("message" => "Unable to create user"));
@@ -114,8 +120,9 @@ class UserController
         http_response_code(200);
         echo json_encode(array(
             "status" => "success",
-            "id" => $user->id,
+            "id" => intval($user->id),
             "name" => $user->display_name,
+            "firstname" => $user->firstname,
             "email" => $user->email,
             "username" => $user->username,
             "image" => $user->avatar_url,
