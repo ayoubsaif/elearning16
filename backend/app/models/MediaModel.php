@@ -81,7 +81,10 @@ class MediaModel
         $stmt->execute();
         $data = $stmt->fetch(PDO::FETCH_ASSOC);
         
-        return $data;
+        if ($data) {
+            return $data;
+        }
+        return false;
     }
 
     public function getAllMedia()

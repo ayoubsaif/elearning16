@@ -93,7 +93,7 @@ class MediaController
         // check if there a file in directory before remove
         $oldFilename = $this->mediaModel->getOneByModel('user', $user_id)['filepath'];
                
-        if (!getimagesize($imageFile) === false) {
+        if (!getimagesize($imageFile) === false && $oldFilename != null) {
             unlink($oldFilename);
         }
 
