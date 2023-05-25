@@ -170,7 +170,7 @@ class CourseModel
         $offset = ($currentPage - 1) * $records_per_page;
         $whereClouse = "WHERE category = {$category}";
         if (count($args) > 0) {
-            $whereClouse += " ".implode("AND ", $args)."";
+            $whereClouse = $whereClouse." AND ".implode("AND ", $args)."";
         }
 
         $query = "SELECT id, name, description, thumbnail_url, slug
@@ -197,7 +197,14 @@ class CourseModel
             );
         }
 
-        return $data;
+        return array(
+            'courses' => [],
+            'pagination' => array(
+                'currentPage' => $currentPage,
+                'pagesCount' => $pagesCount,
+                'recordsPerPage' => $records_per_page,
+            )
+        );
     }
 
     function getTotalRecords($whereClouse)

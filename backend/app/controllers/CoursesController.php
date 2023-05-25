@@ -171,4 +171,11 @@ class CoursesController
             return false;
         }
     }
+
+    public function getSuccessResponse()
+    {
+        http_response_code(200);
+        echo json_encode(array("message" => "Success"));
+        return;
+    }
 }

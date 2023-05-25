@@ -22,7 +22,10 @@ $router->get('/api/profile', 'UserController@getMyProfileInfo');
 $router->post('/api/profile', 'UserController@updateMyProfileInfo');
 
 # Courses
+$router->options('/api/courses/', 'CoursesController@getSuccessResponse');
 $router->get('/api/courses', 'CoursesController@getMany');
+
+$router->options('/api/courses/:slug', 'CoursesController@getSuccessResponse');
 $router->get('/api/courses/:slug', 'CoursesController@getManyByCategory');
 
 $router->get('/api/course/:slug', 'CoursesController@getOne');
