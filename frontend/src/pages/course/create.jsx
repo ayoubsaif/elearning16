@@ -1,5 +1,5 @@
 import { useState, useCallback } from "react";
-import { NextSeo } from 'next-seo';
+import { NextSeo } from "next-seo";
 import * as Yup from "yup";
 import Layout from "@/layout/Layout";
 import { BsPlusCircle, BsPencilSquare } from "react-icons/bs";
@@ -7,7 +7,6 @@ import {
   Flex,
   Box,
   FormControl,
-  InputGroup,
   HStack,
   Stack,
   Heading,
@@ -16,11 +15,9 @@ import {
   FormLabel,
   Textarea,
   Button,
-  Center,
-  InputRightElement,
   Image,
-  IconButton
-} from '@chakra-ui/react';
+  IconButton,
+} from "@chakra-ui/react";
 import ChakraTagInput from "@/components/forms/ChakraTagInput";
 import Input from "@/components/forms/input";
 import { useFormik } from "formik";
@@ -29,22 +26,18 @@ import { getSiteConfig } from "@/services/siteConfig";
 import { getMenuItems } from "@/services/menuItems";
 import { authOptions } from "pages/api/auth/[...nextauth]";
 import { getProfile } from "@/services/profile";
+import { getCategories } from "@/services/category";
 import { getServerSession } from "next-auth/next";
-
+import { useSession } from "next-auth/react";
 
 export default function CreateCourse(props) {
   const { siteConfig, menuItems, categories } = props;
-  const [course, setCourse] = useState({...Box, image: '/img/empty_course.png'});
+  const [course, setCourse] = useState({
+    ...Box,
+    image: "/img/empty_course.png",
+  });
   const [tags, setTags] = useState([]);
-
-  const handleTagsChange = useCallback((event, tags) => {
-    setTags(tags)
-  }, [])
-
-  const generateSlug = (name) => {
-    let slug = name.toLowerCase().replace(/ /g, "-").replace(/[^\w-]+/g, "")
-    formik.setFieldValue("slug", slug);
-  }
+  const { data: session } = useSession();
 
   const formik = useFormik({
     initialValues: {
@@ -53,72 +46,62 @@ export default function CreateCourse(props) {
       description: course?.description || "",
       category: course?.category || "",
       keywords: null,
-      thumbnail_url: null,
+      thumbnail: null,
     },
     validationSchema: Yup.object({
-      name: Yup.string()
-        .required("Nombre es obligatorio"),
-      description: Yup.string()
-        .required("Descripción es obligatorio"),
-      category: Yup.number()
-        .required("Categoría es obligatorio"),
-      keywords: Yup.array()
+      name: Yup.string().required("Nombre es obligatorio"),
+      description: Yup.string().required("Descripción es obligatorio"),
+      category: Yup.number().required("Categoría es obligatorio"),
+      keywords: Yup.array(),
     }),
     onSubmit: async (values) => {
+      console.log("Form submitted!", values);
       try {
         const formData = new FormData();
-        formData.append("image", values.thumbnail_url);
+        formData.append("thumbnail", values.thumbnail);
         formData.append("name", values.name);
         formData.append("description", values.description);
         formData.append("category", values.category);
-        formData.append("keywords", tags);
+        formData.append("keywords", tags.join(","));
 
         const newCourse = await createCourse(
           formData,
           session?.user?.accessToken
         );
-        if (createCourse) {
-          setCourse({
-            ...course,
-            name: createCourse?.name,
-            slug: createCourse?.slug,
-            description: createCourse?.description,
-            category: createCourse?.category,
-            keywords: createCourse?.keywords,
-            image: createCourse?.image,
-          });
-          toast({
-            title: "Curso creado.",
-            description: "Hemos creado el curso.",
-            status: "success",
-            duration: 3000,
-            isClosable: true,
-          });
+        if (newCourse) {
+          Router.push(`/course/${newCourse.slug}-${newCourse.id}`);
         }
-        setEditMode(false);
       } catch (error) {
         console.error("Error creating course:", error);
       }
     },
   });
 
-  const handleImageChange = (e) => {
-    e.preventDefault();
-    handleImageSave(e.target.files[0]);
+  const handleTagsChange = useCallback((event, tags) => {
+    setTags(tags);
+    formik.setFieldValue("keywords", tags);
+  }, []);
+
+  const generateSlug = (name) => {
+    let slug = name
+      .toLowerCase()
+      .replace(/ /g, "-")
+      .replace(/[^\w-]+/g, "");
+    formik.setFieldValue("slug", slug);
   };
 
-  const handleImageSave = (croppedImage) => {
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
     const reader = new FileReader();
     reader.onload = (e) => {
       const imageSrc = e.target.result;
-      console.log(imageSrc);
       setCourse((prevProfile) => ({
         ...prevProfile,
         image: imageSrc,
       }));
     };
-    reader.readAsDataURL(croppedImage);
-    formik.setFieldValue("thumbnail_url", croppedImage);
+    reader.readAsDataURL(file);
+    formik.setFieldValue("thumbnail", file);
   };
 
   return (
@@ -126,138 +109,125 @@ export default function CreateCourse(props) {
       <NextSeo
         title={`${siteConfig?.title} - Crear curso`}
         description="Crea tu propio curso"
-        canonical={`${siteConfig?.siteUrl}/create-course`}
+        canonical={`${siteConfig?.siteUrl}/course/create`}
         openGraph={{
-          url: `${siteConfig?.siteUrl}/create-course`,
+          url: `${siteConfig?.siteUrl}/course/create`,
           title: "Crear curso",
           description: "Crear curso",
         }}
       />
       <Layout siteConfig={siteConfig} menuItems={menuItems}>
         <Flex
-          minH={'100%'}
-          align={'start'}
-          justify={'center'}
+          minH={"100%"}
+          align={"start"}
+          justify={"center"}
           bgSize="cover"
-          bgPosition="center">
-
-          <Stack spacing={4} mx={'auto'} py={0} px={0}>
-            <Stack align={'center'}>
-              <Heading fontSize={'4xl'} textAlign={'center'} color={'black'} mt={10} >
-                CREA TU CURSO
+          bgPosition="center"
+        >
+          <Stack spacing={4} mx={"auto"} py={0} px={0}>
+            <Stack align={"center"}>
+              <Heading
+                fontSize={"4xl"}
+                textAlign={"center"}
+                color={"black"}
+                mt={10}
+              >
+                Crear un nuevo curso
               </Heading>
             </Stack>
             <HStack>
-              <Box
-                rounded={'lg'}
-                boxShadow={'lg'}
-                p={8}
-                w={800}
-              >
+              <Box rounded={"md"} border={"1px solid black"} p={8} w={800}>
                 <form onSubmit={formik.handleSubmit}>
                   <Stack spacing={8}>
-                    <FormControl isRequired>
+                    <FormControl>
                       <FormLabel>Nombre del Curso</FormLabel>
                       <Input
                         id="name"
                         name="name"
                         {...formik.getFieldProps("name")}
                       />
-                      <FormErrorMessage>
-                        {formik.errors.firstname}
-                      </FormErrorMessage>
+                      <FormErrorMessage>{formik.errors.name}</FormErrorMessage>
                     </FormControl>
-                    <FormControl isRequired>
+                    <FormControl>
                       <FormLabel>Slug del Curso</FormLabel>
-                      <InputGroup
-                        style={{ paddingRight: "5.5rem" }}
-                      >
+                      <HStack>
                         <Input
                           id="slug"
                           name="slug"
                           {...formik.getFieldProps("slug")}
                         />
-                        <InputRightElement width='4.5rem'>
-                          <Button onClick={() => generateSlug(formik.values.name)} variant="primary">
-                            Generar
-                          </Button>
-                        </InputRightElement>
-                      </InputGroup>
-                      <FormErrorMessage>
-                        {formik.errors.firstname}
-                      </FormErrorMessage>
+                        <Button
+                          onClick={() => generateSlug(formik.values.name)}
+                          variant="primary"
+                        >
+                          Generar
+                        </Button>
+                      </HStack>
+                      <FormErrorMessage>{formik.errors.slug}</FormErrorMessage>
                     </FormControl>
-                    <FormControl id="description" isRequired>
+                    <FormControl>
                       <FormLabel>Descripción del Curso</FormLabel>
-                      <Textarea type="text" placeholder='Descripción..'
-                        id="descripcion"
-                        name="descripcion"
-                        style={{ width: "100%" }}
-                        rounded={".25em"}
-                        border={"1px"}
-                        borderColor="gray.300"
-                        _hover={{
-                            borderColor: "black",
-                            boxShadow: "0 0 0 1px blue.300",
-                        }}
-                        _focusWithin={{
-                            outline: "2px solid",
-                            outlineColor: "blue.100",
-                            outlineOffset: "0px",
-                        }}
-                        {...formik.getFieldProps("descripcion")}
+                      <Textarea
+                        type="text"
+                        placeholder="Escriba una descripción del curso..."
+                        id="description"
+                        name="description"
+                        {...formik.getFieldProps("description")}
                       />
                     </FormControl>
 
-                    <FormControl id="category" isRequired>
-                      <Select placeholder='Selecciona una categoría'
+                    <FormControl>
+                      <Select
+                        placeholder="Selecciona una categoría"
                         style={{ width: "100%" }}
-                        rounded={".25em"}
-                        border={"1px"}
-                        borderColor="gray.300"
-                        _hover={{
-                            borderColor: "black",
-                            boxShadow: "0 0 0 1px blue.300",
-                        }}
-                        _focusWithin={{
-                            outline: "2px solid",
-                            outlineColor: "blue.100",
-                            outlineOffset: "0px",
-                        }}
+                        id="category"
+                        name="category"
+                        {...formik.getFieldProps("category")}
                       >
                         {categories?.map((category) => (
-                          <option key={category.id} value={category.id}>
+                          <option
+                            key={category.id}
+                            value={category.id}
+                          >
                             {category.name}
                           </option>
                         ))}
                       </Select>
+                      <FormErrorMessage>
+                        {formik.errors.category}
+                      </FormErrorMessage>
                     </FormControl>
 
                     <Box>
-                      <FormControl id="keywords" isRequired>
-                        <FormLabel>Etiquetas del Curso</FormLabel>
+                      <FormControl>
+                        <FormLabel>Etiquetas del curso</FormLabel>
                         <ChakraTagInput
                           style={{ width: "100%" }}
                           rounded={".25em"}
                           border={"1px"}
                           borderColor="gray.300"
                           _hover={{
-                              borderColor: "black",
-                              boxShadow: "0 0 0 1px blue.300",
+                            borderColor: "black",
+                            boxShadow: "0 0 0 1px blue.300",
                           }}
                           _focusWithin={{
-                              outline: "2px solid",
-                              outlineColor: "blue.100",
-                              outlineOffset: "0px",
+                            outline: "2px solid",
+                            outlineColor: "blue.100",
+                            outlineOffset: "0px",
                           }}
+                          id="keywords"
+                          name="keywords"
                           tags={tags}
                           onTagsChange={handleTagsChange}
                         />
+                        <FormErrorMessage>
+                          {formik.errors.keywords}
+                        </FormErrorMessage>
                       </FormControl>
                     </Box>
                     <Stack spacing={10}>
                       <FormControl isInvalid={formik.errors.image}>
-                        <FormLabel>Imagen del Curso</FormLabel>
+                        <FormLabel>Imagen del curso</FormLabel>
                         <HStack>
                           <Box textAlign="center" position="relative">
                             <Image
@@ -277,15 +247,12 @@ export default function CreateCourse(props) {
                               justifyContent="end"
                             >
                               <input
-                                id="thumbnail_url"
+                                id="thumbnail"
+                                name="thumbnail"
                                 type="file"
                                 accept=".jpg,.jpeg,.png"
                                 onChange={(e) => {
                                   handleImageChange(e);
-                                  formik.setFieldValue(
-                                    "thumbnail_url",
-                                    e.currentTarget.files[0]
-                                  );
                                 }}
                                 style={{ display: "none" }}
                               />
@@ -294,52 +261,24 @@ export default function CreateCourse(props) {
                                 aria-label="Change course Image"
                                 rounded={"full"}
                                 onClick={() =>
-                                  document.getElementById("thumbnail_url").click()
+                                  document.getElementById("thumbnail").click()
                                 }
                               />
                             </Box>
                             <FormErrorMessage>
-                              {formik.errors.avatar}
+                              {formik.errors.thumbnail}
                             </FormErrorMessage>
                           </Box>
                         </HStack>
                       </FormControl>
                     </Stack>
-
-                    {/* Añadir Usuarios
-                    <Box>
-                      <Flex alignItems="center">
-                        <FormControl>
-                          <FormLabel>ESTUDIANTES</FormLabel>
-                        </FormControl>
-                        <Button colorScheme="green" variant="outline" mb={2}>
-                          Añadir
-                        </Button>
-                      </Flex>
-                      <Flex>
-                        <FormControl>
-                          <Input id='student' placeholder='Alumno' mt={2}></Input>
-                        </FormControl>
-                        <HStack mt={2}>
-                          <Button colorScheme="blue" variant="outline" ml={2}>
-                            Editar
-                          </Button>
-                          <Button colorScheme="red" variant="outline">
-                            Borrar
-                          </Button>
-                        </HStack>
-                      </Flex>
-                    </Box>
-                    */}
-
                     <Stack spacing={10} pt={2}>
                       <Button
                         leftIcon={<BsPlusCircle />}
                         variant="primary"
+                        type="submit"
                       >
-                        <Center>
-                          Crear curso
-                        </Center>
+                        Crear curso
                       </Button>
                     </Stack>
                   </Stack>
@@ -364,24 +303,10 @@ export async function getServerSideProps(context) {
     };
   }
 
-  const categories = [
-    {
-      id: 1,
-      name: "Programación",
-    },
-    {
-      id: 2,
-      name: "Diseño",
-    },
-    {
-      id: 3,
-      name: "Marketing",
-    },
-  ]
-
   const siteConfig = await getSiteConfig();
   const menuItems = await getMenuItems(session?.user?.accessToken);
   const profileInfo = await getProfile(session?.user?.accessToken);
+  const categories = await getCategories(session?.user?.accessToken);
   return {
     props: {
       categories,

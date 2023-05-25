@@ -187,10 +187,15 @@ class UserController
 
             if (isset($_FILES["image"])) {
                 $Media = new MediaController(new MediaModel());
-                $avatar = $Media->uploadAvatar($_FILES["image"], $user->id);
+                $Media->uploadImage($_FILES["image"], 'user', $user->id, 500, 500);
+                $avatar = $Media->filename;
                 if ($avatar) {
                     $user->avatar_url = $avatar;
                     $updateProfileValues[] = "avatar_url = '{$user->avatar_url}'";
+                }else{
+                    http_response_code(503);
+                    echo json_encode(array("message" => "Unable to upload image"));
+                    return;
                 }
             }
 

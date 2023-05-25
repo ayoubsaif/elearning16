@@ -13,7 +13,6 @@ class CourseModel
     public $name;
     public $slug;
     public $description;
-    public $teacher;
     public $category;
     public $create_date;
     public $create_uid;
@@ -30,11 +29,11 @@ class CourseModel
     {
         $query = "INSERT INTO courses
                 SET
+                    id=:id,
                     name=:name,
                     slug=:slug,
                     description=:description,
                     category=:category,
-                    teacher=:teacher,
                     keywords=:keywords,
                     create_date=:create_date,
                     create_uid=:create_uid,
@@ -42,21 +41,21 @@ class CourseModel
 
         $stmt = $this->conn->prepare($query);
 
+        $this->id = htmlspecialchars(strip_tags($this->id));
         $this->name = htmlspecialchars(strip_tags($this->name));
         $this->slug = htmlspecialchars(strip_tags($this->slug));
         $this->description = htmlspecialchars(strip_tags($this->description));
         $this->category = htmlspecialchars(strip_tags($this->category));
-        $this->teacher = htmlspecialchars(strip_tags($this->teacher));
         $this->keywords = htmlspecialchars(strip_tags($this->keywords));
         $this->create_date = htmlspecialchars(strip_tags($this->create_date));
         $this->create_uid = htmlspecialchars(strip_tags($this->create_uid));
         $this->thumbnail_url = htmlspecialchars(strip_tags($this->thumbnail_url));
 
+        $stmt->bindParam(":id", $this->id);
         $stmt->bindParam(":name", $this->name);
         $stmt->bindParam(":slug", $this->slug);
         $stmt->bindParam(":description", $this->description);
         $stmt->bindParam(":category", $this->category);
-        $stmt->bindParam(":teacher", $this->teacher);
         $stmt->bindParam(":keywords", $this->keywords);
         $stmt->bindParam(":create_date", $this->create_date);
         $stmt->bindParam(":create_uid", $this->create_uid);
@@ -93,7 +92,6 @@ class CourseModel
                 slug=:slug,
                 description=:description,
                 category=:category,
-                teacher=:teacher,
                 keywords=:keywords,
                 create_date=:create_date,
                 create_uid=:create_uid,
@@ -106,7 +104,6 @@ class CourseModel
         $this->slug = htmlspecialchars(strip_tags($this->slug));
         $this->description = htmlspecialchars(strip_tags($this->description));
         $this->category = htmlspecialchars(strip_tags($this->category));
-        $this->teacher = htmlspecialchars(strip_tags($this->teacher));
         $this->keywords = htmlspecialchars(strip_tags($this->keywords));
         $this->create_date = htmlspecialchars(strip_tags($this->create_date));
         $this->create_uid = htmlspecialchars(strip_tags($this->create_uid));
@@ -116,7 +113,6 @@ class CourseModel
         $stmt->bindParam(":slug", $this->slug);
         $stmt->bindParam(":description", $this->description);
         $stmt->bindParam(":category", $this->category);
-        $stmt->bindParam(":teacher", $this->teacher);
         $stmt->bindParam(":keywords", $this->keywords);
         $stmt->bindParam(":create_date", $this->create_date);
         $stmt->bindParam(":create_uid", $this->create_uid);
@@ -240,8 +236,8 @@ class CourseModel
         $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
         if (!empty($data[0])) {
-            $Teacher = new UserModel();
-            $Teacher->getOne($data[0]['teacher']);
+            $CreateUid = new UserModel();
+            $CreateUid->getOne($data[0]['create_uid']);
             $Category = new CategoryModel();
             $Category->getOne($data[0]['category']);
             $CourseContent = new CourseContentModel();
@@ -250,13 +246,6 @@ class CourseModel
             $this->id = $data[0]['id'];
             $this->name = $data[0]['name'];
             $this->description = $data[0]['description'];
-            $this->teacher = !is_null($Teacher->id) ? array(
-                'id' => $Teacher->id,
-                'name' => $Teacher->display_name,
-                'firstname' => $Teacher->firstname,
-                'lastname' => $Teacher->lastname,
-                'image' => $Teacher->avatar_url,
-            ) : null;
             $this->category = !is_null($Category->id) ? array(
                 'id' => $Category->id,
                 'name' => $Category->name,
@@ -265,7 +254,13 @@ class CourseModel
             $this->courseContents = $CourseContent->getAll();
             $this->keywords = explode(",", $data[0]['keywords']);
             $this->create_date = $data[0]['create_date'];
-            $this->create_uid = $data[0]['create_uid'];
+            $this->create_uid = !is_null($CreateUid->id) ? array(
+                'id' => $CreateUid->id,
+                'name' => $CreateUid->display_name,
+                'firstname' => $CreateUid->firstname,
+                'lastname' => $CreateUid->lastname,
+                'image' => $CreateUid->avatar_url,
+            ) : null;
             $this->thumbnail_url = $data[0]['thumbnail_url'];
             return true;
         }
@@ -288,5 +283,20 @@ class CourseModel
         }
 
         return false;
+    }
+
+    function getLastId()
+    {
+        $query = "SELECT id FROM courses ORDER BY id DESC LIMIT 0,1";
+
+        $stmt = $this->conn->prepare($query);
+        $stmt->execute();
+        $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        if (!empty($data[0])) {
+            return $data[0]['id'];
+        }
+
+        return null;
     }
 }

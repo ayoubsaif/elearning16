@@ -134,12 +134,6 @@ export default function Profile(props) {
     setSelectedAvatarFile(null);
   };
 
-  const handleAvatarButtonClick = () => {
-    // Trigger the hidden file input when the button is clicked
-    const fileInput = document.getElementById("avatar");
-    fileInput.click();
-  };
-
   return (
     <>
       <NextSeo

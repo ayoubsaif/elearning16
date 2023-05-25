@@ -5,6 +5,10 @@ require_once 'app/models/MediaModel.php';
 class MediaController
 {
     private $mediaModel;
+    public $filename;
+    public $model;
+    public $model_id;
+    public $fileUrl;
 
     public function __construct()
     {
@@ -42,12 +46,12 @@ class MediaController
         }
     }
 
-    public function uploadAvatar($FILE, $user_id)
+    public function uploadImage($FILE, $model_name, $model_id, $heigth = 500, $width = 500, $delete_old = false)
     {
         $imageFile = $FILE["tmp_name"];
-        $this->mediaModel->filename = uniqid().'_'.$FILE["name"];
-        $this->mediaModel->model = 'user';
-        $this->mediaModel->model_id = $user_id;
+        $this->mediaModel->filename = uniqid() . '_' . $FILE["name"];
+        $this->mediaModel->model = $model_name;
+        $this->mediaModel->model_id = $model_id;
 
         $target_dir = "uploads/avatar";
         $this->mediaModel->filepath = $target_dir . '/' . $this->mediaModel->filename;
@@ -72,7 +76,7 @@ class MediaController
         }
 
         // Create a resized image
-        $resizedImage = imagecreatetruecolor(500, 500);
+        $resizedImage = imagecreatetruecolor($heigth, $width);
         if ($this->mediaModel->filetype == "jpg" || $this->mediaModel->filetype == "jpeg") {
             $originalImage = imagecreatefromjpeg($imageFile);
         } elseif ($this->mediaModel->filetype == "png") {
@@ -80,7 +84,7 @@ class MediaController
         }
 
         // Resize the original image to the new dimensions
-        imagecopyresampled($resizedImage, $originalImage, 0, 0, 0, 0, 500, 500, imagesx($originalImage), imagesy($originalImage));
+        imagecopyresampled($resizedImage, $originalImage, 0, 0, 0, 0, $heigth, $width, imagesx($originalImage), imagesy($originalImage));
 
         if (!imagejpeg($resizedImage, $this->mediaModel->filepath)) {
             http_response_code(503);
@@ -91,17 +95,15 @@ class MediaController
         imagedestroy($resizedImage);
 
         // check if there a file in directory before remove
-        $oldFilename = $this->mediaModel->getOneByModel('user', $user_id);
-               
+        $oldFilename = $this->mediaModel->getOneByModel($this->mediaModel->model, $this->mediaModel->model_id);
+
         if (!getimagesize($imageFile) === false && $oldFilename != null) {
             unlink($oldFilename['filepath']);
         }
 
-        if ($this->mediaModel->uploadMedia())
-        {   
-            return getenv("HOST").$this->mediaModel->filepath;
+        if ($this->mediaModel->uploadMedia()) {
+            $this->fileUrl = getenv("HOST") . $this->mediaModel->filepath;
         }
-
     }
 
     public function getAllMedia()

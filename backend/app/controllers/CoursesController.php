@@ -2,6 +2,7 @@
 
 require_once 'app/models/CourseModel.php';
 require_once 'app/models/CategoryModel.php';
+require_once 'app/controllers/MediaController.php';
 
 require_once 'app/middleware/PermissionMiddleware.php';
 
@@ -17,17 +18,44 @@ class CoursesController
         if (!$UserPermmited) {
             return;
         }
-
+        $data = $_POST;
+        if (empty($data)) {
+            http_response_code(400);
+            echo json_encode(array("message" => "No data provided"));
+            return;
+        }
         $course = new CourseModel();
-        $course->name = $data->name;
-        $course->slug = $data->slug;
-        $course->description = $data->description;
-        $course->category = $data->category;
-        $course->teacher = $UserPermmited->id;
-        $course->keywords = implode(",", $data->keywords);
+        $course->id = intval($course->getLastId())+1;
+        if (isset($_FILES["thumbnail"])) {
+            $Media = new MediaController();
+            $Media->uploadImage($_FILES["thumbnail"], 'course', $course->id, 800, 600);
+            if(isset($Media->fileUrl)) {
+                $course->thumbnail_url = $Media->fileUrl;
+            } else {
+                http_response_code(503);
+                echo json_encode(array("message" => "Unable to upload thumbnail"));
+                return;
+            }
+        }
+
+        if ($data['name'] !== $course->name) {
+            $course->name = $data['name'];
+        }
+        if ($data['slug'] !== $course->slug) {
+            $course->slug = $data['slug'];
+        }
+        if ($data['description'] !== $course->description) {
+            $course->description = $data['description'];
+        }
+        if ($data['category'] !== $course->category) {
+            $course->category = $data['category'];
+        }
+        if ($data['keywords'] !== $course->keywords) {
+            $course->keywords = $data['keywords'];
+        }
+
         $course->create_date = date('Y-m-d H:i:s');
         $course->create_uid = $UserPermmited->id;
-        $course->thumbnail_url = $data->thumbnail_url;
 
         if ($course->create()) {
             http_response_code(201);
@@ -138,7 +166,6 @@ class CoursesController
                 $returnArray = array(
                     "name" => $course->name,
                     "description" => $course->description,
-                    "teacher" => $course->teacher,
                     "category" => $course->category,
                     "keywords" => $course->keywords,
                     "courseContents" => $course->courseContents,

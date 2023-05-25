@@ -130,10 +130,8 @@ class CategoryModel
                 "name" => $name,
                 "slug" => $slug,
                 "description" => $description,
-                "image_url" => $image_url,
-                "parent_cat" => $parent_cat,
-                "keywords" => $keywords,
-                "create_uid" => $create_uid
+                "image" => $image_url,
+                "keywords" => $keywords
             );
 
             array_push($categories_arr, $category_item);
