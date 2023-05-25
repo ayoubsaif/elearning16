@@ -31,6 +31,7 @@ export const authOptions = {
           user.image = res.data?.image;
           user.username = res.data?.username;
           user.accessToken = res.data?.accessToken;
+          console.log("user", user);
           return true;
         }
       }
@@ -38,7 +39,7 @@ export const authOptions = {
     },
     async jwt({ token, user, trigger, session }) {
       if (user) {
-        token.accessToken = user.accessToken;
+        //token.accessToken = user.accessToken;
       }  
       if (trigger === "update" && session?.user) {
         user = {...user, ...session.user};

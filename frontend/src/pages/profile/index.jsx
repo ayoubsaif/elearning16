@@ -15,8 +15,11 @@ import {
   InputLeftElement,
   useToast,
   Button,
+  IconButton,
 } from "@chakra-ui/react";
 import { NextSeo } from "next-seo";
+
+import { BsPencilSquare } from "react-icons/bs";
 
 import { authOptions } from "pages/api/auth/[...nextauth]";
 import { useSession } from "next-auth/react";
@@ -164,40 +167,47 @@ export default function Profile(props) {
               {editMode ? (
                 <Stack spacing={4}>
                   <HStack>
-                    <Avatar
-                      size="xl"
-                      name={profile?.name}
-                      src={profile?.image}
-                    />
-                    <FormControl isInvalid={formik.errors.avatar}>
-                      <FormLabel htmlFor="avatar">Avatar</FormLabel>
-                      <div>
-                        <input
-                          id="avatar"
-                          type="file"
-                          accept=".jpg,.jpeg,.png"
-                          onChange={(e) => {
-                            handleAvatarChange(e);
-                            formik.setFieldValue(
-                              "avatar",
-                              e.currentTarget.files[0]
-                            );
-                          }}
-                          style={{ display: "none" }}
-                        />
-
-                        <Button
-                          onClick={() =>
-                            document.getElementById("avatar").click()
-                          }
+                    <Box textAlign="center" position="relative">
+                      <Avatar
+                        size="xl"
+                        name={profile?.name}
+                        src={profile?.image}
+                      />
+                      <FormControl isInvalid={formik.errors.avatar}>
+                        <Box
+                          position="absolute"
+                          inset={-2}
+                          display="flex"
+                          alignItems="end"
+                          justifyContent="end"
                         >
-                          Seleccione una imagen...
-                        </Button>
-                      </div>
-                      <FormErrorMessage>
-                        {formik.errors.avatar}
-                      </FormErrorMessage>
-                    </FormControl>
+                          <input
+                            id="avatar"
+                            type="file"
+                            accept=".jpg,.jpeg,.png"
+                            onChange={(e) => {
+                              handleAvatarChange(e);
+                              formik.setFieldValue(
+                                "avatar",
+                                e.currentTarget.files[0]
+                              );
+                            }}
+                            style={{ display: "none" }}
+                          />
+                          <IconButton
+                            icon={<BsPencilSquare />}
+                            aria-label="Change Avatar"
+                            rounded={"full"}
+                            onClick={() =>
+                              document.getElementById("avatar").click()
+                            }
+                          />
+                        </Box>
+                        <FormErrorMessage>
+                          {formik.errors.avatar}
+                        </FormErrorMessage>
+                      </FormControl>
+                    </Box>
                   </HStack>
                   <CropImageModal
                     isOpen={Boolean(selectedAvatarFile)}

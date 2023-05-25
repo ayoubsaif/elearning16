@@ -73,7 +73,6 @@ class UserController
             $user->email = $data->email;
             $user->firstname = $data->firstname;
             $user->lastname = $data->lastname;
-            # generate username from email if not provided removing the domain part
             $user->username = isset($data->username) ? $data->username : explode("@", $data->email)[0]."_".uniqid();
             $user->avatar_url = isset($data->image) ? $data->image : null;
             $user->google_id = strval($data->google_id);
