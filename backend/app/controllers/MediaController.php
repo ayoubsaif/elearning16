@@ -91,10 +91,10 @@ class MediaController
         imagedestroy($resizedImage);
 
         // check if there a file in directory before remove
-        $oldFilename = $this->mediaModel->getOneByModel('user', $user_id)['filepath'];
+        $oldFilename = $this->mediaModel->getOneByModel('user', $user_id);
                
         if (!getimagesize($imageFile) === false && $oldFilename != null) {
-            unlink($oldFilename);
+            unlink($oldFilename['filepath']);
         }
 
         if ($this->mediaModel->uploadMedia())
