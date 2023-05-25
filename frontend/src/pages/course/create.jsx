@@ -260,18 +260,19 @@ export default function CreateCourse(props) {
                       </FormControl>
                     </Box>
                     <Stack spacing={10}>
-                      <HStack>
-                        <Box textAlign="center" position="relative">
-                          <Image
-                            size="xl"
-                            name={course?.name}
-                            src={course?.image}
-                            width={270}
-                            height={150}
-                            objectFit="cover"
-                            borderRadius="md"
-                          />
-                          <FormControl isInvalid={formik.errors.image}>
+                      <FormControl isInvalid={formik.errors.image}>
+                        <FormLabel>Imagen del Curso</FormLabel>
+                        <HStack>
+                          <Box textAlign="center" position="relative">
+                            <Image
+                              size="xl"
+                              name={course?.name}
+                              src={course?.image}
+                              width={270}
+                              height={150}
+                              objectFit="cover"
+                              borderRadius="md"
+                            />
                             <Box
                               position="absolute"
                               inset={-2}
@@ -304,9 +305,9 @@ export default function CreateCourse(props) {
                             <FormErrorMessage>
                               {formik.errors.avatar}
                             </FormErrorMessage>
-                          </FormControl>
-                        </Box>
-                      </HStack>
+                          </Box>
+                        </HStack>
+                      </FormControl>
                     </Stack>
 
                     {/* Añadir Usuarios
