@@ -55,6 +55,16 @@ eLearning consist in a application for schools, teams or companys to organize th
     SetEnv DB_PASS database_password
     SetEnv DB_NAME database_name
     ```
+    Add JWT secret key:
+    ```txt
+    SetEnv JWT_SECRET_KEY your_secret_key
+    ```
+
+    Set hostname to use it in logic of media management:
+
+    ```txt
+    SetEnv HOST http://localhost/
+    ```
 5. Run Frontend using the next commands:
    
    Access to frontend folder
@@ -65,5 +75,3 @@ eLearning consist in a application for schools, teams or companys to organize th
    ```bash
    npm start
    ```
-
-   
