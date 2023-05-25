@@ -5,20 +5,14 @@ import {
   Text,
   IconButton,
   Button,
-  Stack,
   Collapse,
-  Icon,
   Link,
-  Popover,
-  PopoverTrigger,
-  PopoverContent,
   useColorModeValue,
   useBreakpointValue,
   useDisclosure,
   Center,
   Spacer,
   ButtonGroup,
-  StackDivider,
   Avatar,
   Menu,
   MenuButton,
@@ -27,15 +21,16 @@ import {
   MenuDivider,
 } from "@chakra-ui/react";
 
-import { GrMenu, GrClose, GrDown, GrFormNextLink } from "react-icons/gr";
+import { GrMenu, GrClose } from "react-icons/gr";
 import { useSession, signIn, signOut } from "next-auth/react";
 
 import MobileNav from "./navbar/MobileNav";
+import { DesktopNav } from "./navbar/DesktopNav";
 
 export default function NavBar({ siteConfig, menuItems }) {
   const { isOpen, onToggle } = useDisclosure();
   const { data: session } = useSession();
-
+  
   return (
     <Box>
       <Flex
@@ -91,8 +86,10 @@ export default function NavBar({ siteConfig, menuItems }) {
                 cursor={"pointer"}
                 minW={0}
               >
-                <Avatar size={"sm"} src={session?.user?.image} />
-                <Text ml={2}>{session?.user?.firstname}</Text>
+                <Flex direction={"row"} align={"center"} p={2}>
+                  <Avatar size={"sm"} src={session?.user?.image} />
+                  <Text ml={2} display={{ base: "none", md: "flex" }}>{session?.user?.firstname}</Text>
+                </Flex>
               </MenuButton>
               <MenuList
                 rounded={".25em"}
@@ -160,98 +157,4 @@ export default function NavBar({ siteConfig, menuItems }) {
   );
 }
 
-const DesktopNav = ({ menuItems }) => {
-  const linkColor = useColorModeValue("black", "gray.200");
-  const linkHoverColor = useColorModeValue("gray.800", "white");
-  const popoverContentBgColor = useColorModeValue("white", "gray.800");
 
-  return (
-    <Stack direction={"row"} spacing={4}>
-      {menuItems?.map((navItem) => (
-        <Box key={navItem?.label}>
-          <Popover trigger={"hover"} placement={"bottom-start"}>
-            <PopoverTrigger>
-              <Link
-                p={2}
-                as={NextLink}
-                href={navItem?.url ?? "#"}
-                fontWeight={500}
-                color={linkColor}
-                _hover={{
-                  textDecoration: "none",
-                  color: linkHoverColor,
-                }}
-              >
-                {navItem?.label}
-              </Link>
-            </PopoverTrigger>
-
-            {navItem?.children && (
-              <PopoverContent
-                borderColor="black"
-                border={"1px"}
-                boxShadow={".25em .25em 0 black"}
-                bg={popoverContentBgColor}
-                rounded={"sm"}
-                minW={"sm"}
-              >
-                <Stack
-                  p={2}
-                  divider={
-                    <StackDivider
-                      border={"1px 0px"}
-                      borderColor="gray.200"
-                      my={"0px"}
-                    />
-                  }
-                >
-                  {navItem.children.map((child) => (
-                    <DesktopSubNav key={child.label} {...child} />
-                  ))}
-                </Stack>
-              </PopoverContent>
-            )}
-          </Popover>
-        </Box>
-      ))}
-    </Stack>
-  );
-};
-
-const DesktopSubNav = ({ label, url, subLabel }) => {
-  return (
-    <Link
-      as={NextLink}
-      href={url}
-      role={"group"}
-      display={"block"}
-      p={4}
-      rounded={"sm"}
-      _hover={{ bg: useColorModeValue("green.50", "gray.900") }}
-    >
-      <Stack direction={"row"} align={"center"}>
-        <Box>
-          <Text
-            transition={"all .3s ease"}
-            _groupHover={{ color: "green.400" }}
-            fontWeight={500}
-          >
-            {label}
-          </Text>
-          <Text fontSize={"sm"}>{subLabel}</Text>
-        </Box>
-        <Flex
-          transition={"all .3s ease"}
-          transform={"translateX(-10px)"}
-          opacity={0}
-          _groupHover={{ opacity: "100%", transform: "translateX(0)" }}
-          justify={"flex-end"}
-          align={"center"}
-          flex={1}
-        >
-          <Icon color={"pink.400"} w={5} h={5} as={GrFormNextLink} />
-        </Flex>
-      </Stack>
-    </Link>
-  );
-};

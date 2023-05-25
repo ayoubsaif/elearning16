@@ -7,6 +7,7 @@ export async function getMenuItems(accessToken) {
     const res = await axios.get(`${API_URL}/api/menu`, { headers: { Authorization: `Bearer ${accessToken}` } } );
     return res.data;
   } catch (error) {
+    console.error(error);
     throw error;
   }
 }
