@@ -162,12 +162,25 @@ class CourseContentModel
             $this->description = $course['description'];
             $this->iframe = $course['iframe'];
             $this->thumbnail_url = $course['thumbnail_url'];
-            $this->course = $course['course'];
+            $this->course = intval($course['course']);
             $this->comments = (new CommentModel())->getAllByCourseContent($this->id);
             $this->create_date = $course['create_date'];
             $this->create_uid = $course['create_uid'];
 
             return true;
+        }
+
+        return false;
+    }
+
+    function getLastId()
+    {
+        $query = "SELECT id FROM course_content ORDER BY id DESC LIMIT 0,1";
+        $stmt = $this->conn->prepare($query);
+
+        if ($stmt->execute()) {
+            $course = $stmt->fetch(PDO::FETCH_ASSOC);
+            return intval($course['id']);
         }
 
         return false;
