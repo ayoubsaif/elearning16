@@ -1,7 +1,6 @@
 import {
   Box,
   Text,
-  Link,
   Flex,
   Image,
   VStack,
@@ -17,7 +16,7 @@ import {
 import { ChevronRightIcon } from "@chakra-ui/icons";
 
 import Layout from "@/layout/Layout";
-import CourseContentCard from "@/components/dataDisplay/CourseContentCard";
+import ContentCard from "@/components/dataDisplay/contentCard";
 
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "pages/api/auth/[...nextauth]";
@@ -26,7 +25,7 @@ import { getSiteConfig } from "@/services/siteConfig";
 import { getMenuItems } from "@/services/menuItems";
 import { getCourse } from "@/services/courses";
 import { useRouter } from "next/router";
-import NextLink from "next/link";
+import Link from "next/link";
 
 export default function CourseLandingPage(props) {
   const { siteConfig, menuItems, course } = props;
@@ -39,15 +38,15 @@ export default function CourseLandingPage(props) {
       <Flex direction="column" align="flex-start" my={4}>
         <Breadcrumb separator={<ChevronRightIcon color="gray.500" />}>
           <BreadcrumbItem>
-            <NextLink href="/" passHref>
+            <Link href="/">
               <Text>Inicio</Text>
-            </NextLink>
+            </Link>
           </BreadcrumbItem>
 
           <BreadcrumbItem>
-            <NextLink href="/courses" passHref>
+            <Link href="/courses">
               <Text>Cursos</Text>
-            </NextLink>
+            </Link>
           </BreadcrumbItem>
 
           <BreadcrumbItem isCurrentPage>
@@ -56,7 +55,7 @@ export default function CourseLandingPage(props) {
         </Breadcrumb>
       </Flex>
 
-      <Box px={4}>
+      <Box px={4} marginBottom={5}>
         <Heading as="h1" fontSize={{ base: "3xl", md: "4xl" }} my={4}>
           {course?.name}
         </Heading>
@@ -93,11 +92,13 @@ export default function CourseLandingPage(props) {
             Course Contents
           </Heading>
           <VStack spacing={5} maxWidth={'100%'}>
-            {course?.courseContents?.map((content) => {
-              return(
-                <CourseContentCard key={content?.id} {...content} slug={router?.query?.slug}/>
-              )
-            })}
+            {course?.courseContents?.map((content) => (
+              <ContentCard
+                key={content?.id}
+                slug={router?.query?.slug}
+                {...content}
+              />
+            ))}
           </VStack>
         </Box>
       </Box>
