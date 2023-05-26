@@ -186,10 +186,8 @@ class UserController
             $updateProfileValues = [];
             if (isset($_FILES["image"])) {
                 $Media = new MediaController(new MediaModel());
-                $Media->uploadImage($_FILES["image"], 'user', $user->id, 500, 500, "update");
-                $avatar = $Media->filename;
-                if ($avatar) {
-                    $user->avatar_url = $avatar;
+                if ($Media->uploadImage($_FILES["image"], 'users', $user->id, 500, 500, "update")) {
+                    $user->avatar_url = $Media->fileUrl;
                     $updateProfileValues[] = "avatar_url = '{$user->avatar_url}'";
                 }else{
                     http_response_code(503);
@@ -248,6 +246,16 @@ class UserController
             $user->getOne($user_id);
             return $user;
         } catch (Exception $e) {
+            return false;
+        }
+    }
+
+    public function getOne($id){
+        $user = new UserModel();
+        $user->id = $id;
+        if($user->getOne($id)){
+            return $user;
+        }else{ 
             return false;
         }
     }

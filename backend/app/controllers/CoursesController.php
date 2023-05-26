@@ -26,11 +26,9 @@ class CoursesController
         }
         $course = new CourseModel();
         $course->id = intval($course->getLastId())+1;
-        echo json_encode($_POST);
         if (isset($_FILES["thumbnail"])) {
             $Media = new MediaController();
-            $Media->uploadImage($_FILES["thumbnail"], 'course', $course->id, 800, 600);
-            echo $Media->fileUrl;
+            $Media->uploadImage($_FILES["thumbnail"], 'courses', $course->id, 800, 450);
             if(isset($Media->fileUrl)) {
                 $course->thumbnail_url = $Media->fileUrl;
             } else {
@@ -67,7 +65,9 @@ class CoursesController
             http_response_code(201);
             echo json_encode(array(
                 "message" => "Course was created",
+                "id" => intval($course->id),
                 "name" => $course->name,
+                "slug" => $course->slug,
                 "description" => $course->description,
                 "category" => $course->category,
                 "keywords" => $course->keywords,

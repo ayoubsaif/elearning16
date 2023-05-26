@@ -46,10 +46,10 @@ class MediaController
         }
     }
 
-    public function uploadImage($FILE, $model_name, $model_id, $heigth = 500, $width = 500, $method = "create")
+    public function uploadImage($file, $model_name, $model_id, $heigth = 500, $width = 500, $method = "create")
     {
-        $imageFile = $FILE["tmp_name"];
-        $this->mediaModel->filename = uniqid() . '_' . $FILE["name"];
+        $imageFile = $file["tmp_name"];
+        $this->mediaModel->filename = uniqid() . '_' . $file["name"];
         $this->mediaModel->model = $model_name;
         $this->mediaModel->model_id = $model_id;
 
@@ -63,7 +63,7 @@ class MediaController
             return;
         }
 
-        if ($FILE["size"] > 500000) {
+        if ($file["size"] > 500000) {
             http_response_code(503);
             echo json_encode(array("message" => "Sorry, your file is too large."));
             return;
