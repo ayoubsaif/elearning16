@@ -33,7 +33,7 @@ import { useRouter } from "next/router";
 
 export default function CreateCourse(props) {
   const { siteConfig, menuItems, categories } = props;
-  const Router = useRouter();
+  const router = useRouter();
   const [course, setCourse] = useState({
     ...Box,
     image: "/img/empty_course.png",
@@ -61,17 +61,18 @@ export default function CreateCourse(props) {
       try {
         const formData = new FormData();
         formData.append("name", values.name);
+        formData.append("slug", values.slug);
         formData.append("description", values.description);
         formData.append("category", values.category);
         formData.append("keywords", tags.join(","));
-        //formData.append("thumbnail", values.thumbnail);
+        formData.append("thumbnail", values.thumbnail);
 
         const newCourse = await createCourse(
           formData,
           session?.user?.accessToken
         );
         if (newCourse) {
-          Router.push(`/course/${newCourse.slug}-${newCourse.id}`);
+          router.push(`/course/${newCourse.slug}-${newCourse.id}`);
         }
       } catch (error) {
         console.error("Error creating course:", error);
