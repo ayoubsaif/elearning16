@@ -28,6 +28,7 @@ $router->get('/api/courses', 'CoursesController@getMany');
 $router->options('/api/courses/:slug', 'CoursesController@getSuccessResponse');
 $router->get('/api/courses/:slug', 'CoursesController@getManyByCategory');
 
+$router->options('/api/course', 'CoursesController@getSuccessResponse');
 $router->get('/api/course/:slug', 'CoursesController@getOne');
 $router->post('/api/course', 'CoursesController@create');
 
