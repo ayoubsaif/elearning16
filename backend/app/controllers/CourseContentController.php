@@ -2,50 +2,88 @@
 
 require_once 'app/controllers/CoursesController.php';
 require_once 'app/models/CourseContentModel.php';
+require_once 'app/models/CourseModel.php';
+
 require_once 'app/middleware/PermissionMiddleware.php';
 
 class CourseContentController
 {
-    public function create(){
-        $data = json_decode(file_get_contents("php://input"));
-
+    public function create()
+    {
         $PermissionMiddleware = new PermissionMiddleware();
-        $allowed = array('admin','teacher');
-
+        $allowed = array('admin', 'teacher');
         $UserPermmited = $PermissionMiddleware->handle($allowed);
-
         if (!$UserPermmited) {
             return;
         }
+        $data = $_POST;
+        if (empty($data)) {
+            http_response_code(400);
+            echo json_encode(array("message" => "No data provided"));
+            return;
+        }
+
+        $CourseContent = new CourseContentModel();
+        $CourseContent->id = intval($CourseContent->getLastId()) + 1;
 
         $course = new CoursesController();
-        $course = $course->checkIfExists($data->course);
+        $course = $course->checkIfExists(intval($data['course']));
 
         if (!$course) {
             http_response_code(404);
             echo json_encode(array("message" => "Course not found"));
             return;
+        }else{
+            $CourseContent->course = intval($data['course']);
         }
 
-        $courseContent = new CourseContentModel();
-        $courseContent->name = $data->name;
-        $courseContent->description = $data->description;
-        $courseContent->iframe = $data->iframe;
-        $courseContent->thumbnail_url = $data->thumbnail_url;
-        $courseContent->course = $data->course;
-        $courseContent->create_date = date('Y-m-d H:i:s');
-        $courseContent->create_uid = $UserPermmited->id;
+        if (isset($_FILES["thumbnail"])) {
+            $Media = new MediaController();
+            $Media->uploadImage($_FILES["thumbnail"], 'coursescontent', $CourseContent->id, 800, 450, 'create');
+            if (isset($Media->fileUrl)) {
+                $CourseContent->thumbnail_url = $Media->fileUrl;
+            } else {
+                http_response_code(503);
+                echo json_encode(array("message" => "Unable to upload thumbnail"));
+                return;
+            }
+        } else {
+            http_response_code(401);
+            echo json_encode(array("message" => "You need to upload a thumbnail"));
+            return;
+        }
 
-        if ($courseContent->create()) {
+        if ($data['name'] !== $CourseContent->name) {
+            $CourseContent->name = $data['name'];
+        }
+        if ($data['description'] !== $CourseContent->description) {
+            $CourseContent->description = $data['description'];
+        }
+        if ($data['iframe'] !== $CourseContent->iframe) {
+            $CourseContent->iframe = $data['iframe'];
+        }
+
+        $CourseContent->create_date = date('Y-m-d H:i:s');
+        $CourseContent->create_uid = $UserPermmited->id;
+
+        if ($CourseContent->create()) {
             http_response_code(201);
-            echo json_encode(array("message" => "Course content was created"));
+            echo json_encode(array(
+                "message" => "Course was created",
+                "id" => intval($CourseContent->id),
+                "name" => $CourseContent->name,
+                "description" => $CourseContent->description,
+                "iframe" => $CourseContent->iframe,
+                "create_date" => $CourseContent->create_date,
+                "create_uid" => $CourseContent->create_uid,
+                "thumbnail" => $CourseContent->thumbnail_url
+            ));
             return;
         } else {
             http_response_code(503);
-            echo json_encode(array("message" => "Unable to create course content"));
+            echo json_encode(array("message" => "Unable to create course"));
             return;
         }
-
     }
 
     public function getAll()
@@ -75,10 +113,11 @@ class CourseContentController
         }
     }
 
-    public function getOne($id){
+    public function getOne($id)
+    {
         try {
             $PermissionMiddleware = new PermissionMiddleware();
-            $allowed = array('admin','teacher','student');
+            $allowed = array('admin', 'teacher', 'student');
             $UserPermmited = $PermissionMiddleware->handle($allowed);
             if (!$UserPermmited) {
                 return;
@@ -86,31 +125,48 @@ class CourseContentController
 
             $courseContent = new CourseContentModel();
             $courseContent->id = $id;
-            $courseContent->getOne($id);
-            http_response_code(200);
-            echo json_encode($courseContent);
+            if ($courseContent->getOne()) {
+                $created_uid = (new UserController())->getOne($courseContent->create_uid);
+                $course = new CourseModel;
+                $course->id = $courseContent->course;
+                $course->getOne();
+                http_response_code(200);
+                echo json_encode(array(
+                    "id" => $courseContent->id,
+                    "name" => $courseContent->name,
+                    "description" => $courseContent->description,
+                    "iframe" => $courseContent->iframe,
+                    "thumbnail_url" => $courseContent->thumbnail_url,
+                    "course" => !is_null($course->id) ? array(
+                        "name" => $course->name,
+                        "slug" => $course->slug . "-" . $course->id,
+                    ) : null,
+                    "create_date" => $courseContent->create_date,
+                    "create_uid" => $created_uid,
+                ));
+            } else {
+                http_response_code(404);
+                echo json_encode(array("message" => "Course content not found"));
+            }
         } catch (Exception $e) {
             http_response_code(401);
             echo json_encode(array("message" => "Unauthorized"));
         }
-
     }
 
-    public function update(){
-
+    public function update()
+    {
     }
 
-    public function delete(){
-
+    public function delete()
+    {
     }
 
-    public function getAllAttachments(){
-
+    public function getAllAttachments()
+    {
     }
 
-    public function getAllComments(){
-
+    public function getAllComments()
+    {
     }
-
 }
-
