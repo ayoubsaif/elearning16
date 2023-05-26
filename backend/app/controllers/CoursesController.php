@@ -171,6 +171,14 @@ class CoursesController
 
     public function getOne($slug)
     {
+        $PermissionMiddleware = new PermissionMiddleware();
+        $allowed = array('admin','teacher','student');
+        $UserPermmited = $PermissionMiddleware->handle($allowed);
+
+        if (!$UserPermmited) {
+            return;
+        }
+        
         try {
             $course = new CourseModel();
             $slugArray = explode("-", $slug);
