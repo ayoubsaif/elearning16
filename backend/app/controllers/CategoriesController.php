@@ -156,4 +156,9 @@ class CategoriesController
         }
     }
 
+    function getSuccessResponse(){
+        http_response_code(200);
+        echo json_encode(array("message" => "Category was updated"));
+        return;
+    }
 }
