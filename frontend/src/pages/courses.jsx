@@ -87,7 +87,7 @@ export default function Home(props) {
         }}
       />
       <Layout siteConfig={siteConfig} menuItems={menuItems}>
-        <Heading as="h1" size="2xl" textAlign="center" my={1}>
+        <Heading as="h1" size="2xl" textAlign="center" my={2}>
           Cursos
         </Heading>
         {loading ? (
