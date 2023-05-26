@@ -41,7 +41,7 @@ export default function Home(props ) {
           </BreadcrumbItem>
 
           <BreadcrumbItem>
-            <Link href={`/courses/${content?.course?.slug}`}>
+            <Link href={`/course/${content?.course?.slug}`}>
               <Text>{content?.course?.name}</Text>
             </Link>
           </BreadcrumbItem>
@@ -52,7 +52,7 @@ export default function Home(props ) {
         </Breadcrumb>
       </Flex>
 
-      <Box px={4} marginBottom={5}>
+      <Box px={4} marginBottom={5} width={"full"}>
         <Heading as="h1" fontSize={{ base: "3xl", md: "4xl" }} my={4}>
           {content?.name}
         </Heading>
