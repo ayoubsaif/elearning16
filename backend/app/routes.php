@@ -44,6 +44,9 @@ $router->post('/api/course-content', 'CourseContentController@create');
 $router->get('/api/course-content', 'CourseContentController@getAll');
 $router->get('/api/course-content/:id', 'CourseContentController@getOne');
 
+$router->options('/api/content-progress/:id', 'CourseContentController@getSuccessResponse');
+$router->post('/api/content-progress/:id', 'CourseContentController@updateContentProgress');
+
 # Attachments
 $router->get('/api/attachments', 'AttachmentsController@getAll');
 
