@@ -3,6 +3,8 @@
 require_once 'app/config/database.php';
 require_once 'app/models/CommentModel.php';
 
+require_once 'app/models/ContentProgressModel.php';
+
 class CourseContentModel
 {
     private $conn;
@@ -134,11 +136,19 @@ class CourseContentModel
         while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
             extract($row);
 
+            $ContentProgress = new ContentProgressModel();
+            $ContentProgress->user = $_SESSION['user'];
+            $ContentProgress->content = intval($id);
+            $ContentProgress->getOne();
+
             $course_item = array(
                 "id" => $id,
                 "name" => $name,
+                "description" => $description,
                 "thumbnail_url" => $thumbnail_url,
-                "create_date" => $create_date
+                "create_date" => $create_date,
+                "played" => $ContentProgress->played,
+                "progress" => $ContentProgress->progress,
             );
 
             array_push($courses_arr, $course_item);
