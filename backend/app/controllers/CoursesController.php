@@ -26,9 +26,11 @@ class CoursesController
         }
         $course = new CourseModel();
         $course->id = intval($course->getLastId())+1;
+        echo json_encode($_POST);
         if (isset($_FILES["thumbnail"])) {
             $Media = new MediaController();
             $Media->uploadImage($_FILES["thumbnail"], 'course', $course->id, 800, 600);
+            echo $Media->fileUrl;
             if(isset($Media->fileUrl)) {
                 $course->thumbnail_url = $Media->fileUrl;
             } else {
@@ -36,6 +38,10 @@ class CoursesController
                 echo json_encode(array("message" => "Unable to upload thumbnail"));
                 return;
             }
+        }else{
+            http_response_code(401);
+            echo json_encode(array("message" => "You need to upload a thumbnail"));
+            return;
         }
 
         if ($data['name'] !== $course->name) {
@@ -59,7 +65,17 @@ class CoursesController
 
         if ($course->create()) {
             http_response_code(201);
-            echo json_encode(array("message" => "Course was created"));
+            echo json_encode(array(
+                "message" => "Course was created",
+                "name" => $course->name,
+                "description" => $course->description,
+                "category" => $course->category,
+                "keywords" => $course->keywords,
+                "courseContents" => $course->courseContents,
+                "create_date" => $course->create_date,
+                "create_uid" => $course->create_uid,
+                "thumbnail_url" => $course->thumbnail_url
+            ));
             return;
         } else {
             http_response_code(503);

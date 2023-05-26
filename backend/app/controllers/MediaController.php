@@ -46,14 +46,14 @@ class MediaController
         }
     }
 
-    public function uploadImage($FILE, $model_name, $model_id, $heigth = 500, $width = 500, $delete_old = false)
+    public function uploadImage($FILE, $model_name, $model_id, $heigth = 500, $width = 500, $method = "create")
     {
         $imageFile = $FILE["tmp_name"];
         $this->mediaModel->filename = uniqid() . '_' . $FILE["name"];
         $this->mediaModel->model = $model_name;
         $this->mediaModel->model_id = $model_id;
 
-        $target_dir = "uploads/avatar";
+        $target_dir = "uploads/".$model_name;
         $this->mediaModel->filepath = $target_dir . '/' . $this->mediaModel->filename;
         $this->mediaModel->filetype = strtolower(pathinfo($this->mediaModel->filepath, PATHINFO_EXTENSION));
 
@@ -94,6 +94,9 @@ class MediaController
         imagedestroy($originalImage);
         imagedestroy($resizedImage);
 
+        if ($method == "update") {
+            $this->mediaModel->removeMedia($this->mediaModel->model, $this->mediaModel->model_id);
+        }
         // check if there a file in directory before remove
         $oldFilename = $this->mediaModel->getOneByModel($this->mediaModel->model, $this->mediaModel->model_id);
 
@@ -103,6 +106,7 @@ class MediaController
 
         if ($this->mediaModel->uploadMedia()) {
             $this->fileUrl = getenv("HOST") . $this->mediaModel->filepath;
+            return true;
         }
     }
 
