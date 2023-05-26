@@ -17,7 +17,6 @@ $router->post('/auth/google', 'UserController@googleAuth');
 
 # Profile
 $router->options('/api/profile', 'UserController@getSuccessResponse');
-
 $router->get('/api/profile', 'UserController@getMyProfileInfo');
 $router->post('/api/profile', 'UserController@updateMyProfileInfo');
 
@@ -36,6 +35,7 @@ $router->post('/api/course', 'CoursesController@create');
 $router->get('/api/categories', 'CategoriesController@getAll');
 $router->get('/api/category', 'CategoriesController@getOne');
 
+$router->options('/api/category', 'CategoriesController@getSuccessResponse');
 $router->put('/api/category/:id', 'CategoriesController@update');
 $router->post('/api/category', 'CategoriesController@create');
 
