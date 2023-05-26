@@ -228,44 +228,49 @@ class CourseModel
     # Get one course, query by slug-id
     function getOne()
     {
-        $query = "SELECT * FROM courses WHERE id = :id LIMIT 1";
+        try{
+            $query = "SELECT * FROM courses WHERE id = :id LIMIT 1";
 
-        $stmt = $this->conn->prepare($query);
-        $stmt->bindParam(":id", $this->id);
-        $stmt->execute();
-        $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-        if (!empty($data[0])) {
-            $CreateUid = new UserModel();
-            $CreateUid->getOne($data[0]['create_uid']);
-            $Category = new CategoryModel();
-            $Category->getOne($data[0]['category']);
-            $CourseContent = new CourseContentModel();
-            $CourseContent->course = $this->id;
-
-            $this->id = $data[0]['id'];
-            $this->name = $data[0]['name'];
-            $this->description = $data[0]['description'];
-            $this->category = !is_null($Category->id) ? array(
-                'id' => $Category->id,
-                'name' => $Category->name,
-                'slug' => $Category->slug,
-            ) : null;
-            $this->courseContents = $CourseContent->getAll();
-            $this->keywords = explode(",", $data[0]['keywords']);
-            $this->create_date = $data[0]['create_date'];
-            $this->create_uid = !is_null($CreateUid->id) ? array(
-                'id' => $CreateUid->id,
-                'name' => $CreateUid->display_name,
-                'firstname' => $CreateUid->firstname,
-                'lastname' => $CreateUid->lastname,
-                'image' => $CreateUid->avatar_url,
-            ) : null;
-            $this->thumbnail_url = $data[0]['thumbnail_url'];
-            return true;
+            $stmt = $this->conn->prepare($query);
+            $stmt->bindParam(":id", $this->id);
+            $stmt->execute();
+            $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    
+            if (!empty($data[0])) {
+                $CreateUid = new UserModel();
+                $CreateUid->getOne($data[0]['create_uid']);
+                $Category = new CategoryModel();
+                $Category->getOne($data[0]['category']);
+                $CourseContent = new CourseContentModel();
+                $CourseContent->course = $this->id;
+    
+                $this->id = $data[0]['id'];
+                $this->name = $data[0]['name'];
+                $this->slug = $data[0]['slug'];
+                $this->description = $data[0]['description'];
+                $this->category = !is_null($Category->id) ? array(
+                    'id' => $Category->id,
+                    'name' => $Category->name,
+                    'slug' => $Category->slug,
+                ) : null;
+                $this->courseContents = $CourseContent->getAll();
+                $this->keywords = explode(",", $data[0]['keywords']);
+                $this->create_date = $data[0]['create_date'];
+                $this->create_uid = !is_null($CreateUid->id) ? array(
+                    'id' => $CreateUid->id,
+                    'name' => $CreateUid->display_name,
+                    'firstname' => $CreateUid->firstname,
+                    'lastname' => $CreateUid->lastname,
+                    'image' => $CreateUid->avatar_url,
+                ) : null;
+                $this->thumbnail_url = $data[0]['thumbnail_url'];
+                return true;
+            }
+    
+            return False;
+        }catch(Exception $e){
+            return False;
         }
-
-        return False;
     }
 
     # Method to check if slug already exists
