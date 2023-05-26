@@ -25,6 +25,8 @@ class PermissionMiddleware extends Middleware
                     $user = $user->validateToken($token);
                     if ($user) {
                         if (in_array($user->role, $allowed)) {
+                            session_start();
+                            $_SESSION['user'] = intval($user->id);
                             return $user;
                         } else {
                             http_response_code(403);
