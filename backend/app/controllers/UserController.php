@@ -184,10 +184,9 @@ class UserController
                 return;
             }
             $updateProfileValues = [];
-
             if (isset($_FILES["image"])) {
                 $Media = new MediaController(new MediaModel());
-                $Media->uploadImage($_FILES["image"], 'user', $user->id, 500, 500);
+                $Media->uploadImage($_FILES["image"], 'user', $user->id, 500, 500, "update");
                 $avatar = $Media->filename;
                 if ($avatar) {
                     $user->avatar_url = $avatar;
