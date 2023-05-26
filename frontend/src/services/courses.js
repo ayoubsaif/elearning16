@@ -89,7 +89,7 @@ export function getCourseContent(slug) {
 
 export async function createCourse(data, accessToken) {
   try {
-    const res = await axios.get(`/api/courses/`, data,
+    const res = await axios.post(`${API_PUBLIC_URL}/api/course`, data,
       { headers: { 
         "Content-Type": "multipart/form-data",
         Authorization: `Bearer ${accessToken}`

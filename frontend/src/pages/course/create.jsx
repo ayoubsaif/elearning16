@@ -29,9 +29,11 @@ import { getProfile } from "@/services/profile";
 import { getCategories } from "@/services/category";
 import { getServerSession } from "next-auth/next";
 import { useSession } from "next-auth/react";
+import { useRouter } from "next/router";
 
 export default function CreateCourse(props) {
   const { siteConfig, menuItems, categories } = props;
+  const Router = useRouter();
   const [course, setCourse] = useState({
     ...Box,
     image: "/img/empty_course.png",
@@ -58,11 +60,11 @@ export default function CreateCourse(props) {
       console.log("Form submitted!", values);
       try {
         const formData = new FormData();
-        formData.append("thumbnail", values.thumbnail);
         formData.append("name", values.name);
         formData.append("description", values.description);
         formData.append("category", values.category);
         formData.append("keywords", tags.join(","));
+        //formData.append("thumbnail", values.thumbnail);
 
         const newCourse = await createCourse(
           formData,
@@ -123,6 +125,7 @@ export default function CreateCourse(props) {
           justify={"center"}
           bgSize="cover"
           bgPosition="center"
+          paddingBottom={10}
         >
           <Stack spacing={4} mx={"auto"} py={0} px={0}>
             <Stack align={"center"}>
@@ -227,7 +230,7 @@ export default function CreateCourse(props) {
                     </Box>
                     <Stack spacing={10}>
                       <FormControl isInvalid={formik.errors.image}>
-                        <FormLabel>Imagen del curso</FormLabel>
+                        <FormLabel>Imagen del curso (Usar Imágenes en 16/9)</FormLabel>
                         <HStack>
                           <Box textAlign="center" position="relative">
                             <Image
@@ -238,6 +241,7 @@ export default function CreateCourse(props) {
                               height={150}
                               objectFit="cover"
                               borderRadius="md"
+                              aspectRatio={16 / 9}
                             />
                             <Box
                               position="absolute"

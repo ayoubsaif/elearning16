@@ -39,7 +39,7 @@ export default function CourseCard(props) {
           />
         </AspectRatio>
         <Box p={4} minHeight={"8em"} maxHeight="10em">
-          <Heading color={"black"} fontSize={"2xl"} noOfLines={1}>
+          <Heading color={"black"} fontSize={"2xl"} noOfLines={1} lineHeight={1.5}>
             {name}
           </Heading>
           <Text color={"gray.500"} noOfLines={2}>

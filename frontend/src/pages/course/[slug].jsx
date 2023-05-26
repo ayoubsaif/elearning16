@@ -25,10 +25,12 @@ import { authOptions } from "pages/api/auth/[...nextauth]";
 import { getSiteConfig } from "@/services/siteConfig";
 import { getMenuItems } from "@/services/menuItems";
 import { getCourse } from "@/services/courses";
+import { useRouter } from "next/router";
 import NextLink from "next/link";
 
 export default function CourseLandingPage(props) {
   const { siteConfig, menuItems, course } = props;
+  const router = useRouter();
 
   const isMobile = useBreakpointValue({ base: true, md: false });
 
@@ -38,18 +40,18 @@ export default function CourseLandingPage(props) {
         <Breadcrumb separator={<ChevronRightIcon color="gray.500" />}>
           <BreadcrumbItem>
             <NextLink href="/" passHref>
-              <BreadcrumbLink>Inicio</BreadcrumbLink>
+              <Text>Inicio</Text>
             </NextLink>
           </BreadcrumbItem>
 
           <BreadcrumbItem>
             <NextLink href="/courses" passHref>
-              <BreadcrumbLink>Cursos</BreadcrumbLink>
+              <Text>Cursos</Text>
             </NextLink>
           </BreadcrumbItem>
 
           <BreadcrumbItem isCurrentPage>
-            <BreadcrumbLink>{course?.name}</BreadcrumbLink>
+            <Text>{course?.name}</Text>
           </BreadcrumbItem>
         </Breadcrumb>
       </Flex>
@@ -58,11 +60,11 @@ export default function CourseLandingPage(props) {
         <Heading as="h1" fontSize={{ base: "3xl", md: "4xl" }} my={4}>
           {course?.name}
         </Heading>
-
-        <Text fontSize={{ base: "md", md: "lg" }} mb={4}>
-          Creado por <strong>{course?.teacher?.name}</strong>
-        </Text>
-
+        {course?.create_uid &&
+          <Text fontSize={{ base: "md", md: "lg" }} mb={4}>
+            Creado por <strong>{course?.create_uid?.name}</strong>
+          </Text>
+        }
         <Flex direction={isMobile ? "column" : "row"} align="flex-start" mb={8}>
           <Box
             w={isMobile ? "full" : 400}
@@ -81,11 +83,8 @@ export default function CourseLandingPage(props) {
               objectFit="cover"
             />
           </Box>
-
           <VStack align="flex-start" spacing={4} mb={4} flex="1">
             <Text fontSize={{ base: "md", md: "lg" }}>{course?.description}</Text>
-
-            <Button>Enroll Now</Button>
           </VStack>
         </Flex>
 
@@ -93,10 +92,13 @@ export default function CourseLandingPage(props) {
           <Heading as="h2" fontSize={{ base: "xl", md: "2xl" }} my={4}>
             Course Contents
           </Heading>
-
-          {course?.courseContents?.map((content) => (
-            <CourseContentCard key={content?.id} {...content} />
-          ))}
+          <VStack spacing={5} maxWidth={'100%'}>
+            {course?.courseContents?.map((content) => {
+              return(
+                <CourseContentCard key={content?.id} {...content} slug={router?.query?.slug}/>
+              )
+            })}
+          </VStack>
         </Box>
       </Box>
     </Layout>

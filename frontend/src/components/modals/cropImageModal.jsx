@@ -1,11 +1,9 @@
-import React, { use, useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 import AvatarEditor from "react-avatar-editor";
 import {
   Box,
   Button,
   Center,
-  FormControl,
-  FormErrorMessage,
   Modal,
   ModalBody,
   ModalCloseButton,
@@ -17,7 +15,6 @@ import {
   SliderTrack,
   SliderFilledTrack,
   SliderThumb,
-  useDisclosure,
 } from "@chakra-ui/react";
 import { useEffect } from "react";
 

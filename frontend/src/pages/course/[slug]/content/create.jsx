@@ -25,7 +25,7 @@ export default function CreateCourse(props) {
 
   return (
     <>
-          <NextSeo
+      <NextSeo
         title={`${siteConfig?.title} - Crear contenido`}
         description="Crear contenido"
         canonical={`${siteConfig?.siteUrl}/create-course`}
