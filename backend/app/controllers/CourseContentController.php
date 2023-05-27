@@ -290,7 +290,7 @@ class CourseContentController
         if ($ContentProgress->checkIfExists())
         {
             if ($ContentProgress->update()) {
-                http_response_code(201);
+                http_response_code(200);
                 echo json_encode(array(
                     "message" => "Content progress was updated",
                     "content" => intval($ContentProgress->content),
