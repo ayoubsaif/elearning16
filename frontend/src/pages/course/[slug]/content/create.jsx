@@ -2,7 +2,7 @@ import { useState, useCallback, useRef, useEffect } from "react";
 import { NextSeo } from "next-seo";
 import * as Yup from "yup";
 import Layout from "@/layout/Layout";
-import { BsPlusCircle, BsPencilSquare } from "react-icons/bs";
+import { BsPlusLg, BsPencilSquare } from "react-icons/bs";
 import dynamic from "next/dynamic";
 const ReactPlayer = dynamic(() => import("react-player"), { ssr: false });
 import {
@@ -72,9 +72,7 @@ export default function CreateCourseContent(props) {
           session?.user?.accessToken
         );
         if (newContent) {
-          console.log("Content created:", newContent);
-          console.log('course: ', course)
-          //router.push(`/course/${course?.slug}/content/${newContent.id}`);
+          router.push(`/course/${course?.slug}/content/${newContent.id}`);
         }
       } catch (error) {
         console.error("Error creating content:", error);
@@ -105,7 +103,7 @@ export default function CreateCourseContent(props) {
   return (
     <>
       <NextSeo
-        title={`${siteConfig?.title} - Crear contenido para ${course?.name}`}
+        title={`Crear contenido para ${course?.name} - ${siteConfig?.title}`}
         description="Crea tu propio curso"
         canonical={`${siteConfig?.siteUrl}/course/${course?.slug}/content/create`}
         openGraph={{
@@ -234,7 +232,7 @@ export default function CreateCourseContent(props) {
                     </Stack>
                     <Stack spacing={10} pt={2}>
                       <Button
-                        leftIcon={<BsPlusCircle />}
+                        leftIcon={<BsPlusLg />}
                         variant="primary"
                         type="submit"
                       >

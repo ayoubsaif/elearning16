@@ -8,9 +8,19 @@ import {
   Breadcrumb,
   BreadcrumbItem,
   AspectRatio,
+  HStack,
+  IconButton,
+  AlertDialog,
+  AlertDialogBody,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogContent,
+  AlertDialogOverlay,
+  useDisclosure,
+  Button
 } from "@chakra-ui/react";
 import Link from "next/link";
-
+import { BsTrash3, BsPencilSquare } from "react-icons/bs";
 const ReactPlayer = dynamic(() => import("react-player"), { ssr: false });
 import { ChevronRightIcon } from "@chakra-ui/icons";
 import { getServerSession } from "next-auth/next";
@@ -19,14 +29,18 @@ import Layout from "@/layout/Layout";
 import { getSiteConfig } from "@/services/siteConfig";
 import { getMenuItems } from "@/services/menuItems";
 import { getCourseContentById } from "@/services/courseContent";
-import { formatDistanceToNow, set } from "date-fns";
+import { formatDistanceToNow } from "date-fns";
 import { es } from "date-fns/locale";
+import { NextSeo } from "next-seo";
 
 import { updateContentProgress } from "@/services/courseContent";
 import { useSession } from "next-auth/react";
 
 export default function Home(props) {
   const { siteConfig, menuItems, content } = props;
+  const { isOpen, onOpen, onClose } = useDisclosure()
+  const cancelRef = useRef();
+
   const { data: session } = useSession();
   const createdDate = formatDistanceToNow(new Date(content?.create_date), {
     locale: es,
@@ -62,63 +76,126 @@ export default function Home(props) {
   }, [currentTime, onDuration]);
 
   return (
-    <Layout siteConfig={siteConfig} menuItems={menuItems}>
-      <Flex direction="column" align="flex-start" my={4}>
-        <Breadcrumb separator={<ChevronRightIcon color="gray.500" />}>
-          <BreadcrumbItem>
-            <Link href="/">
-              <Text>Inicio</Text>
-            </Link>
-          </BreadcrumbItem>
+    <>
+      <NextSeo
+        title={`${content?.name} - ${siteConfig?.title}`}
+        description={`${content?.description}`}
+        canonical={`${siteConfig?.siteUrl}/course/${content?.course?.slug}/content/${content?.id}`}
+        openGraph={{
+          url: `${siteConfig?.siteUrl}/course/${content?.course?.slug}/content/${content?.id}`,
+          title: `${content?.name}`,
+          description: `${content?.description}`
+        }}
+      />
+      <Layout siteConfig={siteConfig} menuItems={menuItems}>
+        <Flex direction="column" align="flex-start" my={4}>
+          <Breadcrumb separator={<ChevronRightIcon color="gray.500" />}>
+            <BreadcrumbItem>
+              <Link href="/">
+                <Text>Inicio</Text>
+              </Link>
+            </BreadcrumbItem>
 
-          <BreadcrumbItem>
-            <Link href="/courses">
-              <Text>Cursos</Text>
-            </Link>
-          </BreadcrumbItem>
+            <BreadcrumbItem>
+              <Link href="/courses">
+                <Text>Cursos</Text>
+              </Link>
+            </BreadcrumbItem>
 
-          <BreadcrumbItem>
-            <Link href={`/course/${content?.course?.slug}`}>
-              <Text>{content?.course?.name}</Text>
-            </Link>
-          </BreadcrumbItem>
+            <BreadcrumbItem>
+              <Link href={`/course/${content?.course?.slug}`}>
+                <Text>{content?.course?.name}</Text>
+              </Link>
+            </BreadcrumbItem>
 
-          <BreadcrumbItem isCurrentPage>
-            <Text>{content?.name}</Text>
-          </BreadcrumbItem>
-        </Breadcrumb>
-      </Flex>
+            <BreadcrumbItem isCurrentPage>
+              <Text>{content?.name}</Text>
+            </BreadcrumbItem>
+          </Breadcrumb>
+        </Flex>
 
-      <Box px={4} marginBottom={5} width={"full"}>
-        <Heading as="h1" fontSize={{ base: "3xl", md: "4xl" }} my={4}>
-          {content?.name}
-        </Heading>
-        <Box paddingTop={10}>
-          <AspectRatio maxW="100%" ratio={16 / 9}>
-            <ReactPlayer
-              ref={playerRef}
-              url={content?.iframe}
-              controls
-              onProgress={handleProgress}
-              onDuration={setOnDuration}
-              width={"full"}
-              height={"full"}
-            />
-          </AspectRatio>
-          <Text paddingTop={10}>
-            Publicado hace {createdDate}{" "}
-            {content?.create_uid?.name && (
+        <Box px={4} marginBottom={5} width={"full"}>
+          <HStack spacing={4} align="center">
+            <Heading as="h1" fontSize={{ base: "3xl", md: "4xl" }} my={4}>
+              {content?.name}
+            </Heading>
+            {content?.canEdit &&
               <>
-                {"por"} <strong>{content?.create_uid?.name}</strong>
+                <Link href={`/course/${content?.course?.slug}/content/${content?.id}/edit`}>
+                  <IconButton
+                    icon={<BsPencilSquare />}
+                    aria-label="Edit course"
+                    rounded={"full"}
+                    variant={'outlined'}
+                  />
+                </Link>
+                <IconButton
+                  icon={<BsTrash3 />}
+                  aria-label="Delete course"
+                  rounded={"full"}
+                  variant={'red'}
+                  onClick={onOpen}
+                />
+                <AlertDialog
+                  isOpen={isOpen}
+                  leastDestructiveRef={cancelRef}
+                  onClose={onClose}
+                >
+                  <AlertDialogOverlay>
+                    <AlertDialogContent
+                      border='1px solid black'
+                      transform="translate(-.25rem, -.25rem)"
+                      boxShadow=".25rem .25rem 0 black"
+                    >
+                      <AlertDialogHeader fontSize='lg' fontWeight='bold'>
+                        Eliminar contenido {content?.name}
+                      </AlertDialogHeader>
+
+                      <AlertDialogBody>
+                        ¿Estás seguro? No podrás revertir esta acción después.
+                      </AlertDialogBody>
+
+                      <AlertDialogFooter>
+                        <Button ref={cancelRef} onClick={onClose}>
+                          Cancelar
+                        </Button>
+                        <Button colorScheme='red' onClick={onClose} ml={3}>
+                          Elimiar
+                        </Button>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialogOverlay>
+                </AlertDialog>
               </>
-            )}
-          </Text>
-          <Text paddingTop={10} paddingBottom={10}>
-            {content?.description}
-          </Text>
+            }
+          </HStack>
+          <Box paddingTop={10}>
+            <AspectRatio maxW="100%" ratio={16 / 9}>
+              <ReactPlayer
+                ref={playerRef}
+                url={content?.iframe}
+                controls
+                onProgress={handleProgress}
+                onDuration={setOnDuration}
+                width={"full"}
+                height={"full"}
+              />
+            </AspectRatio>
+            <Text paddingTop={10}>
+              Publicado hace {createdDate}{" "}
+              {content?.create_uid?.name && (
+                <>
+                  {"por"} <strong>{content?.create_uid?.name}</strong>
+                </>
+              )}
+            </Text>
+            <Text paddingTop={10} paddingBottom={10}>
+              {content?.description}
+            </Text>
+          </Box>
         </Box>
-      </Box>
-    </Layout>
+      </Layout>
+    </>
   );
 }
 

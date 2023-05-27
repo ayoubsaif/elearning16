@@ -43,7 +43,7 @@ export default function CallToActionWithIllustration(props) {
             encuentre disponible.
           </Text>
           <Stack spacing={6} direction={"row"}>
-            <NextLink href="/" passhref>
+            <NextLink href="/">
               <Button variant="primary" px={6}>
                 Volver al Inicio
               </Button>

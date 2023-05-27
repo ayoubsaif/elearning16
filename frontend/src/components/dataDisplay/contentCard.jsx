@@ -12,11 +12,11 @@ import {
 } from "@chakra-ui/react";
 
 export default function ContentCard(props) {
-  const { name, description, thumbnail_url, id, slug } = props;
+  const { name, description, thumbnail, id, slug } = props;
 
   return (
     <>
-      {name && thumbnail_url && id && slug && (
+      {name && thumbnail && id && slug && (
         <Box
           rounded={"md"}
           overflow={"hidden"}
@@ -34,7 +34,7 @@ export default function ContentCard(props) {
             <HStack spacing={2}>
               <AspectRatio height="100%" minWidth={"160px"} ratio={16 / 9}>
                 <Img
-                  src={thumbnail_url}
+                  src={thumbnail}
                   objectFit={"cover"}
                   height="full"
                   width="full"

@@ -11,7 +11,7 @@ import {
 import { BsArrowUpRight } from "react-icons/bs";
 
 export default function CourseCard(props) {
-  const { name, description, thumbnail_url, slug, id } = props.course;
+  const { name, description, thumbnail, slug, id } = props.course;
   return (
     <Box
       w={"full"}
@@ -30,7 +30,7 @@ export default function CourseCard(props) {
       <NextLink href={`/course/${slug}-${id}`}>
         <AspectRatio maxW='400px' ratio={16 / 9}>
           <Img
-            src={thumbnail_url}
+            src={thumbnail}
             roundedTop={".25em"}
             objectFit="cover"
             h="full"

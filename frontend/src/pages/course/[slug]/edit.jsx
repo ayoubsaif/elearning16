@@ -2,7 +2,7 @@ import { useState, useCallback } from "react";
 import { NextSeo } from "next-seo";
 import * as Yup from "yup";
 import Layout from "@/layout/Layout";
-import { BsPlusLg, BsPencilSquare } from "react-icons/bs";
+import { BsSave, BsPencilSquare } from "react-icons/bs";
 import {
   Flex,
   Box,
@@ -21,9 +21,9 @@ import {
 import ChakraTagInput from "@/components/forms/ChakraTagInput";
 import Input from "@/components/forms/input";
 import { useFormik } from "formik";
-import { createCourse } from "@/services/courses";
 import { getSiteConfig } from "@/services/siteConfig";
 import { getMenuItems } from "@/services/menuItems";
+import { getCourse, editCourse } from "@/services/courses";
 import { authOptions } from "pages/api/auth/[...nextauth]";
 import { getProfile } from "@/services/profile";
 import { getCategories } from "@/services/category";
@@ -31,14 +31,13 @@ import { getServerSession } from "next-auth/next";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 
-export default function CreateCourse(props) {
-  const { siteConfig, menuItems, categories } = props;
+export default function EditCourse(props) {
+  const { siteConfig, menuItems, categories, initialData } = props;
   const router = useRouter();
   const [course, setCourse] = useState({
-    ...Box,
-    thumbnail: "/img/empty_course.png",
+    ...initialData
   });
-  const [tags, setTags] = useState([]);
+  const [tags, setTags] = useState(course?.keywords || []);
   const { data: session } = useSession();
 
   const formik = useFormik({
@@ -47,8 +46,8 @@ export default function CreateCourse(props) {
       slug: course?.slug || "",
       description: course?.description || "",
       category: course?.category || "",
-      keywords: null,
-      thumbnail: null,
+      keywords: tags,
+      thumbnail: course?.thumbnail || null,
     },
     validationSchema: Yup.object({
       name: Yup.string().required("Nombre es obligatorio"),
@@ -67,13 +66,13 @@ export default function CreateCourse(props) {
         formData.append("keywords", tags.join(","));
         formData.append("thumbnail", values.thumbnail);
 
-        const newCourse = await createCourse(
+        const newCourse = await editCourse(
+          course?.id,
           formData,
           session?.user?.accessToken
         );
         if (newCourse) {
-          console.log("Course created:", newCourse);
-          //router.push(`/course/${newCourse.slug}-${newCourse.id}`);
+          router.push(`/course/${course?.slug}`);
         }
       } catch (error) {
         console.error("Error creating course:", error);
@@ -111,13 +110,13 @@ export default function CreateCourse(props) {
   return (
     <>
       <NextSeo
-        title={`Crear curso - ${siteConfig?.title}`}
+        title={`Editar ${course?.name} - ${siteConfig?.title}`}
         description="Crea tu propio curso"
-        canonical={`${siteConfig?.siteUrl}/course/create`}
+        canonical={`${siteConfig?.siteUrl}/course/${course?.slug}/edit`}
         openGraph={{
-          url: `${siteConfig?.siteUrl}/course/create`,
-          title: "Crear curso",
-          description: "Crear curso",
+          url: `${siteConfig?.siteUrl}/course/${course?.slug}/edit`,
+          title: `Editar ${course?.name}`,
+          description: `Editar ${course?.name}`,
         }}
       />
       <Layout siteConfig={siteConfig} menuItems={menuItems}>
@@ -137,7 +136,7 @@ export default function CreateCourse(props) {
                 color={"black"}
                 mt={10}
               >
-                Crear un nuevo curso
+                Editar curso {course?.name}
               </Heading>
             </Stack>
             <HStack>
@@ -280,11 +279,11 @@ export default function CreateCourse(props) {
                     </Stack>
                     <Stack spacing={10} pt={2}>
                       <Button
-                        leftIcon={<BsPlusLg />}
+                        leftIcon={<BsSave />}
                         variant="primary"
                         type="submit"
                       >
-                        Crear curso
+                        Guardar cambios
                       </Button>
                     </Stack>
                   </Stack>
@@ -313,12 +312,14 @@ export async function getServerSideProps(context) {
   const menuItems = await getMenuItems(session?.user?.accessToken);
   const profileInfo = await getProfile(session?.user?.accessToken);
   const categories = await getCategories(session?.user?.accessToken);
+  const initialData = await getCourse(context?.query?.slug ,session?.user?.accessToken);
   return {
     props: {
-      categories,
-      siteConfig,
-      menuItems,
-      profileInfo,
+        initialData,
+        categories,
+        siteConfig,
+        menuItems,
+        profileInfo,
     },
   };
 }

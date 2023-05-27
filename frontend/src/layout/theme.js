@@ -52,6 +52,30 @@ const theme = extendTheme({
             bg: "black",
           },
         },
+        outlined: {
+          color: "black",
+          bg: "white",
+          _hover: {
+            bg: "blue.300",
+            color: "white",
+          },
+          _active: {
+            color: "white",
+            bg: "blue.400",
+          },
+        },
+        red: {
+          color: "black",
+          bg: "red.100",
+          _hover: {
+            bg: "red.500",
+            color: "white",
+          },
+          _active: {
+            color: "white",
+            bg: "red.400",
+          },
+        },
       },
     },
     Input: {

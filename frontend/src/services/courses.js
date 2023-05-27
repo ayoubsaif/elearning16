@@ -97,3 +97,32 @@ export async function createCourse(data, accessToken) {
     throw error;
   }
 }
+
+export async function editCourse(id, data, accessToken) {
+  try {
+    const res = await axios.post(`${API_PUBLIC_URL}/api/course/${id}`, data,
+      { headers: { 
+        "Content-Type": "multipart/form-data",
+        Authorization: `Bearer ${accessToken}`
+      }}
+    );
+    return res.data;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+}
+
+export async function deleteCourse(id, accessToken) {
+  try {
+    const res = await axios.delete(`${API_PUBLIC_URL}/api/course/${id}`,
+      { headers: { 
+        Authorization: `Bearer ${accessToken}`
+      }}
+    );
+    return res.data;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+}
