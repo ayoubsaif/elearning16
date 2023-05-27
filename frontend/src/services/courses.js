@@ -83,25 +83,6 @@ export async function getCoursesByCategoryFromServer(
   }
 }
 
-export function getCourseContent(slug) {
-  return axios.get(`${API_URL}/api/courses/${slug}/content`);
-}
-
-export async function getCourseContentById(id, accessToken) {
-  try {
-    const options = {
-      headers: { Authorization: `Bearer ${accessToken}` },
-    };
-    const res = await axios.get(`${API_URL}/api/course-content/${id}`, {
-      ...options,
-    });
-    return res.data;
-  } catch (error) {
-    console.error(error);
-    throw error;
-  }
-}
-
 export async function createCourse(data, accessToken) {
   try {
     const res = await axios.post(`${API_PUBLIC_URL}/api/course`, data,

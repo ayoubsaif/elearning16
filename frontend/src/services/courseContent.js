@@ -18,3 +18,33 @@ export async function updateContentProgress(accessToken, contentId, data) {
     throw error;
   }
 }
+
+export async function getCourseContentById(id, accessToken) {
+  try {
+    const options = {
+      headers: { Authorization: `Bearer ${accessToken}` },
+    };
+    const res = await axios.get(`${API_URL}/api/course-content/${id}`, {
+      ...options,
+    });
+    return res.data;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+}
+
+export async function createContent(data, accessToken) {
+  try {
+    const res = await axios.post(`${API_PUBLIC_URL}/api/course-content`, data,
+      { headers: { 
+        "Content-Type": "multipart/form-data",
+        Authorization: `Bearer ${accessToken}`
+      }}
+    );
+    return res.data;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+}

@@ -18,7 +18,7 @@ import { authOptions } from "pages/api/auth/[...nextauth]";
 import Layout from "@/layout/Layout";
 import { getSiteConfig } from "@/services/siteConfig";
 import { getMenuItems } from "@/services/menuItems";
-import { getCourseContentById } from "@/services/courses";
+import { getCourseContentById } from "@/services/courseContent";
 import { formatDistanceToNow, set } from "date-fns";
 import { es } from "date-fns/locale";
 
