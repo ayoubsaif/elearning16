@@ -1,4 +1,3 @@
-
 import React from "react";
 import Link from "next/link";
 import {
@@ -9,14 +8,15 @@ import {
   Flex,
   AspectRatio,
   HStack,
+  Stack,
 } from "@chakra-ui/react";
 
 export default function ContentCard(props) {
-  const { name, thumbnail_url, id, slug } = props;
-  
+  const { name, description, thumbnail_url, id, slug } = props;
+
   return (
     <>
-      {name && thumbnail_url && id && slug &&
+      {name && thumbnail_url && id && slug && (
         <Box
           rounded={"md"}
           overflow={"hidden"}
@@ -31,26 +31,39 @@ export default function ContentCard(props) {
           }}
         >
           <Link href={`/course/${slug}/content/${id}`}>
-            <HStack spacing={2.5}>
-              <AspectRatio width='100%' height='100%' maxWidth='200px' ratio={16 / 9}>
+            <HStack spacing={2}>
+              <AspectRatio height="100%" minWidth={"160px"} ratio={16 / 9}>
                 <Img
                   src={thumbnail_url}
-                  roundedTop={".25em"}
                   objectFit={"cover"}
-                  height='full'
-                  width='full'
+                  height="full"
+                  width="full"
                   alt={"Blog Image"}
                 />
               </AspectRatio>
-              <Box p={4}>
-                <Heading color={"black"} fontSize={"1xm"} noOfLines={1} lineHeight={2}>
-                  {name}
-                </Heading>
-              </Box>
+              <Stack spacing={1} width={"full"} p={2}>
+                <Box>
+                  <Heading
+                    color={"black"}
+                    fontSize={"1xm"}
+                    noOfLines={1}
+                    lineHeight={1.5}
+                  >
+                    {name}
+                  </Heading>
+                  <Text
+                    color={"gray.500"}
+                    fontSize={"sm"}
+                    noOfLines={1}
+                  >
+                    {description}
+                  </Text>
+                </Box>
+              </Stack>
             </HStack>
           </Link>
         </Box>
-      }
+      )}
     </>
   );
 }
