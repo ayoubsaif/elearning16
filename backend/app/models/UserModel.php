@@ -190,4 +190,62 @@ class UserModel
             return false;
         }
     }
+
+    function updatePassword($password){
+        try{
+            $query = "UPDATE users
+                        SET
+                            password = :password
+                        WHERE
+                            id = :id";
+            $stmt = $this->conn->prepare($query);
+            
+            $password_hash = password_hash($password, PASSWORD_BCRYPT);
+            $stmt->bindParam(":password", $password_hash);
+            $stmt->bindParam(":id", $this->id);
+
+            if ($stmt->execute()) {
+                return true;
+            }
+            return false;
+        }catch(Exception $e){
+            error_log($e->getMessage());
+            return false;
+        }
+    }
+
+    function getMany()
+    {
+        try{
+            $query = "SELECT *
+                        FROM users
+                        ORDER BY id DESC";
+
+            $stmt = $this->conn->prepare($query);
+            $stmt->execute();
+            $num = $stmt->rowCount();
+
+            if ($num > 0) {
+                $users_arr = array();
+                while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+                    $user_item = array(
+                        "id" => $row['id'],
+                        "firstname" => $row['firstname'],
+                        "lastname" => $row['lastname'],
+                        "display_name" => $row['firstname'] . " " . $row['lastname'],
+                        "username" => $row['username'],
+                        "email" => $row['email'],
+                        "avatar_url" => $row['avatar_url'],
+                        "role" => $row['role'],
+                        "bio" => $row['bio']
+                    );
+                    array_push($users_arr, $user_item);
+                }
+                return $users_arr;
+            }
+            return false;
+        }catch(Exception $e){
+            return false;
+        }
+    }
 }

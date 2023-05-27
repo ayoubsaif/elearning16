@@ -72,7 +72,7 @@ class CoursesController
                 "courseContents" => $course->courseContents,
                 "create_date" => $course->create_date,
                 "create_uid" => $course->create_uid,
-                "thumbnail_url" => $course->thumbnail_url
+                "thumbnail" => $course->thumbnail_url
             ));
             return;
         } else {

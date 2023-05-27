@@ -30,6 +30,8 @@ $router->get('/api/courses/:slug', 'CoursesController@getManyByCategory');
 $router->options('/api/course', 'CoursesController@getSuccessResponse');
 $router->get('/api/course/:slug', 'CoursesController@getOne');
 $router->post('/api/course', 'CoursesController@create');
+
+$router->options('/api/course/:id', 'CoursesController@getSuccessResponse');
 $router->post('/api/course/:id', 'CoursesController@update');
 $router->delete('/api/course/:id', 'CoursesController@delete');
 
@@ -50,8 +52,6 @@ $router->get('/api/course-content/:id', 'CourseContentController@getOne');
 $router->options('/api/content-progress/:id', 'CourseContentController@getSuccessResponse');
 $router->post('/api/content-progress/:id', 'CourseContentController@updateContentProgress');
 
-# Attachments
-$router->get('/api/attachments', 'AttachmentsController@getAll');
-
-$router->post('/api/attachment', 'AttachmentsController@create');
-$router->get('/api/attachment/:id', 'AttachmentsController@getOne');
+# Users
+$router->options('/api/users', 'UserController@getSuccessResponse');
+$router->get('/api/users', 'UserController@getMany');

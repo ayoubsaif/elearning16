@@ -260,6 +260,25 @@ class UserController
         }
     }
 
+    public function getMany()
+    {
+        $PermissionMiddleware = new PermissionMiddleware();
+        $allowed = array('admin');
+        $UserPermmited = $PermissionMiddleware->handle($allowed);
+        if (!$UserPermmited) {
+            return;
+        }
+        $user = new UserModel();
+        $users = $user->getMany();
+        if ($users) {
+            http_response_code(200);
+            echo json_encode($users);
+        } else {
+            http_response_code(404);
+            echo json_encode(array("message" => "No users found"));
+        }
+    }
+
     public function getSuccessResponse()
     {
         http_response_code(200);
