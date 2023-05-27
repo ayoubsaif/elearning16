@@ -190,6 +190,7 @@ class CoursesController
                 $returnArray = array(
                     "id" => intval($course->id),
                     "name" => $course->name,
+                    "slug" => $course->slug."-".$course->id,
                     "description" => $course->description,
                     "category" => $course->category,
                     "keywords" => $course->keywords,
