@@ -40,6 +40,7 @@ $router->put('/api/category/:id', 'CategoriesController@update');
 $router->post('/api/category', 'CategoriesController@create');
 
 # Course Content
+$router->options('/api/course-content', 'CourseContentController@getSuccessResponse');
 $router->post('/api/course-content', 'CourseContentController@create');
 $router->get('/api/course-content', 'CourseContentController@getAll');
 $router->get('/api/course-content/:id', 'CourseContentController@getOne');
