@@ -166,4 +166,31 @@ class CategoryModel
 
         return false;
     }
+
+    
+    function getOneByID($id)
+    {
+        $query = "SELECT * FROM categories WHERE id = :id LIMIT 1";
+        $stmt = $this->conn->prepare($query);
+
+        $id = htmlspecialchars(strip_tags($id));
+        $stmt->bindParam(":id", $id);
+
+        $stmt->execute();
+        $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        if (!empty($data[0])){
+            $this->id = $data[0]['id'];
+            $this->name = $data[0]['name'];
+            $this->slug = $data[0]['slug'];
+            $this->description = $data[0]['description'];
+            $this->image_url = $data[0]['image_url'];
+            $this->parent_cat = $data[0]['parent_cat'];
+            $this->keywords = $data[0]['keywords'];
+            $this->create_uid = $data[0]['create_uid'];
+            return true;
+        }
+
+        return false;
+    }
 }

@@ -30,6 +30,8 @@ $router->get('/api/courses/:slug', 'CoursesController@getManyByCategory');
 $router->options('/api/course', 'CoursesController@getSuccessResponse');
 $router->get('/api/course/:slug', 'CoursesController@getOne');
 $router->post('/api/course', 'CoursesController@create');
+$router->post('/api/course/:id', 'CoursesController@update');
+$router->delete('/api/course/:id', 'CoursesController@delete');
 
 # Course Categories
 $router->get('/api/categories', 'CategoriesController@getAll');

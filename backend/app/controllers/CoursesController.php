@@ -10,8 +10,6 @@ class CoursesController
 {
     public function create()
     {
-        $data = json_decode(file_get_contents("php://input"));
-        
         $PermissionMiddleware = new PermissionMiddleware();
         $allowed = array('admin','teacher');
         $UserPermmited = $PermissionMiddleware->handle($allowed);
@@ -80,6 +78,83 @@ class CoursesController
         } else {
             http_response_code(503);
             echo json_encode(array("message" => "Unable to create course"));
+            return;
+        }
+    }
+
+    public function update($id)
+    {
+        $PermissionMiddleware = new PermissionMiddleware();
+        $allowed = array('admin','teacher');
+        $UserPermmited = $PermissionMiddleware->handle($allowed);
+        if (!$UserPermmited) {
+            return;
+        }
+        $data = $_POST;
+        if (empty($data)) {
+            http_response_code(400);
+            echo json_encode(array("message" => "No data provided"));
+            return;
+        }
+        $course = new CourseModel();
+        $course->getOne($id);
+        if (!$course->id) {
+            http_response_code(404);
+            echo json_encode(array("message" => "Course not found"));
+            return;
+        }
+        if (isset($_FILES["thumbnail"])) {
+            $Media = new MediaController();
+            $Media->uploadImage($_FILES["thumbnail"], 'courses', $course->id, 800, 450);
+            if(isset($Media->fileUrl)) {
+                $course->thumbnail_url = $Media->fileUrl;
+            } else {
+                $course->thumbnail_url = $Media->fileUrl;
+            }
+        }
+
+        $setClouse = [];
+        if (isset($data['name']) && $data['name'] !== $course->name) {
+            $course->name = htmlspecialchars(strip_tags($data['name']));
+            $setClouse[] = "name = '{$course->name}'";
+        }
+        if (isset($data['slug']) && $data['slug'] !== $course->slug) {
+            $course->slug = htmlspecialchars(strip_tags($data['slug']));
+            $setClouse[] = "slug = '{$course->slug}'";
+        }
+        if (isset($data['description']) && $data['description'] !== $course->description) {
+            $course->description = htmlspecialchars(strip_tags($data['description']));
+            $setClouse[] = "description = '{$course->description}'";
+        }
+        if (isset($data['category']) && $data['category'] !== $course->category) {
+            $course->category = htmlspecialchars(strip_tags($data['category']));
+            $setClouse[] = "category = '{$course->category}'";
+        }
+        if (isset($data['keywords']) && $data['keywords'] !== $course->keywords) {
+            $course->keywords = htmlspecialchars(strip_tags($data['keywords']));
+            $setClouse[] = "keywords = '{$course->keywords}'";
+        }
+        $course->create_date = date('Y-m-d H:i:s');
+        $course->create_uid = $UserPermmited->id;
+
+        if (empty($setClouse)) {
+            http_response_code(400);
+            echo json_encode(array("message" => "No hay datos para actualizar"));
+            return;
+        }
+
+        if ($course->update($setClouse)) {
+            http_response_code(200);
+            echo json_encode(array(
+                "message" => "Curso actualizado",
+                "id" => intval($course->id),
+                "name" => $course->name,
+                "slug" => $course->slug,
+            ));
+            return;
+        } else {
+            http_response_code(503);
+            echo json_encode(array("message" => "No se puede actualizar el curso"));
             return;
         }
     }
@@ -174,7 +249,6 @@ class CoursesController
         $PermissionMiddleware = new PermissionMiddleware();
         $allowed = array('admin','teacher','student');
         $UserPermmited = $PermissionMiddleware->handle($allowed);
-
         if (!$UserPermmited) {
             return;
         }
@@ -185,22 +259,38 @@ class CoursesController
             $courseId = end($slugArray);
             $course->id = $courseId;
 
-            if ($course->getOne()) {
+            if ($course->getOne($courseId)) {
+                $CreateUid = new UserModel();
+                $CreateUid->getOne($course->create_uid);
+                $Category = new CategoryModel();
+                $Category->getOne($course->category);
+                $CourseContent = new CourseContentModel();
+                $CourseContent->course = $course->id;
+                $course->courseContents = $CourseContent->getMany();
                 http_response_code(200);
-                $returnArray = array(
+                echo json_encode(array(
                     "id" => intval($course->id),
                     "name" => $course->name,
                     "slug" => $course->slug."-".$course->id,
                     "description" => $course->description,
-                    "category" => $course->category,
+                    "category" => !is_null($Category->id) ? array(
+                        'id' => $Category->id,
+                        'name' => $Category->name,
+                        'slug' => $Category->slug,
+                    ) : null,
                     "keywords" => $course->keywords,
                     "courseContents" => $course->courseContents,
                     "create_date" => $course->create_date,
-                    "create_uid" => $course->create_uid,
-                    "thumbnail_url" => $course->thumbnail_url,
+                    "create_uid" => !is_null($CreateUid->id) ? array(
+                        'id' => $CreateUid->id,
+                        'name' => $CreateUid->display_name,
+                        'firstname' => $CreateUid->firstname,
+                        'lastname' => $CreateUid->lastname,
+                        'image' => $CreateUid->avatar_url,
+                    ) : null,
+                    "thumbnail" => $course->thumbnail_url,
                     "canEdit" => $UserPermmited->id == $course->create_uid || $UserPermmited->role == "admin" ? true : false,
-                );
-                echo json_encode($returnArray);
+                ));
                 return;
             } else {
                 http_response_code(404);
@@ -214,12 +304,40 @@ class CoursesController
         }
     }
 
+    public function delete($id)
+    {
+        $PermissionMiddleware = new PermissionMiddleware();
+        $allowed = array('admin','teacher');
+        $UserPermmited = $PermissionMiddleware->handle($allowed);
+        if (!$UserPermmited) {
+            return;
+        }
+        $course = new CourseModel();
+        $course->id = $id;
+        $course->getOne($id);
+        if (!$course->create_uid == $UserPermmited->id && $UserPermmited->role != "admin") {
+            http_response_code(403);
+            echo json_encode(array("message" => "No se le permite eliminar este curso"));
+            return;
+        }
+        if ($course->delete($id)) {
+            http_response_code(200);
+            echo json_encode(array("message" => "Curso eliminado"));
+            return;
+        } else {
+            http_response_code(503);
+            echo json_encode(array("message" => "Curso no eliminado"));
+            return;
+        }
+    } 
+    
+
     public function checkIfExists($CourseId)
     {
         $course = new CourseModel();
         $course->id = $CourseId;
 
-        if ($course->getOne()) {
+        if ($course->getOne($CourseId)) {
             return true;
         } else {
             return false;

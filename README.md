@@ -23,6 +23,10 @@ eLearning consist in a application for schools, teams or companys to organize th
     ```bash
     cd ./backend && composer
     ```
+    Remove comments in your Apache server in `php.ini` for the next values:
+    ```ini
+    extension=gd
+    ```
 
 2. Install the requirements for frontend application
 

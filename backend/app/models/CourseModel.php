@@ -84,45 +84,24 @@ class CourseModel
         return false;
     }
 
-    function update()
+    function update($setClouse)
     {
-        $query = "UPDATE courses
-            SET
-                name=:name,
-                slug=:slug,
-                description=:description,
-                category=:category,
-                keywords=:keywords,
-                create_date=:create_date,
-                create_uid=:create_uid,
-                thumbnail_url=:thumbnail_url
-            WHERE id=:id";
+        try{
+            $query = "UPDATE courses
+            SET " . implode(", ", $setClouse) . "
+            WHERE id = :id";
+            $stmt = $this->conn->prepare($query);
 
-        $stmt = $this->conn->prepare($query);
+            $stmt->bindParam(":id", $this->id);
 
-        $this->name = htmlspecialchars(strip_tags($this->name));
-        $this->slug = htmlspecialchars(strip_tags($this->slug));
-        $this->description = htmlspecialchars(strip_tags($this->description));
-        $this->category = htmlspecialchars(strip_tags($this->category));
-        $this->keywords = htmlspecialchars(strip_tags($this->keywords));
-        $this->create_date = htmlspecialchars(strip_tags($this->create_date));
-        $this->create_uid = htmlspecialchars(strip_tags($this->create_uid));
-        $this->thumbnail_url = htmlspecialchars(strip_tags($this->thumbnail_url));
+            if ($stmt->execute()) {
+                return true;
+            }
 
-        $stmt->bindParam(":name", $this->name);
-        $stmt->bindParam(":slug", $this->slug);
-        $stmt->bindParam(":description", $this->description);
-        $stmt->bindParam(":category", $this->category);
-        $stmt->bindParam(":keywords", $this->keywords);
-        $stmt->bindParam(":create_date", $this->create_date);
-        $stmt->bindParam(":create_uid", $this->create_uid);
-        $stmt->bindParam(":thumbnail_url", $this->thumbnail_url);
-
-        if ($stmt->execute()) {
-            return true;
+            return false;
+        }catch(Exception $e){
+            echo $e->getMessage();
         }
-
-        return false;
     }
 
     function getMany($args, $currentPage = 1, $records_per_page = 12)
@@ -131,7 +110,7 @@ class CourseModel
         $offset = ($currentPage - 1) * $records_per_page;
         $whereClouse = "";
         if (count($args) > 0) {
-            $whereClouse = "WHERE ".implode("AND ", $args)."";
+            $whereClouse = "WHERE " . implode("AND ", $args) . "";
         }
 
         $query = "SELECT id, name, description, thumbnail_url, slug
@@ -166,7 +145,7 @@ class CourseModel
         $offset = ($currentPage - 1) * $records_per_page;
         $whereClouse = "WHERE category = {$category}";
         if (count($args) > 0) {
-            $whereClouse = $whereClouse." AND ".implode("AND ", $args)."";
+            $whereClouse = $whereClouse . " AND " . implode("AND ", $args) . "";
         }
 
         $query = "SELECT id, name, description, thumbnail_url, slug
@@ -226,49 +205,35 @@ class CourseModel
     }
 
     # Get one course, query by slug-id
-    function getOne()
+    function getOne($id)
     {
-        try{
-            $query = "SELECT * FROM courses WHERE id = :id LIMIT 1";
+        try {
+            $query = "SELECT * FROM courses WHERE id = ? LIMIT 1";
 
             $stmt = $this->conn->prepare($query);
-            $stmt->bindParam(":id", $this->id);
+            if (isset($id)) {
+                $stmt->bindParam(1, $id);
+            } else {
+                $stmt->bindParam(1, $this->id);
+            }
             $stmt->execute();
             $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
-    
+
             if (!empty($data[0])) {
-                $CreateUid = new UserModel();
-                $CreateUid->getOne($data[0]['create_uid']);
-                $Category = new CategoryModel();
-                $Category->getOne($data[0]['category']);
-                $CourseContent = new CourseContentModel();
-                $CourseContent->course = $this->id;
-    
                 $this->id = $data[0]['id'];
                 $this->name = $data[0]['name'];
                 $this->slug = $data[0]['slug'];
                 $this->description = $data[0]['description'];
-                $this->category = !is_null($Category->id) ? array(
-                    'id' => $Category->id,
-                    'name' => $Category->name,
-                    'slug' => $Category->slug,
-                ) : null;
-                $this->courseContents = $CourseContent->getAll();
+                $this->category = $data[0]['category'];
                 $this->keywords = explode(",", $data[0]['keywords']);
                 $this->create_date = $data[0]['create_date'];
-                $this->create_uid = !is_null($CreateUid->id) ? array(
-                    'id' => $CreateUid->id,
-                    'name' => $CreateUid->display_name,
-                    'firstname' => $CreateUid->firstname,
-                    'lastname' => $CreateUid->lastname,
-                    'image' => $CreateUid->avatar_url,
-                ) : null;
+                $this->create_uid = $data[0]['create_uid'];
                 $this->thumbnail_url = $data[0]['thumbnail_url'];
                 return true;
             }
-    
+
             return False;
-        }catch(Exception $e){
+        } catch (Exception $e) {
             return False;
         }
     }
