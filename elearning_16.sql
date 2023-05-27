@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 27-05-2023 a las 09:55:33
+-- Tiempo de generación: 27-05-2023 a las 09:58:00
 -- Versión del servidor: 10.4.22-MariaDB
 -- Versión de PHP: 8.1.0
 
@@ -29,6 +29,7 @@ USE `elearning_16`;
 -- Estructura de tabla para la tabla `attachments`
 --
 
+DROP TABLE IF EXISTS `attachments`;
 CREATE TABLE `attachments` (
   `id` bigint(20) NOT NULL,
   `name` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
@@ -56,6 +57,7 @@ INSERT INTO `attachments` (`id`, `name`, `file_url`, `course_content`, `create_d
 -- Estructura de tabla para la tabla `categories`
 --
 
+DROP TABLE IF EXISTS `categories`;
 CREATE TABLE `categories` (
   `id` int(11) NOT NULL,
   `name` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
@@ -82,6 +84,7 @@ INSERT INTO `categories` (`id`, `name`, `slug`, `description`, `image_url`, `par
 -- Estructura de tabla para la tabla `comments`
 --
 
+DROP TABLE IF EXISTS `comments`;
 CREATE TABLE `comments` (
   `id` bigint(20) NOT NULL,
   `course_content` bigint(20) DEFAULT NULL,
@@ -104,6 +107,7 @@ INSERT INTO `comments` (`id`, `course_content`, `user`, `parent_comment`, `creat
 -- Estructura de tabla para la tabla `content_progress`
 --
 
+DROP TABLE IF EXISTS `content_progress`;
 CREATE TABLE `content_progress` (
   `content` bigint(20) NOT NULL COMMENT 'Course Content relation',
   `user` int(11) NOT NULL,
@@ -116,7 +120,7 @@ CREATE TABLE `content_progress` (
 --
 
 INSERT INTO `content_progress` (`content`, `user`, `played`, `progress`) VALUES
-(8, 13, 2512.84, 20.0322),
+(8, 13, 2484, 19.8023),
 (14, 13, 2331.3, 18.585);
 
 -- --------------------------------------------------------
@@ -125,6 +129,7 @@ INSERT INTO `content_progress` (`content`, `user`, `played`, `progress`) VALUES
 -- Estructura de tabla para la tabla `courses`
 --
 
+DROP TABLE IF EXISTS `courses`;
 CREATE TABLE `courses` (
   `id` int(11) NOT NULL,
   `name` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
@@ -401,6 +406,7 @@ INSERT INTO `courses` (`id`, `name`, `slug`, `description`, `thumbnail_url`, `ca
 -- Estructura de tabla para la tabla `course_content`
 --
 
+DROP TABLE IF EXISTS `course_content`;
 CREATE TABLE `course_content` (
   `id` bigint(20) NOT NULL,
   `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
@@ -439,6 +445,7 @@ INSERT INTO `course_content` (`id`, `name`, `slug`, `description`, `iframe`, `th
 -- Estructura de tabla para la tabla `course_sections`
 --
 
+DROP TABLE IF EXISTS `course_sections`;
 CREATE TABLE `course_sections` (
   `id` int(11) NOT NULL,
   `name` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
@@ -452,6 +459,7 @@ CREATE TABLE `course_sections` (
 -- Estructura de tabla para la tabla `media`
 --
 
+DROP TABLE IF EXISTS `media`;
 CREATE TABLE `media` (
   `id` int(11) NOT NULL,
   `filename` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
@@ -542,6 +550,7 @@ INSERT INTO `media` (`id`, `filename`, `filepath`, `filetype`, `created_at`, `up
 -- Estructura de tabla para la tabla `menu_items`
 --
 
+DROP TABLE IF EXISTS `menu_items`;
 CREATE TABLE `menu_items` (
   `id` int(11) NOT NULL,
   `order` int(11) DEFAULT NULL,
@@ -567,6 +576,7 @@ INSERT INTO `menu_items` (`id`, `order`, `label`, `subLabel`, `url`, `parent_id`
 -- Estructura de tabla para la tabla `site_config`
 --
 
+DROP TABLE IF EXISTS `site_config`;
 CREATE TABLE `site_config` (
   `variable` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
   `value` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL
@@ -588,6 +598,7 @@ INSERT INTO `site_config` (`variable`, `value`) VALUES
 -- Estructura de tabla para la tabla `users`
 --
 
+DROP TABLE IF EXISTS `users`;
 CREATE TABLE `users` (
   `id` int(11) NOT NULL,
   `firstname` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'User Firstname',
