@@ -34,20 +34,32 @@ export default function Home(props) {
   const playerRef = useRef(null);
   const [currentTime, setCurrentTime] = useState(content?.played);
   const [onDuration, setOnDuration] = useState(0);
-
-
+  const lastUpdateRef = useRef(0);
+  
   const handleProgress = (state) => {
     setCurrentTime(state.playedSeconds.toFixed(4));
-    const updateProgress = async () => {
-      const data = {
-        played: currentTime,
-        progress:
-          onDuration - currentTime > 0 ? (currentTime * 100) / onDuration : 100,
-      };
-      updateContentProgress(session?.user?.accessToken, content?.id, data);
-    };
-    setTimeout(updateProgress, 120000);
   };
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      const now = Date.now();
+      const timeSinceLastUpdate = now - lastUpdateRef.current;
+
+      if (timeSinceLastUpdate >= 60000) {
+        const data = {
+          played: parseFloat(currentTime),
+          progress:
+            onDuration - currentTime > 0 ? (currentTime * 100) / onDuration : 100,
+        };
+        updateContentProgress(session?.user?.accessToken, content?.id, data);
+        lastUpdateRef.current = now;
+      }
+    }, 1000);
+
+    return () => {
+      clearInterval(interval);
+    };
+  }, [currentTime, onDuration]);
 
   return (
     <Layout siteConfig={siteConfig} menuItems={menuItems}>
