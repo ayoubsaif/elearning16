@@ -109,7 +109,7 @@ class CourseContentController
             if (isset($_GET['course'])) {
                 $courseContent->course = $_GET['course'];
             }
-            $courseContents = $courseContent->getAll($from_record_num, $records_per_page);
+            $courseContents = $courseContent->getMany($from_record_num, $records_per_page);
     
             if ($courseContents) {
                 http_response_code(200);
@@ -140,19 +140,18 @@ class CourseContentController
 
             $courseContent = new CourseContentModel();
             $courseContent->id = $id;
-            if ($courseContent->getOne()) {
+            if ($courseContent->getOne($id)) {
                 $User = new UserModel();
                 $User->getOne($courseContent->create_uid);
                 $course = new CourseModel;
-                $course->id = $courseContent->course;
-                $course->getOne();
+                $course->getOne($courseContent->course);
                 http_response_code(200);
                 echo json_encode(array(
                     "id" => $courseContent->id,
                     "name" => $courseContent->name,
                     "description" => $courseContent->description,
                     "iframe" => $courseContent->iframe,
-                    "thumbnail_url" => $courseContent->thumbnail_url,
+                    "thumbnail" => $courseContent->thumbnail_url,
                     "course" => !is_null($course->id) ? array(
                         "name" => $course->name,
                         "slug" => $course->slug . "-" . $course->id,
@@ -162,6 +161,7 @@ class CourseContentController
                         "id" => $User->id,
                         "name" => $User->display_name,
                     ) : null,
+                    "canEdit" => $UserPermmited->id === $courseContent->create_uid || $UserPermmited->role === 'admin' ? true : false,
                 ));
             } else {
                 http_response_code(404);
@@ -258,8 +258,7 @@ class CourseContentController
     public function checkIfExists($id)
     {
         $CourseContent = new CourseContentModel();
-        $CourseContent->id = $id;
-        if ($CourseContent->getOne()) {
+        if ($CourseContent->getOne($id)) {
             return $CourseContent;
         } else {
             return false;

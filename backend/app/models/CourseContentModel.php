@@ -116,7 +116,7 @@ class CourseContentModel
         return false;
     }
 
-    function getAll($from_record_num = 0, $records_per_page = 10)
+    function getMany($from_record_num = 0, $records_per_page = 10)
     {
         $query = "SELECT * 
             FROM course_content
@@ -145,7 +145,7 @@ class CourseContentModel
                 "id" => $id,
                 "name" => $name,
                 "description" => $description,
-                "thumbnail_url" => $thumbnail_url,
+                "thumbnail" => $thumbnail_url,
                 "create_date" => $create_date,
                 "played" => $ContentProgress->played,
                 "progress" => $ContentProgress->progress,
@@ -158,11 +158,11 @@ class CourseContentModel
     }
 
 
-    function getOne()
+    function getOne($id)
     {
         $query = "SELECT * FROM course_content WHERE id = :id LIMIT 0,1";
         $stmt = $this->conn->prepare($query);
-        $stmt->bindParam(":id", $this->id);
+        $stmt->bindParam(":id", $id);
 
         if ($stmt->execute()) {
             $course = $stmt->fetch(PDO::FETCH_ASSOC);
