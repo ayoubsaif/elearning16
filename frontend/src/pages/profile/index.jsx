@@ -99,6 +99,7 @@ export default function Profile(props) {
               name: updatedProfile?.name,
               username: updatedProfile?.username,
               image: updatedProfile?.image,
+              firstname: updatedProfile?.firstname,
             },
           });
           toast({
