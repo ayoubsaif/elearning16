@@ -188,6 +188,7 @@ class CoursesController
             if ($course->getOne()) {
                 http_response_code(200);
                 $returnArray = array(
+                    "id" => intval($course->id),
                     "name" => $course->name,
                     "description" => $course->description,
                     "category" => $course->category,
