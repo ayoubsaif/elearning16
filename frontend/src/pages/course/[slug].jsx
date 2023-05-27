@@ -55,7 +55,7 @@ export default function CourseLandingPage(props) {
         </Breadcrumb>
       </Flex>
 
-      <Box px={4} marginBottom={5}>
+      <Box px={4} marginBottom={5} width={"full"}>
         <Heading as="h1" fontSize={{ base: "3xl", md: "4xl" }} my={4}>
           {course?.name}
         </Heading>
@@ -89,7 +89,7 @@ export default function CourseLandingPage(props) {
 
         <Box>
           <Heading as="h2" fontSize={{ base: "xl", md: "2xl" }} my={4}>
-            Course Contents
+            Contenidos del curso
           </Heading>
           <VStack spacing={5} maxWidth={'100%'}>
             {course?.courseContents?.map((content) => (
