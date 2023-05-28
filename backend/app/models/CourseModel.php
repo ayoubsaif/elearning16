@@ -113,22 +113,33 @@ class CourseModel
             $whereClouse = "WHERE " . implode("AND ", $args) . "";
         }
 
-        $query = "SELECT id, name, description, thumbnail_url, slug
+        $query = "SELECT id, name, description, thumbnail_url, create_date
             FROM courses 
             $whereClouse
             ORDER BY id DESC LIMIT {$offset}, {$records_per_page}";
-
-        $stmt = $this->conn->prepare($query);
-        $stmt->execute();
-        $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
+            
         // Calculate the total number of pages
         $totalRecords = $this->getTotalRecords($whereClouse);
         $pagesCount = ceil($totalRecords / $records_per_page);
 
-        if ($data) {
+        $stmt = $this->conn->prepare($query);
+        $stmt->execute();
+
+        if ($totalRecords) {
+            $courses_arr = array();
+            while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+                extract($row);
+                $course_item = array(
+                    "id" => $id,
+                    "name" => $name,
+                    "description" => $description,
+                    "thumbnail" => $thumbnail_url,
+                    "create_date" => $create_date,
+                );
+                array_push($courses_arr, $course_item);
+            }
             return array(
-                'courses' => $data,
+                'courses' => $courses_arr,
                 'pagination' => array(
                     'currentPage' => $currentPage,
                     'pagesCount' => $pagesCount,
@@ -137,7 +148,7 @@ class CourseModel
             );
         }
 
-        return $data;
+        return [];
     }
 
     function getManyByCategory($category, $args, $currentPage = 1, $records_per_page = 12)
