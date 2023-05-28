@@ -194,12 +194,14 @@ class CourseContentController
         $course = new CoursesController();
         $course = $course->checkIfExists(intval($data['course']));
 
+        $setClouse = [];
         if (!$course) {
             http_response_code(404);
             echo json_encode(array("message" => "Course not found"));
             return;
         }else{
             $CourseContent->course = intval($data['course']);
+            $setClouse[] = "course = '{$CourseContent->course}'";
         }
 
         if (isset($_FILES["thumbnail"])) {
@@ -207,34 +209,34 @@ class CourseContentController
             $Media->uploadImage($_FILES["thumbnail"], 'coursescontent', $CourseContent->id, 800, 450, 'update');
             if (isset($Media->fileUrl)) {
                 $CourseContent->thumbnail_url = $Media->fileUrl;
+                $setClouse[] = "thumbnail_url = '{$CourseContent->thumbnail_url}'";
             } else {
                 http_response_code(503);
                 echo json_encode(array("message" => "Unable to upload thumbnail"));
                 return;
             }
-        } else {
-            http_response_code(401);
-            echo json_encode(array("message" => "You need to upload a thumbnail"));
-            return;
         }
 
         if ($data['name'] !== $CourseContent->name) {
             $CourseContent->name = $data['name'];
+            $setClouse[] = "name = '{$CourseContent->name}'";
         }
         if ($data['description'] !== $CourseContent->description) {
             $CourseContent->description = $data['description'];
+            $setClouse[] = "description = '{$CourseContent->description}'";
         }
         if ($data['iframe'] !== $CourseContent->iframe) {
             $CourseContent->iframe = $data['iframe'];
+            $setClouse[] = "iframe = '{$CourseContent->iframe}'";
         }
 
         $CourseContent->create_date = date('Y-m-d H:i:s');
         $CourseContent->create_uid = $UserPermmited->id;
 
-        if ($CourseContent->update()) {
+        if ($CourseContent->update($setClouse)) {
             http_response_code(201);
             echo json_encode(array(
-                "message" => "Course was created",
+                "message" => "El contenido del curso se cargó",
                 "id" => intval($CourseContent->id),
                 "name" => $CourseContent->name,
                 "description" => $CourseContent->description,
@@ -246,10 +248,12 @@ class CourseContentController
             return;
         } else {
             http_response_code(503);
-            echo json_encode(array("message" => "Unable to create course"));
+            echo json_encode(array("message" => "Incapaz de actualizar el contenido de curso"));
             return;
         }
     }
+
+
 
     public function delete()
     {

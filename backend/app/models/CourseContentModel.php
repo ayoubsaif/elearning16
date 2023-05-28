@@ -77,43 +77,24 @@ class CourseContentModel
         return false;
     }
 
-    function update()
+    function update($setClouse)
     {
-        $query = "UPDATE course_content
-            SET
-            name=:name,
-            description=:description,
-            iframe=:iframe,
-            thumbnail_url=:thumbnail_url,
-            course=:course,
-            create_date=:create_date,
-            create_uid=:create_uid
-            WHERE
-                id=:id";
+        try{
+            $query = "UPDATE course_content
+            SET " . implode(", ", $setClouse) . "
+            WHERE id = :id";
+            $stmt = $this->conn->prepare($query);
 
-        $stmt = $this->conn->prepare($query);
+            $stmt->bindParam(":id", $this->id);
 
-        $this->name = htmlspecialchars(strip_tags($this->name));
-        $this->description = htmlspecialchars(strip_tags($this->description));
-        $this->iframe = htmlspecialchars(strip_tags($this->iframe));
-        $this->thumbnail_url = htmlspecialchars(strip_tags($this->thumbnail_url));
-        $this->course = htmlspecialchars(strip_tags($this->course));
-        $this->create_date = htmlspecialchars(strip_tags($this->create_date));
-        $this->create_uid = htmlspecialchars(strip_tags($this->create_uid));
+            if ($stmt->execute()) {
+                return true;
+            }
 
-        $stmt->bindParam(":name", $this->name);
-        $stmt->bindParam(":description", $this->description);
-        $stmt->bindParam(":iframe", $this->iframe);
-        $stmt->bindParam(":thumbnail_url", $this->thumbnail_url);
-        $stmt->bindParam(":course", $this->course);
-        $stmt->bindParam(":create_date", $this->create_date);
-        $stmt->bindParam(":create_uid", $this->create_uid);
-
-        if ($stmt->execute()) {
-            return true;
+            return false;
+        }catch(Exception $e){
+            echo $e->getMessage();
         }
-
-        return false;
     }
 
     function getMany($from_record_num = 0, $records_per_page = 10)

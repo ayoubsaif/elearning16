@@ -47,6 +47,10 @@ $router->post('/api/category', 'CategoriesController@create');
 $router->options('/api/course-content', 'CourseContentController@getSuccessResponse');
 $router->post('/api/course-content', 'CourseContentController@create');
 $router->get('/api/course-content', 'CourseContentController@getAll');
+
+
+$router->options('/api/course-content/:id', 'CourseContentController@getSuccessResponse');
+$router->post('/api/course-content/:id', 'CourseContentController@update');
 $router->get('/api/course-content/:id', 'CourseContentController@getOne');
 
 $router->options('/api/content-progress/:id', 'CourseContentController@getSuccessResponse');
