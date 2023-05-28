@@ -220,7 +220,7 @@ class CoursesController
         $Category->getOne($slug);
         if (!$Category->id) {
             http_response_code(404);
-            echo json_encode(array("message" => "Category not found"));
+            echo json_encode(array("message" => "Categoría no encontrada"));
             return;
         }
         $search = isset($_GET['search']) ? $_GET['search'] : null;
@@ -231,6 +231,7 @@ class CoursesController
 
         $records_per_page = isset($_GET['limit']) ? $_GET['limit'] : 12;
         $courses = $course->getManyByCategory($Category->id, $args, $page, $records_per_page);
+        $courses['canCreate'] = $UserPermmited->role == "admin" || $UserPermmited->role == "teacher" ? true : false;
         if ($Category->name){
             $courses['category'] = $Category;
         }
@@ -240,7 +241,7 @@ class CoursesController
             return;
         } else {
             http_response_code(204);
-            echo json_encode(array("message" => "No courses found"));
+            echo json_encode(array("message" => "No se encontraron cursos"));
             return;
         }
     }

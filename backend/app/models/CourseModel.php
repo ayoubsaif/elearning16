@@ -160,7 +160,7 @@ class CourseModel
             $whereClouse = $whereClouse . " AND " . implode("AND ", $args) . "";
         }
 
-        $query = "SELECT id, name, description, thumbnail_url, slug
+        $query = "SELECT id, name, slug, description, thumbnail_url, create_date
             FROM courses 
             $whereClouse
             ORDER BY id DESC LIMIT {$offset}, {$records_per_page}";
@@ -173,7 +173,23 @@ class CourseModel
         $totalRecords = $this->getTotalRecords($whereClouse);
         $pagesCount = ceil($totalRecords / $records_per_page);
 
-        if ($data) {
+        $stmt = $this->conn->prepare($query);
+        $stmt->execute();
+
+        if ($totalRecords) {
+            $courses_arr = array();
+            while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+                extract($row);
+                $course_item = array(
+                    "id" => $id,
+                    "slug" => $slug,
+                    "name" => $name,
+                    "description" => $description,
+                    "thumbnail" => $thumbnail_url,
+                    "create_date" => $create_date,
+                );
+                array_push($courses_arr, $course_item);
+            }
             return array(
                 'courses' => $data,
                 'pagination' => array(
