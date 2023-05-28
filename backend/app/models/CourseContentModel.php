@@ -176,4 +176,21 @@ class CourseContentModel
 
         return false;
     }
+
+    function checkIfExists($id)
+    {
+        $query = "SELECT * FROM course_content WHERE id = :id LIMIT 0,1";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(":id", $id);
+
+        if ($stmt->execute()) {
+            $course = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            if ($course) {
+                return true;
+            }
+        }
+
+        return false;
+    }
 }

@@ -50,8 +50,9 @@ $router->get('/api/course-content', 'CourseContentController@getAll');
 
 
 $router->options('/api/course-content/:id', 'CourseContentController@getSuccessResponse');
-$router->post('/api/course-content/:id', 'CourseContentController@update');
 $router->get('/api/course-content/:id', 'CourseContentController@getOne');
+$router->post('/api/course-content/:id', 'CourseContentController@update');
+$router->delete('/api/course-content/:id', 'CourseContentController@delete');
 
 $router->options('/api/content-progress/:id', 'CourseContentController@getSuccessResponse');
 $router->post('/api/content-progress/:id', 'CourseContentController@updateContentProgress');

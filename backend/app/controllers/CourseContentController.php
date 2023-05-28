@@ -253,10 +253,32 @@ class CourseContentController
         }
     }
 
-
-
-    public function delete()
+    public function delete($id)
     {
+        $PermissionMiddleware = new PermissionMiddleware();
+        $allowed = array('admin', 'teacher');
+        $UserPermmited = $PermissionMiddleware->handle($allowed);
+        if (!$UserPermmited) {
+            return;
+        }
+        $CourseContent = new CourseContentModel();
+        $CourseContent->id = $id;
+
+        if ($CourseContent->checkIfExists($id)) {
+            if ($CourseContent->delete($id)) {
+                http_response_code(200);
+                echo json_encode(array("message" => "Course content was deleted"));
+                return;
+            } else {
+                http_response_code(503);
+                echo json_encode(array("message" => "Unable to delete course content"));
+                return;
+            }
+        } else {
+            http_response_code(404);
+            echo json_encode(array("message" => "Course content not found"));
+            return;
+        }
     }
 
     public function checkIfExists($id)
