@@ -98,7 +98,7 @@ export async function createCourse(data, accessToken) {
   }
 }
 
-export async function editCourse(id, data, accessToken) {
+export async function updateCourse(id, data, accessToken) {
   try {
     const res = await axios.post(`${API_PUBLIC_URL}/api/course/${id}`, data,
       { headers: { 

@@ -5,10 +5,11 @@ import {
   Heading,
 } from "@chakra-ui/react";
 import { usePagination } from "@ajna/pagination";
-
+import CoursesToolbar from "../../components/dataDisplay/coursesToolbar";
 import { getSiteConfig } from "@/services/siteConfig";
 import { getMenuItems } from "@/services/menuItems";
-import { getCoursesByCategory, getCoursesFromServer } from "@/services/courses";
+import { getCategories } from "@/services/category";
+import { getCoursesByCategory } from "@/services/courses";
 
 import Layout from "@/layout/Layout";
 import CoursesGrid from "@/components/courses/CoursesGrid";
@@ -18,12 +19,14 @@ import { authOptions } from "pages/api/auth/[...nextauth]";
 import { useSession } from "next-auth/react";
 
 export default function Home(props) {
-  const { siteConfig, menuItems, coursesData, paginationData, params, category } = props;
+  const { siteConfig, menuItems, coursesData, paginationData, params, canCreate, category, categories } = props;
   const { page, search } = params;
   const router = useRouter();
   const topRef = useRef(null);
   const [courses, setCourses] = useState(coursesData);
   const [pagination, setPagination] = useState(paginationData);
+  const [searchBar, setSearchBar] = useState(search);
+  const [searchParams, setSearchParams] = useState(search);
   const { pagesCount, currentPage, setCurrentPage, pages } = usePagination({
     pagesCount: pagination?.pagesCount,
     initialState: { currentPage: page || 1 },
@@ -40,10 +43,12 @@ export default function Home(props) {
         if (currentPage !== 1) {
           params.page = currentPage;
         }
-        if (search) {
-          params.search = search;
+        if (searchParams) {
+          params.search = searchParams;
         }
-        
+        if (searchBar) {
+          params.search = searchBar;
+        }
         const data = await getCoursesByCategory(router.query.slug, session?.user?.accessToken, params);
         
         if (data && data.courses && data.pagination) {
@@ -73,7 +78,7 @@ export default function Home(props) {
     fetchDataWithDelay();
   
     return () => clearTimeout(timeoutId);
-  }, [currentPage, router.query.slug, session?.user?.accessToken]);
+  }, [currentPage, router.query.slug, session?.user?.accessToken, searchBar, searchParams]);
 
   return (
     <>
@@ -100,6 +105,7 @@ export default function Home(props) {
         <Heading as="h1" size="2xl" textAlign="center" my={4}>
           Cursos de {category?.name}
         </Heading>
+        <CoursesToolbar categories={categories} category={category} canCreate={canCreate} searchBar={searchBar} setSearchBar={setSearchBar} setSearchParams={setSearchParams}/>
         <CoursesGrid 
           loading={loading}
           courses={courses}
@@ -127,6 +133,7 @@ export async function getServerSideProps({ query, req, res }) {
   }
   const siteConfig = await getSiteConfig();
   const menuItems = await getMenuItems(session?.user?.accessToken);
+  const categories = await getCategories(session?.user?.accessToken);
 
   const { page, search, slug } = query;
   const params = {
@@ -154,6 +161,8 @@ export async function getServerSideProps({ query, req, res }) {
       coursesData: coursesItems?.courses || [],
       category: coursesItems?.category || null,
       paginationData: coursesItems?.pagination || {},
+      canCreate: coursesItems?.canCreate || false,
+      categories,
       params,
     },
   };

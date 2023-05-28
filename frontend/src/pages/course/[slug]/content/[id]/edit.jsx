@@ -22,7 +22,7 @@ import {
 } from "@chakra-ui/react";
 import Input from "@/components/forms/input";
 import { useFormik } from "formik";
-import { createContent } from "@/services/courseContent";
+import { updateContent } from "@/services/courseContent";
 import { getSiteConfig } from "@/services/siteConfig";
 import { getMenuItems } from "@/services/menuItems";
 import { authOptions } from "pages/api/auth/[...nextauth]";
@@ -67,7 +67,8 @@ export default function EditCourseContent(props) {
         formData.append("iframe", values.iframe);
         formData.append("thumbnail", values.thumbnail);
 
-        const newContent = await createContent(
+        const newContent = await updateContent(
+          initialValues?.id,
           formData,
           session?.user?.accessToken
         );
@@ -87,7 +88,7 @@ export default function EditCourseContent(props) {
       const imageSrc = e.target.result;
       setContent((prevProfile) => ({
         ...prevProfile,
-        image: imageSrc,
+        thumbnail: imageSrc,
       }));
     };
     reader.readAsDataURL(file);
@@ -193,7 +194,7 @@ export default function EditCourseContent(props) {
                             <Image
                               size="xl"
                               name={content?.name}
-                              src={content?.image}
+                              src={content?.thumbnail}
                               width={270}
                               height={150}
                               objectFit="cover"

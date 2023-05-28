@@ -23,7 +23,7 @@ import Input from "@/components/forms/input";
 import { useFormik } from "formik";
 import { getSiteConfig } from "@/services/siteConfig";
 import { getMenuItems } from "@/services/menuItems";
-import { getCourse, editCourse } from "@/services/courses";
+import { getCourse, updateCourse } from "@/services/courses";
 import { authOptions } from "pages/api/auth/[...nextauth]";
 import { getProfile } from "@/services/profile";
 import { getCategories } from "@/services/category";
@@ -66,7 +66,7 @@ export default function EditCourse(props) {
         formData.append("keywords", tags.join(","));
         formData.append("thumbnail", values.thumbnail);
 
-        const newCourse = await editCourse(
+        const newCourse = await updateCourse(
           course?.id,
           formData,
           session?.user?.accessToken

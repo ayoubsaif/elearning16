@@ -28,11 +28,11 @@ import { authOptions } from "pages/api/auth/[...nextauth]";
 import Layout from "@/layout/Layout";
 import { getSiteConfig } from "@/services/siteConfig";
 import { getMenuItems } from "@/services/menuItems";
-import { getCourseContentById } from "@/services/courseContent";
+import { getCourseContentById, deleteContent } from "@/services/courseContent";
 import { formatDistanceToNow } from "date-fns";
 import { es } from "date-fns/locale";
 import { NextSeo } from "next-seo";
-
+import { useRouter } from "next/router";
 import { updateContentProgress } from "@/services/courseContent";
 import { useSession } from "next-auth/react";
 
@@ -40,7 +40,8 @@ export default function Home(props) {
   const { siteConfig, menuItems, content } = props;
   const { isOpen, onOpen, onClose } = useDisclosure()
   const cancelRef = useRef();
-
+  const router = useRouter();
+  
   const { data: session } = useSession();
   const createdDate = formatDistanceToNow(new Date(content?.create_date), {
     locale: es,
@@ -74,6 +75,11 @@ export default function Home(props) {
       clearInterval(interval);
     };
   }, [currentTime, onDuration]);
+
+  const onDelete = async () => {
+    await deleteContent(content?.id, session?.user?.accessToken);
+    router.push(`/course/${content?.course?.slug}`);
+  }
 
   return (
     <>
@@ -159,7 +165,7 @@ export default function Home(props) {
                         <Button ref={cancelRef} onClick={onClose}>
                           Cancelar
                         </Button>
-                        <Button colorScheme='red' onClick={onClose} ml={3}>
+                        <Button colorScheme='red' onClick={onDelete} ml={3}>
                           Elimiar
                         </Button>
                       </AlertDialogFooter>

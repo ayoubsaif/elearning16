@@ -1,5 +1,6 @@
 import { NextSeo } from "next-seo";
 import { useEffect, useState, useRef } from "react";
+import Link from "next/link";
 import {
   Grid,
   GridItem,
@@ -12,7 +13,8 @@ import {
 import { getSiteConfig } from "@/services/siteConfig";
 import { getMenuItems } from "@/services/menuItems";
 import { getCourses, getCoursesFromServer } from "@/services/courses";
-
+import { getCategories } from "@/services/category";
+import CoursesToolbar from "@/components/dataDisplay/coursesToolbar";
 import Layout from "@/layout/Layout";
 import CourseCard from "@/components/dataDisplay/courseCard";
 import ChakraPagination from "@/components/pagination";
@@ -25,12 +27,14 @@ import { authOptions } from "pages/api/auth/[...nextauth]";
 import { useRouter } from "next/router";
 
 export default function Home(props) {
-  const { siteConfig, menuItems, coursesData, paginationData, params } = props;
+  const { siteConfig, menuItems, coursesData, paginationData, categories, canCreate, params } = props;
   const { page, search } = params;
   const router = useRouter();
   const topRef = useRef(null);
   const [courses, setCourses] = useState(coursesData);
   const [pagination, setPagination] = useState(paginationData);
+  const [searchParams, setSearchParams] = useState(search);
+  const [searchBar, setSearchBar] = useState(search);
   const { pagesCount, currentPage, setCurrentPage, pages } = usePagination({
     pagesCount: pagination?.pagesCount,
     initialState: { currentPage: page || 1 },
@@ -39,11 +43,14 @@ export default function Home(props) {
 
   useEffect(() => {
     let timeoutId;
+    
+    console.log(searchBar);
     const fetchData = async () => {
       if (currentPage) {
         const params = {};
         if (currentPage && currentPage != 1){params.page = currentPage};
-        if (search){params.search = search};
+        if (searchParams){params.search = searchParams};
+        if (searchBar){params.search = searchBar}
         const data = await getCourses(params);
         if (data && data.courses && data.pagination) {
           setCourses(data.courses);
@@ -63,7 +70,7 @@ export default function Home(props) {
     setLoading(true);
     timeoutId = setTimeout(fetchData, 200);
     return () => clearTimeout(timeoutId);
-  }, [currentPage]);
+  }, [currentPage, searchBar, searchParams]);
 
   return (
     <>
@@ -90,6 +97,7 @@ export default function Home(props) {
         <Heading as="h1" size="2xl" textAlign="center" my={2}>
           Cursos
         </Heading>
+        <CoursesToolbar categories={categories} canCreate={canCreate} searchBar={searchBar} setSearchBar={setSearchBar} setSearchParams={setSearchParams}/>
         {loading ? (
           <CoursesLoading />
         ) : courses ? (
@@ -137,6 +145,7 @@ export async function getServerSideProps({ query, req, res }) {
   }
   const siteConfig = await getSiteConfig();
   const menuItems = await getMenuItems(session?.user?.accessToken);
+  const categories = await getCategories(session?.user?.accessToken);
 
   const { page, search } = query;
   const params = {
@@ -151,10 +160,12 @@ export async function getServerSideProps({ query, req, res }) {
 
   return {
     props: {
+      categories,
       siteConfig,
       menuItems,
       coursesData: coursesItems?.courses || [],
       paginationData: coursesItems?.pagination || {},
+      canCreate: coursesItems?.canCreate || false,
       params,
     },
   };
