@@ -113,7 +113,7 @@ class CourseModel
             $whereClouse = "WHERE " . implode("AND ", $args) . "";
         }
 
-        $query = "SELECT id, name, description, thumbnail_url, create_date
+        $query = "SELECT id, slug, name, description, thumbnail_url, create_date
             FROM courses 
             $whereClouse
             ORDER BY id DESC LIMIT {$offset}, {$records_per_page}";
@@ -131,6 +131,7 @@ class CourseModel
                 extract($row);
                 $course_item = array(
                     "id" => $id,
+                    "slug" => $slug,
                     "name" => $name,
                     "description" => $description,
                     "thumbnail" => $thumbnail_url,
