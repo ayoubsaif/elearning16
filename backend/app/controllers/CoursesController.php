@@ -192,6 +192,7 @@ class CoursesController
         if ($Category->name){
             $courses['category'] = $Category;
         }
+        $courses['canCreate'] = $UserPermmited->role == "admin" || $UserPermmited->role == "teacher" ? true : false;
         if ($courses) {
             http_response_code(200);
             echo json_encode($courses);
