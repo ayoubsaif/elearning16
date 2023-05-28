@@ -23,30 +23,30 @@ class PermissionMiddleware extends Middleware
                 if ($token) {
                     $user = new UserController();
                     $user = $user->validateToken($token);
-                    if ($user) {
+                    if (isset($user->id)) {
                         if (in_array($user->role, $allowed)) {
                             session_start();
                             $_SESSION['user'] = intval($user->id);
                             return $user;
                         } else {
                             http_response_code(403);
-                            echo json_encode(array("message" => "You don't have permission to access this resource"));
+                            echo json_encode(array("message" => "No tiene permiso para acceder a este recurso"));
                             return false;
                         }
                     } else {
-                        http_response_code(401);
-                        echo json_encode(array("message" => "Invalid token"));
+                        http_response_code(440);
+                        echo json_encode(array("message" => "Token expirado"));
                         return false;
                     }
                 }
             } else {
                 http_response_code(401);
-                echo json_encode(array("message" => "No token provided"));
+                echo json_encode(array("message" => "No se ha proporcionado token"));
                 return false;
             }
         } else {
             http_response_code(401);
-            echo json_encode(array("message" => "No Authorization provided"));
+            echo json_encode(array("message" => "No se ha proporcionado autorización"));
             return false;
         }
     }

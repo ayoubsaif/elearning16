@@ -44,7 +44,6 @@ class MenuController
         }
 
         $menuItem = new MenuItemModel();
-
         $menuItems = $menuItem->get();
         if ($menuItems) {
             http_response_code(200);

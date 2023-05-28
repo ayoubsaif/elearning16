@@ -15,6 +15,7 @@ import {
   SliderTrack,
   SliderFilledTrack,
   SliderThumb,
+  VStack,
 } from "@chakra-ui/react";
 import { useEffect } from "react";
 
@@ -24,7 +25,6 @@ const CropImageModal = ({ isOpen, onClose, onSave, selectedAvatarFile }) => {
   const avatarEditorRef = useRef();
 
   useEffect(() => {
-
     if (!selectedAvatarFile) {
       return;
     }
@@ -42,13 +42,15 @@ const CropImageModal = ({ isOpen, onClose, onSave, selectedAvatarFile }) => {
   const handleSaveClick = () => {
     if (avatarEditorRef.current) {
       const canvas = avatarEditorRef.current.getImage();
-  
+
       canvas.toBlob((blob) => {
-        const croppedFile = new File([blob], selectedAvatarFile.name, { type: selectedAvatarFile.type });
+        const croppedFile = new File([blob], selectedAvatarFile.name, {
+          type: selectedAvatarFile.type,
+        });
         onSave(croppedFile); // Pass the cropped File object to the onSave callback
       });
     }
-  
+
     onClose();
   };
 
@@ -56,45 +58,46 @@ const CropImageModal = ({ isOpen, onClose, onSave, selectedAvatarFile }) => {
     <Modal isOpen={isOpen} onClose={onClose}>
       <ModalOverlay />
       <ModalContent>
-        <ModalHeader>Crop Image</ModalHeader>
+        <ModalHeader>Recortar imagen</ModalHeader>
         <ModalCloseButton />
         <ModalBody>
           {imageSrc && (
-            <Box textAlign="center">
-              <AvatarEditor
-                ref={avatarEditorRef}
-                image={imageSrc}
-                width={250}
-                height={250}
-                border={50}
-                borderRadius={125}
-                color={[255, 255, 255, 0.6]}
-                scale={scale}
-              />
-              <Center mt={4}>
-                <Slider
-                  value={scale}
-                  min={1}
-                  max={3}
-                  step={0.01}
-                  onChange={(value) => setScale(value)}
-                >
-                  <SliderTrack>
-                    <SliderFilledTrack />
-                  </SliderTrack>
-                  <SliderThumb />
-                </Slider>
+            <VStack mb={4}>
+              <Center width={"full"} border={1} borderColor={"gray.100"} rounded="sm">
+                <AvatarEditor
+                  ref={avatarEditorRef}
+                  image={imageSrc}
+                  width={250}
+                  height={250}
+                  border={50}
+                  borderRadius={125}
+                  color={[255, 255, 255, 0.6]}
+                  scale={scale}
+                />
               </Center>
-            </Box>
+              <Slider
+                width={"full"}
+                value={scale}
+                min={1}
+                max={3}
+                step={0.01}
+                onChange={(value) => setScale(value)}
+              >
+                <SliderTrack>
+                  <SliderFilledTrack />
+                </SliderTrack>
+                <SliderThumb/>
+              </Slider>
+            </VStack>
           )}
         </ModalBody>
 
         <ModalFooter>
           <Button variant="ghost" onClick={onClose}>
-            Cancel
+            Cancelar
           </Button>
-          <Button colorScheme="blue" ml={3} onClick={handleSaveClick}>
-            Save
+          <Button variant="primary" ml={3} onClick={handleSaveClick}>
+            Guardar
           </Button>
         </ModalFooter>
       </ModalContent>

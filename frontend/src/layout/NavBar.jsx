@@ -30,7 +30,7 @@ import { DesktopNav } from "./navbar/DesktopNav";
 export default function NavBar({ siteConfig, menuItems }) {
   const { isOpen, onToggle } = useDisclosure();
   const { data: session } = useSession();
-  
+
   return (
     <Box>
       <Flex
@@ -88,7 +88,9 @@ export default function NavBar({ siteConfig, menuItems }) {
               >
                 <Flex direction={"row"} align={"center"} p={2}>
                   <Avatar size={"sm"} src={session?.user?.image} />
-                  <Text ml={2} display={{ base: "none", md: "flex" }}>{session?.user?.firstname}</Text>
+                  <Text ml={2} display={{ base: "none", md: "flex" }}>
+                    {session?.user?.firstname}
+                  </Text>
                 </Flex>
               </MenuButton>
               <MenuList
@@ -156,5 +158,3 @@ export default function NavBar({ siteConfig, menuItems }) {
     </Box>
   );
 }
-
-

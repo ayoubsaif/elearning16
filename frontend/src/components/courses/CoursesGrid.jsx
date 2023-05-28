@@ -1,4 +1,14 @@
-import { Center, Fade, Grid, GridItem, SimpleGrid } from "@chakra-ui/react";
+import {
+  Center,
+  Fade,
+  Grid,
+  GridItem,
+  SimpleGrid,
+  Alert,
+  AlertIcon,
+  AlertTitle,
+  AlertDescription,
+} from "@chakra-ui/react";
 import CourseCard from "@/components/dataDisplay/courseCard";
 import ChakraPagination from "@/components/pagination";
 import CoursesLoading from "@/components/skeleton/CoursesLoading";
@@ -22,6 +32,7 @@ export default function CoursesGrid({
             <GridItem my="1em" w={"full"}>
               <Center>
                 <SimpleGrid columns={[1, 2, 2, 4]} spacing="20px">
+                  {console.log(courses.length)}
                   {courses.map((course) => (
                     <CourseCard course={course} key={course?.id} />
                   ))}
@@ -41,7 +52,25 @@ export default function CoursesGrid({
           </Center>
         </Grid>
       ) : (
-        <p>No hay cursos</p>
+        <Grid my="1em" ref={topRef}>
+          <Alert
+            status="warning"
+            variant="subtle"
+            flexDirection="column"
+            alignItems="center"
+            justifyContent="center"
+            textAlign="center"
+            height="200px"
+          >
+            <AlertIcon boxSize="40px" mr={0} />
+            <AlertTitle mt={4} mb={1} fontSize="lg">
+              No se han encontrado cursos
+            </AlertTitle>
+            <AlertDescription maxWidth="sm">
+              Intenta con otros filtros de búsqueda.
+            </AlertDescription>
+          </Alert>
+        </Grid>
       )}
     </>
   );

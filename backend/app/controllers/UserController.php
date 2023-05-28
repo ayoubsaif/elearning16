@@ -20,7 +20,12 @@ class UserController
             $user = new UserModel();
             $user->firstname = $data->firstname;
             $user->lastname = $data->lastname;
-            $user->username = $data->username;
+
+            if(isset($data->username) && !empty($data->username)){
+                $user->username = $data->username;
+            }else{
+                $user->username = explode("@", $data->email)[0]."_".uniqid();
+            }
             $user->email = $data->email;
             $user->password = $data->password;
 
@@ -84,11 +89,11 @@ class UserController
                         $this->successAuthResponse($user);
                     }else{
                         http_response_code(503);
-                        echo json_encode(array("message" => "Unable to create user"));
+                        echo json_encode(array("message" => "No se puede crear el usuario"));
                     }
                 } else {
                     http_response_code(503);
-                    echo json_encode(array("message" => "Unable to create user"));
+                    echo json_encode(array("message" => "No se puede crear el usuario"));
                 }
             } else {
                 $user->googleIdUpdate();
@@ -96,7 +101,7 @@ class UserController
             }
         } catch (Exception $e) {
             http_response_code(401);
-            echo json_encode(array("message" => "Unauthorized"));
+            echo json_encode(array("message" => "No autorizado"));
         }
     }
 
@@ -105,7 +110,7 @@ class UserController
         $key = getenv("JWT_KEY");
         $token = array(
             "iat" => time(),
-            "exp" => time() + 3600,
+            "exp" => time() + 30 * 24 * 60 * 60,
             "data" => array(
                 "id" => $user->id,
                 "name" => $user->display_name,
@@ -127,6 +132,7 @@ class UserController
             "image" => $user->avatar_url,
             "role" => $user->role,
             "accessToken" => $jwt,
+            "exp" => $token['exp'],
         ));
     }
 
@@ -240,16 +246,24 @@ class UserController
         try {
             $key = new Key(getenv("JWT_KEY"), 'HS256');
             $decoded_token = JWT::decode($token, $key);
+    
+            // Check if the token has expired
+            $current_time = time();
+            
+            if ($decoded_token->exp < $current_time) {
+                return false;
+            }
+    
             $user_id = $decoded_token->data->id;
             $user = new UserModel();
             $user->id = $user_id;
             $user->getOne($user_id);
             return $user;
         } catch (Exception $e) {
-            return false;
+            return $e->getMessage(); // Return the error message
         }
     }
-
+    
     public function getOne($id){
         $user = new UserModel();
         $user->id = $id;

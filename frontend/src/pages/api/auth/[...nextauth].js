@@ -31,16 +31,13 @@ export const authOptions = {
           user.image = res.data?.image;
           user.username = res.data?.username;
           user.accessToken = res.data?.accessToken;
-          console.log("user", user);
+          user.exp = res.data?.exp;
           return true;
         }
       }
       return true;
     },
     async jwt({ token, user, trigger, session }) {
-      if (user) {
-        //token.accessToken = user.accessToken;
-      }  
       if (trigger === "update" && session?.user) {
         user = {...user, ...session.user};
       }
@@ -94,6 +91,7 @@ export default NextAuth({
   ],
   session: {
     strategy: "jwt",
+    maxAge: 30 * 24 * 60 * 60,
   },
   pages: {
     signIn: "/auth/login",

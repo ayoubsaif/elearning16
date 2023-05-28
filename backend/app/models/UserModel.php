@@ -52,7 +52,7 @@ class UserModel
             $this->role = $this->role ? htmlspecialchars(strip_tags($this->role)) : 'student';
             $this->password = htmlspecialchars(strip_tags($this->password));
             $this->avatar_url = $this->avatar_url ? htmlspecialchars(strip_tags($this->avatar_url)) : null;
-            $this->google_id = htmlspecialchars(strip_tags($this->google_id));
+            $this->google_id = $this->google_id ? htmlspecialchars(strip_tags($this->google_id)) : null;
 
 
             $stmt->bindParam(":firstname", $this->firstname);

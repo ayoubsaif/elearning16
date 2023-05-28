@@ -25,15 +25,23 @@ import { usePagination } from "@ajna/pagination";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "pages/api/auth/[...nextauth]";
 import { useRouter } from "next/router";
+import CoursesGrid from "../components/courses/CoursesGrid";
 
 export default function Home(props) {
-  const { siteConfig, menuItems, coursesData, paginationData, categories, canCreate, params } = props;
+  const {
+    siteConfig,
+    menuItems,
+    coursesData,
+    paginationData,
+    categories,
+    canCreate,
+    params,
+  } = props;
   const { page, search } = params;
   const router = useRouter();
   const topRef = useRef(null);
   const [courses, setCourses] = useState(coursesData);
   const [pagination, setPagination] = useState(paginationData);
-  const [searchParams, setSearchParams] = useState(search);
   const [searchBar, setSearchBar] = useState(search);
   const { pagesCount, currentPage, setCurrentPage, pages } = usePagination({
     pagesCount: pagination?.pagesCount,
@@ -43,14 +51,15 @@ export default function Home(props) {
 
   useEffect(() => {
     let timeoutId;
-    
-    console.log(searchBar);
     const fetchData = async () => {
       if (currentPage) {
         const params = {};
-        if (currentPage && currentPage != 1){params.page = currentPage};
-        if (searchParams){params.search = searchParams};
-        if (searchBar){params.search = searchBar}
+        if (currentPage && currentPage != 1) {
+          params.page = currentPage;
+        }
+        if (searchBar) {
+          params.search = searchBar;
+        }
         const data = await getCourses(params);
         if (data && data.courses && data.pagination) {
           setCourses(data.courses);
@@ -70,7 +79,7 @@ export default function Home(props) {
     setLoading(true);
     timeoutId = setTimeout(fetchData, 200);
     return () => clearTimeout(timeoutId);
-  }, [currentPage, searchBar, searchParams]);
+  }, [currentPage, searchBar]);
 
   return (
     <>
@@ -94,39 +103,24 @@ export default function Home(props) {
         }}
       />
       <Layout siteConfig={siteConfig} menuItems={menuItems}>
-        <Heading as="h1" size="2xl" textAlign="center" my={2}>
+        <Heading as="h1" size="2xl" my={2}>
           Cursos
         </Heading>
-        <CoursesToolbar categories={categories} canCreate={canCreate} searchBar={searchBar} setSearchBar={setSearchBar} setSearchParams={setSearchParams}/>
-        {loading ? (
-          <CoursesLoading />
-        ) : courses ? (
-          <Grid my="1em" ref={topRef}>
-            <Fade in={!loading}>
-              <GridItem my="1em" w={"full"}>
-                <Center>
-                  <SimpleGrid columns={[1, 2, 2, 4]} spacing="20px">
-                    {courses.map((course) => (
-                      <CourseCard course={course} key={course?.id} />
-                    ))}
-                  </SimpleGrid>
-                </Center>
-              </GridItem>
-            </Fade>
-            <Center>
-              <Fade in={!loading}>
-                <ChakraPagination
-                  pages={pages}
-                  currentPage={currentPage}
-                  pagesCount={pagesCount}
-                  setCurrentPage={setCurrentPage}
-                />
-              </Fade>
-            </Center>
-          </Grid>
-        ) : (
-          <p>No hay cursos</p>
-        )}
+        <CoursesToolbar
+          categories={categories}
+          canCreate={canCreate}
+          searchBar={searchBar}
+          setSearchBar={setSearchBar}
+        />
+        <CoursesGrid
+          loading={loading}
+          courses={courses}
+          pages={pages}
+          currentPage={currentPage}
+          pagesCount={pagesCount}
+          setCurrentPage={setCurrentPage}
+          topRef={topRef}
+        />
       </Layout>
     </>
   );

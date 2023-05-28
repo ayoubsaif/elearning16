@@ -1,5 +1,5 @@
         
-import React from "react"
+import React, { useRef } from "react"
 import {
     HStack,
     Menu,
@@ -14,21 +14,21 @@ import {
 import { BsFunnel, BsPlusLg, BsX } from "react-icons/bs";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import SearchBar from "../forms/searchInput";
+import SearchBar from "@/components/forms/searchInput";
 
-export default function CoursesToolbar({categories, category, canCreate, searchBar, setSearchBar, setSearchParams}) {
+export default function CoursesToolbar({categories, category, canCreate, searchBar, setSearchBar}) {
     const router = useRouter();
+    const searchBarRef = useRef(null);
 
     const resetSearch = () => {
-        setSearchBar('');
-        setSearchParams('');
-        router.push('/courses', );
+        setSearchBar(null);
+        searchBarRef.current.setInputValue('');
     }
 
     return (
         <HStack spacing='24px' width={'100%'} justify={'space-between'}>
             <HStack spacing='24px'>
-                <SearchBar setSearchBar={setSearchBar}/>
+                <SearchBar searchBar={searchBar} setSearchBar={setSearchBar} ref={searchBarRef} />
                 <Menu>
                     <Tooltip label='Filtrar' placement='bottom'>
                         <MenuButton as={IconButton} icon={<BsFunnel />} />
@@ -43,16 +43,15 @@ export default function CoursesToolbar({categories, category, canCreate, searchB
                         </MenuOptionGroup>
                     </MenuList>
                 </Menu>
-                {(category || searchBar !== '') &&
+                {(category || searchBar) &&
                     <Tooltip label='Eliminar filtros' placement='bottom'>
                         <IconButton
                             aria-label="delete-filter"
                             icon={<BsX />}
-                            onClick={() => resetSearch()}
+                            onClick={resetSearch}
                         />
                     </Tooltip>
                 }
-
             </HStack>
             {canCreate && 
                 <HStack spacing='24px'>

@@ -147,9 +147,16 @@ class CourseModel
                     'recordsPerPage' => $records_per_page,
                 )
             );
+        }else{
+            return array(
+                'courses' => [],
+                'pagination' => array(
+                    'currentPage' => $currentPage,
+                    'pagesCount' => $pagesCount,
+                    'recordsPerPage' => $records_per_page,
+                )
+            );
         }
-
-        return [];
     }
 
     function getManyByCategory($category, $args, $currentPage = 1, $records_per_page = 12)
