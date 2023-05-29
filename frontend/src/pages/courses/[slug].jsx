@@ -52,7 +52,6 @@ export default function Home(props) {
         } else if (currentPage !== 1) {
           params.page = currentPage;
         }
-
         const data = await getCoursesByCategory(
           router.query.slug,
           session?.user?.accessToken,
@@ -78,6 +77,7 @@ export default function Home(props) {
       }
     };
 
+    setLoading(true);
     const fetchDataWithDelay = () => {
       timeoutId = setTimeout(fetchData, 200);
     };
@@ -127,7 +127,7 @@ export default function Home(props) {
                 </Center>
               )}
               <Heading as="h2" size="xl">
-                Cursos de {category?.name}
+                {category?.name}
               </Heading>
               <Text fontSize="md" w="full" color={"gray.500"} mt={2}>
                 {category?.description}
