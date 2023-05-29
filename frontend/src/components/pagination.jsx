@@ -1,4 +1,4 @@
-import { useColorModeValue } from "@chakra-ui/react";
+import { useBreakpointValue } from "@chakra-ui/react";
 import {
   Pagination,
   PaginationNext,
@@ -12,7 +12,7 @@ import { isMobile } from "react-device-detect";
 
 export default function ChakraPagination(props) {
   const { pages, currentPage, setCurrentPage, pagesCount } = props;
-  let pagesToShow = isMobile ? 3 : 9;
+  let pagesToShow = isMobile || useBreakpointValue({ base: true, md: false }) ? 3 : 9;
   let start = currentPage - 2;
   let maxPages = start + pagesToShow;
 
@@ -76,7 +76,6 @@ export default function ChakraPagination(props) {
                   boxShadow: "none",
                 }}
                 _current={{
-                  w: 7,
                   bg: "blue.300",
                   color: "white",
                   _hover: {
@@ -136,7 +135,6 @@ export default function ChakraPagination(props) {
                   boxShadow: "none",
                 }}
                 _current={{
-                  w: 7,
                   bg: "blue.300",
                   color: "white",
                   _hover: {
