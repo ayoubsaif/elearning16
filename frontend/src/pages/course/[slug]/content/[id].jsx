@@ -166,7 +166,7 @@ export default function Home(props) {
                           Cancelar
                         </Button>
                         <Button colorScheme='red' onClick={onDelete} ml={3}>
-                          Elimiar
+                          Eliminar
                         </Button>
                       </AlertDialogFooter>
                     </AlertDialogContent>

@@ -7,12 +7,18 @@ import {
   PaginationContainer,
   PaginationPageGroup,
 } from "@ajna/pagination";
-import { BsArrowLeft, BsUnindent, BsIndent, BsArrowRight } from "react-icons/bs";
+import {
+  BsArrowLeft,
+  BsUnindent,
+  BsIndent,
+  BsArrowRight,
+} from "react-icons/bs";
 import { isMobile } from "react-device-detect";
 
 export default function ChakraPagination(props) {
   const { pages, currentPage, setCurrentPage, pagesCount } = props;
-  let pagesToShow = isMobile || useBreakpointValue({ base: true, md: false }) ? 3 : 9;
+  let pagesToShow =
+    isMobile || useBreakpointValue({ base: true, md: false }) ? 3 : 9;
   let start = currentPage - 2;
   let maxPages = start + pagesToShow;
 
@@ -35,7 +41,7 @@ export default function ChakraPagination(props) {
     >
       <PaginationContainer>
         <PaginationPrevious
-          rounded={".25rem"}
+          rounded={"md"}
           border={"1px"}
           borderColor="black"
           bg="white"
@@ -49,21 +55,14 @@ export default function ChakraPagination(props) {
           }}
           mr=".50em"
         >
-          {isMobile ? (
-              <BsArrowLeft />
-          ) : (
-            <>
-              <BsArrowLeft />
-              {"Atras"}
-            </>
-          )}
+          <BsArrowLeft />
         </PaginationPrevious>
         <PaginationPageGroup spacing={2} alignItems={"center"}>
           {hasFirst && (
             <>
               <PaginationPage
                 minWidth="2.5em"
-                rounded={".25rem"}
+                rounded={"md"}
                 border={"1px"}
                 borderColor="black"
                 bg="white"
@@ -122,7 +121,7 @@ export default function ChakraPagination(props) {
               <BsIndent />
               <PaginationPage
                 minWidth="2.5em"
-                rounded={".25rem"}
+                rounded={"md"}
                 border={"1px"}
                 borderColor="black"
                 bg="white"
@@ -149,7 +148,7 @@ export default function ChakraPagination(props) {
           )}
         </PaginationPageGroup>
         <PaginationNext
-          rounded={".25rem"}
+          rounded={"md"}
           border={"1px"}
           borderColor="black"
           bg="white"
@@ -163,14 +162,7 @@ export default function ChakraPagination(props) {
           }}
           ml=".50em"
         >
-          {isMobile ? (
-            <BsArrowRight />
-          ) : (
-            <>
-              {"Siguiente"}
-              <BsArrowRight />
-            </>
-          )}
+          <BsArrowRight />
         </PaginationNext>
       </PaginationContainer>
     </Pagination>

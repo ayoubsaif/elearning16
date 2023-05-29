@@ -21,10 +21,10 @@ class UserController
             $user->firstname = $data->firstname;
             $user->lastname = $data->lastname;
 
-            if(isset($data->username) && !empty($data->username)){
+            if (isset($data->username) && !empty($data->username)) {
                 $user->username = $data->username;
-            }else{
-                $user->username = explode("@", $data->email)[0]."_".uniqid();
+            } else {
+                $user->username = explode("@", $data->email)[0] . "_" . uniqid();
             }
             $user->email = $data->email;
             $user->password = $data->password;
@@ -78,16 +78,15 @@ class UserController
             $user->email = $data->email;
             $user->firstname = $data->firstname;
             $user->lastname = $data->lastname;
-            $user->username = isset($data->username) ? $data->username : explode("@", $data->email)[0]."_".uniqid();
+            $user->username = isset($data->username) ? $data->username : explode("@", $data->email)[0] . "_" . uniqid();
             $user->avatar_url = isset($data->image) ? $data->image : null;
             $user->google_id = strval($data->google_id);
             if (!$user->emailExists()) {
                 if ($user->create()) {
-                    if ($user->emailExists())
-                    {
+                    if ($user->emailExists()) {
                         http_response_code(201);
                         $this->successAuthResponse($user);
-                    }else{
+                    } else {
                         http_response_code(503);
                         echo json_encode(array("message" => "No se puede crear el usuario"));
                     }
@@ -177,12 +176,12 @@ class UserController
             if (!$UserPermmited) {
                 return;
             }
-    
+
             $user_id = $UserPermmited->id;
             $user = new UserModel();
             $user->id = $user_id;
             $user->getOne($user_id);
-    
+
             $data = $_POST;
             if (empty($data)) {
                 http_response_code(400);
@@ -195,7 +194,7 @@ class UserController
                 if ($Media->uploadImage($_FILES["image"], 'users', $user->id, 500, 500, "update")) {
                     $user->avatar_url = $Media->fileUrl;
                     $updateProfileValues[] = "avatar_url = '{$user->avatar_url}'";
-                }else{
+                } else {
                     http_response_code(503);
                     echo json_encode(array("message" => "Unable to upload image"));
                     return;
@@ -218,7 +217,7 @@ class UserController
                 $user->bio = htmlspecialchars(strip_tags($data['bio']));
                 $updateProfileValues[] = "bio = '{$user->bio}'";
             }
-    
+
             if ($user->updateProfile($updateProfileValues)) {
                 http_response_code(200);
                 echo json_encode(array(
@@ -246,14 +245,14 @@ class UserController
         try {
             $key = new Key(getenv("JWT_KEY"), 'HS256');
             $decoded_token = JWT::decode($token, $key);
-    
+
             // Check if the token has expired
             $current_time = time();
-            
+
             if (!isset($decoded_token->exp) || $decoded_token->exp < $current_time) {
                 return false;
             }
-    
+
             $user_id = $decoded_token->data->id;
             $user = new UserModel();
             $user->id = $user_id;
@@ -263,11 +262,12 @@ class UserController
             return $e->getMessage(); // Return the error message
         }
     }
-    
-    public function getOne($id){
+
+    public function getOne($id)
+    {
         $user = new UserModel();
         $user->id = $id;
-        if($user->getOne($id)){
+        if ($user->getOne($id)) {
             http_response_code(200);
             echo json_encode(array(
                 "id" => intval($user->id),
@@ -280,9 +280,80 @@ class UserController
                 "role" => $user->role,
                 "image" => $user->avatar_url
             ));
-        }else{ 
+        } else {
             http_response_code(404);
             echo json_encode(array("message" => "User not found"));
+        }
+    }
+
+    public function updateOne($id)
+    {
+        try {
+            $PermissionMiddleware = new PermissionMiddleware();
+            $allowed = array('admin', 'teacher', 'student');
+            $UserPermmited = $PermissionMiddleware->handle($allowed);
+            if (!$UserPermmited) {
+                return;
+            }
+            $user = new UserModel();
+            $user->id = $id;
+            $user->getOne($id);
+
+            $data = $_POST;
+            if (empty($data)) {
+                http_response_code(400);
+                echo json_encode(array("message" => "No data provided"));
+                return;
+            }
+            $updateProfileValues = [];
+            if (isset($_FILES["image"])) {
+                $Media = new MediaController(new MediaModel());
+                if ($Media->uploadImage($_FILES["image"], 'users', $user->id, 500, 500, "update")) {
+                    $user->avatar_url = $Media->fileUrl;
+                    $updateProfileValues[] = "avatar_url = '{$user->avatar_url}'";
+                } else {
+                    http_response_code(503);
+                    echo json_encode(array("message" => "Unable to upload image"));
+                    return;
+                }
+            }
+
+            if ($data['firstname'] !== $user->firstname) {
+                $user->firstname = htmlspecialchars(strip_tags($data['firstname']));
+                $updateProfileValues[] = "firstname = '{$user->firstname}'";
+            }
+            if ($data['lastname'] !== $user->lastname) {
+                $user->lastname = htmlspecialchars(strip_tags($data['lastname']));
+                $updateProfileValues[] = "lastname = '{$user->lastname}'";
+            }
+            if ($data['username'] !== $user->username) {
+                $user->username = htmlspecialchars(strip_tags($data['username']));
+                $updateProfileValues[] = "username = '{$user->username}'";
+            }
+            if ($data['bio'] !== $user->bio) {
+                $user->bio = htmlspecialchars(strip_tags($data['bio']));
+                $updateProfileValues[] = "bio = '{$user->bio}'";
+            }
+
+            if ($user->updateProfile($updateProfileValues)) {
+                http_response_code(200);
+                echo json_encode(array(
+                    "id" => intval($user->id),
+                    "name" => $user->display_name,
+                    "firstname" => $user->firstname,
+                    "lastname" => $user->lastname,
+                    "username" => $user->username,
+                    "bio" => $user->bio,
+                    "email" => $user->email,
+                    "image" => $user->avatar_url
+                ));
+            } else {
+                http_response_code(503);
+                echo json_encode(array("message" => "Unable to update user info"));
+            }
+        } catch (Exception $e) {
+            http_response_code(503);
+            echo json_encode(array("message" => "Unable to update user info", "error" => $e->getMessage()));
         }
     }
 

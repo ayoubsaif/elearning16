@@ -72,8 +72,7 @@ export default function CreateCourse(props) {
           session?.user?.accessToken
         );
         if (newCourse) {
-          console.log("Course created:", newCourse);
-          //router.push(`/course/${newCourse.slug}-${newCourse.id}`);
+          router.push(`/course/${newCourse.slug}-${newCourse.id}`);
         }
       } catch (error) {
         console.error("Error creating course:", error);

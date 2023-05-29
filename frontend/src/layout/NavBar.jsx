@@ -44,7 +44,7 @@ export default function NavBar({ siteConfig, menuItems }) {
         borderColor={"black"}
         align={"center"}
       >
-        <Flex flex={{ base: 1 }} justify={{ base: "center", md: "start" }}>
+        <Flex flex={{ base: 1 }} justify={{ base: "center", md: "start" }} alignItems={"center"}>
           <Flex display={{ base: "flex", md: "none" }}>
             <IconButton
               onClick={onToggle}
