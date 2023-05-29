@@ -238,7 +238,6 @@ class UserModel
                         "email" => $row['email'],
                         "image" => $row['avatar_url'],
                         "role" => $row['role'],
-                        "bio" => $row['bio'],
                         "create_date" => $row['create_date']
                     );
                     array_push($users_arr, $user_item);
