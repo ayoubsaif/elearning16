@@ -142,6 +142,7 @@ class CourseModel
             return array(
                 'courses' => $courses_arr,
                 'pagination' => array(
+                    'totalItems' => $totalRecords,
                     'currentPage' => $currentPage,
                     'pagesCount' => $pagesCount,
                     'recordsPerPage' => $records_per_page,
@@ -151,6 +152,7 @@ class CourseModel
             return array(
                 'courses' => [],
                 'pagination' => array(
+                    'totalItems' => $totalRecords,
                     'currentPage' => $currentPage,
                     'pagesCount' => $pagesCount,
                     'recordsPerPage' => $records_per_page,
@@ -200,6 +202,7 @@ class CourseModel
             return array(
                 'courses' => $data,
                 'pagination' => array(
+                    'totalItems' => $totalRecords,
                     'currentPage' => $currentPage,
                     'pagesCount' => $pagesCount,
                     'recordsPerPage' => $records_per_page,
@@ -210,6 +213,7 @@ class CourseModel
         return array(
             'courses' => [],
             'pagination' => array(
+                'totalItems' => $totalRecords,
                 'currentPage' => $currentPage,
                 'pagesCount' => $pagesCount,
                 'recordsPerPage' => $records_per_page,
