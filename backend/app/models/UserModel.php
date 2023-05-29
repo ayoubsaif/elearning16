@@ -18,6 +18,7 @@ class UserModel
     public $avatar_url;
     public $role;
     public $bio;
+    public $active;
 
     # External Auth Provider Identifiers
     public $google_id;
@@ -128,6 +129,7 @@ class UserModel
             if ($num > 0) {
                 $row = $stmt->fetch(PDO::FETCH_ASSOC);
                 $this->id = $row['id'];
+                $this->active = $row['active'] == 1? true : false;
                 $this->firstname = $row['firstname'];
                 $this->lastname = $row['lastname'];
                 $this->display_name = $this->firstname . " " . $this->lastname;
@@ -159,6 +161,7 @@ class UserModel
             $this->display_name = $this->firstname . " " . $this->lastname;
 
             if ($stmt->execute()) {
+                $this->getOne($this->id);
                 return true;
             }
 
@@ -246,6 +249,22 @@ class UserModel
             }
             return false;
         }catch(Exception $e){
+            return false;
+        }
+    }
+
+    function deleteOne()
+    {
+        try{
+            $query = "DELETE FROM users WHERE id = :id";
+            $stmt = $this->conn->prepare($query);
+            $stmt->bindParam(":id", $this->id);
+            if ($stmt->execute()) {
+                return true;
+            }
+            return false;
+        }catch(Exception $e){
+            echo json_encode(array("message" => $e->getMessage()));
             return false;
         }
     }

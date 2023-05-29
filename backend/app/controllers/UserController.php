@@ -290,7 +290,7 @@ class UserController
     {
         try {
             $PermissionMiddleware = new PermissionMiddleware();
-            $allowed = array('admin', 'teacher', 'student');
+            $allowed = array('admin');
             $UserPermmited = $PermissionMiddleware->handle($allowed);
             if (!$UserPermmited) {
                 return;
@@ -330,10 +330,6 @@ class UserController
                 $user->username = htmlspecialchars(strip_tags($data['username']));
                 $updateProfileValues[] = "username = '{$user->username}'";
             }
-            if ($data['bio'] !== $user->bio) {
-                $user->bio = htmlspecialchars(strip_tags($data['bio']));
-                $updateProfileValues[] = "bio = '{$user->bio}'";
-            }
 
             if ($user->updateProfile($updateProfileValues)) {
                 http_response_code(200);
@@ -354,6 +350,25 @@ class UserController
         } catch (Exception $e) {
             http_response_code(503);
             echo json_encode(array("message" => "Unable to update user info", "error" => $e->getMessage()));
+        }
+    }
+
+    public function deleteOne($id)
+    {
+        $PermissionMiddleware = new PermissionMiddleware();
+        $allowed = array('admin');
+        $UserPermmited = $PermissionMiddleware->handle($allowed);
+        if (!$UserPermmited) {
+            return;
+        }
+        $user = new UserModel();
+        $user->id = $id;
+        if ($user->deleteOne($id)) {
+            http_response_code(200);
+            echo json_encode(array("message" => "User was deleted"));
+        } else {
+            http_response_code(503);
+            echo json_encode(array("message" => "Unable to delete user"));
         }
     }
 

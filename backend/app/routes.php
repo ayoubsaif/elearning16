@@ -64,3 +64,4 @@ $router->get('/api/users', 'UserController@getMany');
 $router->options('/api/user/:id', 'UserController@getSuccessResponse');
 $router->get('/api/user/:id', 'UserController@getOne');
 $router->post('/api/user/:id', 'UserController@updateOne');
+$router->delete('/api/user/:id', 'UserController@deleteOne');
