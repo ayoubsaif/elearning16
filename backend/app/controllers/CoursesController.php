@@ -232,7 +232,13 @@ class CoursesController
         $courses = $course->getManyByCategory($Category->id, $args, $page, $records_per_page);
         $courses['canCreate'] = $UserPermmited->role == "admin" || $UserPermmited->role == "teacher" ? true : false;
         if ($Category->name){
-            $courses['category'] = $Category;
+            $courses['category'] = array(
+                'id' => $Category->id,
+                'name' => $Category->name,
+                'slug' => $Category->slug,
+                'description' => $Category->description,
+                'image' => $Category->image_url,
+            );
         }
         if ($courses) {
             http_response_code(200);
