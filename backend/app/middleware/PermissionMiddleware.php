@@ -34,8 +34,8 @@ class PermissionMiddleware extends Middleware
                             return false;
                         }
                     } else {
-                        http_response_code(440);
-                        echo json_encode(array("message" => "Token expirado"));
+                        http_response_code(401);
+                        echo json_encode(array("message" => "Token expirado o no válido, Inicie sesión nuevamente"));
                         return false;
                     }
                 }

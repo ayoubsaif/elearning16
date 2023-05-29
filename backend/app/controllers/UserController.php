@@ -250,7 +250,7 @@ class UserController
             // Check if the token has expired
             $current_time = time();
             
-            if ($decoded_token->exp < $current_time) {
+            if ( !isset($decoded_token->exp) || $decoded_token->exp < $current_time) {
                 return false;
             }
     
