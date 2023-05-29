@@ -31,6 +31,7 @@ export const authOptions = {
           user.image = res.data?.image;
           user.username = res.data?.username;
           user.accessToken = res.data?.accessToken;
+          user.role = res.data?.role;
           user.exp = res.data?.exp;
           return true;
         }
@@ -51,6 +52,7 @@ export const authOptions = {
         picture: token.image,
         image: token.image,
         username: token.username,
+        role: token.role,
         accessToken: token.accessToken,
       };
       return session;
