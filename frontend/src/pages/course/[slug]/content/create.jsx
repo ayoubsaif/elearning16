@@ -113,27 +113,30 @@ export default function CreateCourseContent(props) {
         }}
       />
       <Layout siteConfig={siteConfig} menuItems={menuItems}>
-        <Flex
-          minH={"100%"}
-          align={"start"}
-          justify={"center"}
-          bgSize="cover"
-          bgPosition="center"
-          paddingBottom={10}
-        >
-          <Stack spacing={4} mx={"auto"} py={0} px={0}>
-            <Stack align={"center"}>
+      
+
+<Stack width={"80%"}
+          mx="auto"
+          border={"1px"}
+          borderColor={"black"}
+          rounded={"md"}
+          overflow={"hidden"}
+          my={5}>
+          <HStack>
+            <Box width={"80%"}
+              mx="auto"
+              rounded={"md"}
+              overflow={"hidden"}
+              my={5}>
               <Heading
                 fontSize={"4xl"}
                 textAlign={"center"}
                 color={"black"}
-                mt={10}
+                mb={10}
               >
                 Nuevo contenido para "{course?.name}"
               </Heading>
-            </Stack>
-            <HStack>
-              <Box rounded={"md"} border={"1px solid black"} p={8} w={800}>
+              
                 <form onSubmit={formik.handleSubmit}>
                   <Stack spacing={8}>
                     <FormControl>
@@ -244,7 +247,6 @@ export default function CreateCourseContent(props) {
               </Box>
             </HStack>
           </Stack>
-        </Flex>
       </Layout>
     </>
   );
