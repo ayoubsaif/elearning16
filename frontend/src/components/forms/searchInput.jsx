@@ -30,9 +30,9 @@ const SearchBar = forwardRef((props, ref) => {
     }
   };
 
-  const handleInputChange = (event) => {
-    const searchTerm = event.target.value;
-    setSearchBar(searchTerm); // Update the searchBar state without triggering the search request
+  const handleInputChange = (e) => {
+    setSearchContent(searchTerm);
+    inputRef.current.value = e.target.value;
   };
 
   const handleReset = () => {
@@ -51,8 +51,6 @@ const SearchBar = forwardRef((props, ref) => {
             type="text"
             placeholder="Search"
             ref={inputRef}
-            value={searchBar}
-            onChange={handleInputChange}
             onKeyDown={handleKeyDown}
           />
           {searchBar && (

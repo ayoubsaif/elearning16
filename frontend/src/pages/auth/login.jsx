@@ -25,6 +25,7 @@ import { Link } from "@chakra-ui/next-js";
 
 export default function Login(props) {
   const router = useRouter();
+  const { error } = router.query;
   const { siteConfig, signInProviders } = props;
   const toast = useToast({
     containerStyle: {
@@ -52,10 +53,10 @@ export default function Login(props) {
     const signInStatus = await signIn("google", {
       callbackUrl: "/courses",
     });
-    if (signInStatus.error) {
+    if (error) {
       toast({
         title: "Error al iniciar sesión con Google",
-        description: "Hemos modificado tu perfil.",
+        description: `Hemos modificado tu perfil. Error: ${error}`,
         status: "warning",
         duration: 3000,
         isClosable: true,

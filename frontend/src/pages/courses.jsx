@@ -1,14 +1,7 @@
 import { NextSeo } from "next-seo";
 import { useEffect, useState, useRef } from "react";
 import Link from "next/link";
-import {
-  Grid,
-  GridItem,
-  Center,
-  SimpleGrid,
-  Heading,
-  Fade,
-} from "@chakra-ui/react";
+import { Heading } from "@chakra-ui/react";
 
 import { getSiteConfig } from "@/services/siteConfig";
 import { getMenuItems } from "@/services/menuItems";
@@ -16,9 +9,6 @@ import { getCourses, getCoursesFromServer } from "@/services/courses";
 import { getCategories } from "@/services/category";
 import CoursesToolbar from "@/components/dataDisplay/coursesToolbar";
 import Layout from "@/layout/Layout";
-import CourseCard from "@/components/dataDisplay/courseCard";
-import ChakraPagination from "@/components/pagination";
-import CoursesLoading from "@/components/skeleton/CoursesLoading";
 
 import { usePagination } from "@ajna/pagination";
 
@@ -54,12 +44,14 @@ export default function Home(props) {
     const fetchData = async () => {
       if (currentPage) {
         const params = {};
-        if (currentPage && currentPage != 1) {
-          params.page = currentPage;
-        }
+
         if (searchBar) {
           params.search = searchBar;
+          params.page = 1;
+        } else if (currentPage !== 1) {
+          params.page = currentPage;
         }
+
         const data = await getCourses(params);
         if (data && data.courses && data.pagination) {
           setCourses(data.courses);
