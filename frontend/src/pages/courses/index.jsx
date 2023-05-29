@@ -15,7 +15,7 @@ import { usePagination } from "@ajna/pagination";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "pages/api/auth/[...nextauth]";
 import { useRouter } from "next/router";
-import CoursesGrid from "../components/courses/CoursesGrid";
+import CoursesGrid from "@/components/courses/CoursesGrid";
 
 export default function Home(props) {
   const {
