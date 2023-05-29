@@ -50,8 +50,8 @@ export default function Login(props) {
   };
 
   const handleGoogleSignIn = async () => {
-    const signInStatus = await signIn("google", {
-      callbackUrl: "/courses",
+    await signIn("google", {
+      callbackUrl: "/",
     });
     if (error) {
       toast({
@@ -61,8 +61,6 @@ export default function Login(props) {
         duration: 3000,
         isClosable: true,
       });
-    } else if (signInStatus.ok) {
-      router.push(signInStatus.callbackUrl);
     }
   };
 
@@ -103,13 +101,13 @@ export default function Login(props) {
                   email: values.email,
                   password: values.password,
                   redirect: false,
-                  callbackUrl: "/courses",
+                  callbackUrl: "/",
                 });
                 if (signInStatus?.error) {
                   actions.setErrors({
                     email: "Correo electrónico o contraseña incorrectos",
                   });
-                } else if (signInStatus?.ok) {
+                } else if (ssignInStatus?.ok) {
                   router.push(signInStatus?.url);
                 }
                 actions.setSubmitting(false);
