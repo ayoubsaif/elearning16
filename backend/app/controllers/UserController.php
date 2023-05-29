@@ -250,7 +250,7 @@ class UserController
             // Check if the token has expired
             $current_time = time();
             
-            if ( !isset($decoded_token->exp) || $decoded_token->exp < $current_time) {
+            if (!isset($decoded_token->exp) || $decoded_token->exp < $current_time) {
                 return false;
             }
     
@@ -268,9 +268,21 @@ class UserController
         $user = new UserModel();
         $user->id = $id;
         if($user->getOne($id)){
-            return $user;
+            http_response_code(200);
+            echo json_encode(array(
+                "id" => intval($user->id),
+                "name" => $user->display_name,
+                "firstname" => $user->firstname,
+                "lastname" => $user->lastname,
+                "username" => $user->username,
+                "bio" => $user->bio,
+                "email" => $user->email,
+                "role" => $user->role,
+                "image" => $user->avatar_url
+            ));
         }else{ 
-            return false;
+            http_response_code(404);
+            echo json_encode(array("message" => "User not found"));
         }
     }
 

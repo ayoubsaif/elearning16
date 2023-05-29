@@ -60,3 +60,6 @@ $router->post('/api/content-progress/:id', 'CourseContentController@updateConten
 # Users
 $router->options('/api/users', 'UserController@getSuccessResponse');
 $router->get('/api/users', 'UserController@getMany');
+
+$router->options('/api/users', 'UserController@getSuccessResponse');
+$router->get('/api/user/:id', 'UserController@getOne');
