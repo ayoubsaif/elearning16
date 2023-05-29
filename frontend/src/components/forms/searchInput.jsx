@@ -4,7 +4,10 @@ import {
   Input,
   InputGroup,
   InputLeftElement,
+  InputRightElement,
   Box,
+  CloseButton,
+  HStack,
 } from "@chakra-ui/react";
 import { SearchIcon, CloseIcon } from "@chakra-ui/icons";
 
@@ -43,23 +46,25 @@ const SearchBar = forwardRef((props, ref) => {
   return (
     <>
       <Box width={300}>
-        <InputGroup>
-          <InputLeftElement pointerEvents="none">
-            <SearchIcon color="gray.300" />
-          </InputLeftElement>
-          <Input
-            type="text"
-            placeholder="Search"
-            ref={inputRef}
-            onKeyDown={handleKeyDown}
-          />
-          {searchBar && (
-            <Button variant="ghost" onClick={handleReset}>
-              <CloseIcon />
-            </Button>
-          )}
-          <Button onClick={handleSearch}>Search</Button>
-        </InputGroup>
+        <HStack>
+          <InputGroup size="md">
+            <InputLeftElement pointerEvents="none">
+              <SearchIcon color="gray.300" />
+            </InputLeftElement>
+            <Input
+              type="text"
+              placeholder="Buscar cursos..."
+              ref={inputRef}
+              onKeyDown={handleKeyDown}
+            />
+            <InputRightElement>
+              {searchBar && <CloseButton size="sm" onClick={handleReset} />}
+            </InputRightElement>
+          </InputGroup>
+          <Button variant={"outline"} onClick={handleSearch}>
+            Buscar
+          </Button>
+        </HStack>
       </Box>
     </>
   );
