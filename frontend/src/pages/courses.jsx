@@ -1,7 +1,7 @@
 import { NextSeo } from "next-seo";
 import { useEffect, useState, useRef } from "react";
 import Link from "next/link";
-import { Heading } from "@chakra-ui/react";
+import { Heading, Text, VStack } from "@chakra-ui/react";
 
 import { getSiteConfig } from "@/services/siteConfig";
 import { getMenuItems } from "@/services/menuItems";
@@ -95,24 +95,27 @@ export default function Home(props) {
         }}
       />
       <Layout siteConfig={siteConfig} menuItems={menuItems}>
-        <Heading as="h1" size="2xl" my={2}>
-          Cursos
-        </Heading>
-        <CoursesToolbar
-          categories={categories}
-          canCreate={canCreate}
-          searchBar={searchBar}
-          setSearchBar={setSearchBar}
-        />
-        <CoursesGrid
-          loading={loading}
-          courses={courses}
-          pages={pages}
-          currentPage={currentPage}
-          pagesCount={pagesCount}
-          setCurrentPage={setCurrentPage}
-          topRef={topRef}
-        />
+        <VStack width="full" my={10}>
+          <Heading as="h2" size="xl" my={2}w="full">
+            Cursos
+          </Heading>
+          <CoursesToolbar
+            canCreate={canCreate}
+            searchBar={searchBar}
+            setSearchBar={setSearchBar}
+            totalItems={pagination?.totalItems}
+          />
+          <CoursesGrid
+            w="full"
+            loading={loading}
+            courses={courses}
+            pages={pages}
+            currentPage={currentPage}
+            pagesCount={pagesCount}
+            setCurrentPage={setCurrentPage}
+            topRef={topRef}
+          />
+        </VStack>
       </Layout>
     </>
   );
