@@ -16,7 +16,7 @@ import {
   Switch,
   Button,
   SimpleGrid,
-  Image,
+  Text,
   Avatar,
   Center
 } from "@chakra-ui/react";
@@ -33,7 +33,6 @@ import { useRouter } from "next/router";
 
 export default function EditUser(props) {
   const { siteConfig, menuItems, initialData } = props;
-  const router = useRouter();
   const [user, setUser] = useState({
     ...initialData
   });
@@ -52,12 +51,11 @@ export default function EditUser(props) {
       username: user?.username || "",
       email: user?.email || "",
       role: user?.role || "",
-      active: user?.active || "",
-      createdate: user?.createdate || '',
+      active: user?.active || true,
     },
     validationSchema: Yup.object({
-      name: Yup.string().required("Nombre es obligatorio"),
-      surname: Yup.string().required("Apellido es obligatorio"),
+      firstname: Yup.string().required("Nombre es obligatorio"),
+      lastname: Yup.string().required("Apellido es obligatorio"),
     }),
     onSubmit: async (values) => {
       console.log("Form submitted!", values);
@@ -69,15 +67,15 @@ export default function EditUser(props) {
         formData.append("email", values.email);
         formData.append("role", values.role);
         formData.append("active", values.active);
-        formData.append("createdate", values.createdate);
 
-        const newUser = await updateUser(
+        const newUserData = await updateUser(
           user?.id,
           formData,
           session?.user?.accessToken
         );
-        if (newUser) {
-          router.push(`/admin/users`);
+        if (newUserData) {
+          console.log("User updated:", newUserData);
+          //router.push(`/admin/users`);
         }
       } catch (error) {
         console.error("Error creating course:", error);
@@ -90,16 +88,16 @@ export default function EditUser(props) {
       <NextSeo
         title={`Editar ${user?.name} - ${siteConfig?.title}`}
         description="Editar los datos del usuario seleccionado"
-        canonical={`${siteConfig?.siteUrl}/admin/users/${user?.id}/edit`}
+        canonical={`${siteConfig?.siteUrl}/admin/user/${user?.id}/edit`}
         openGraph={{
-          url: `${siteConfig?.siteUrl}/admin/users/${user?.id}/edit`,
+          url: `${siteConfig?.siteUrl}/admin/user/${user?.id}/edit`,
           title: `Editar ${user?.name}`,
           description: `Editar ${user?.name}`,
         }}
       />
       <Layout siteConfig={siteConfig} menuItems={menuItems}>
         <Flex
-          minH={"100%"}
+          minH={"full"}
           align={"start"}
           justify={"center"}
           bgSize="cover"
@@ -109,12 +107,13 @@ export default function EditUser(props) {
           <Stack spacing={4} mx={"auto"} py={0} px={0}>
             <Stack align={"center"}>
               <Heading
-                fontSize={"4xl"}
+                as={"h3"}
+                fontSize={"lg"}
                 textAlign={"center"}
                 color={"black"}
                 mt={10}
               >
-                Editar Usario {user?.name}
+                Editar usuario {user?.name}
               </Heading>
             </Stack>
             <HStack>
@@ -124,33 +123,38 @@ export default function EditUser(props) {
                     <Center>
                       <Avatar
                         size={"xl"}
-                        name={user?.username}
+                        name={user?.name}
                         src={user?.image}
                         width={150}
                         height={150}
                         objectFit="cover"
                       />
                     </Center>
+                    {user?.bio &&
+                      <Text fontSize={"md"} textAlign={"center"} color={"gray.500"}>
+                        {user?.bio}
+                      </Text>
+                    }
                     <FormControl>
-                      <FormLabel>Nombre del Usuario</FormLabel>
+                      <FormLabel>Nombre</FormLabel>
                       <Input
                         id="firstname"
                         name="firstname"
                         {...formik.getFieldProps("firstname")}
                       />
-                      <FormErrorMessage>{formik.errors.name}</FormErrorMessage>
+                      <FormErrorMessage>{formik.errors.firstname}</FormErrorMessage>
                     </FormControl>
                     <FormControl>
-                      <FormLabel>Apellido del Usuario</FormLabel>
+                      <FormLabel>Apellido/s</FormLabel>
                       <Input
                         id="lastname"
                         name="lastname"
                         {...formik.getFieldProps("lastname")}
                       />
-                      <FormErrorMessage>{formik.errors.name}</FormErrorMessage>
+                      <FormErrorMessage>{formik.errors.lastname}</FormErrorMessage>
                     </FormControl>
                     <FormControl>
-                      <FormLabel>User Name</FormLabel>
+                      <FormLabel>Nombre de usuario</FormLabel>
                       <Input
                         id="username"
                         name="username"
@@ -158,7 +162,7 @@ export default function EditUser(props) {
                       />
                     </FormControl>
                     <FormControl>
-                      <FormLabel>Email del usuario</FormLabel>
+                      <FormLabel>Email</FormLabel>
                       <Input
                         id="email"
                         name="email"
@@ -167,7 +171,7 @@ export default function EditUser(props) {
                     </FormControl>
                     <FormControl>
                       <Select
-                        placeholder="Slecciona un rol"
+                        placeholder="Selecciona un rol"
                         style={{ width: "100%" }}
                         id="role"
                         name="role"
@@ -184,11 +188,11 @@ export default function EditUser(props) {
                       </Select>
                     </FormControl>
                     <FormControl as={SimpleGrid} columns={{ base: 2, lg: 4 }}>
-                      <FormLabel htmlFor='isChecked'>Activo:</FormLabel>
+                      <FormLabel htmlFor='isChecked'>Activo</FormLabel>
                       <Switch 
                         id='active'
                         name='active'
-                        isChecked={...formik.getFieldProps("active")} 
+                        {...formik.getFieldProps("active")} 
                       />
                     </FormControl>
                     <Stack spacing={10} pt={2}>

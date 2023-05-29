@@ -12,6 +12,17 @@ import {
   Tr,
   Th,
   useDisclosure,
+  AlertDialog,
+  AlertDialogBody,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogContent,
+  AlertDialogOverlay,
+  Button,
+  Center,
+  Avatar,
+  HStack,
+  useToast
 } from "@chakra-ui/react";
 import { getUsers, deleteUser } from "@/services/users";
 import { getSiteConfig } from "@/services/siteConfig";
@@ -19,31 +30,54 @@ import { getMenuItems } from "@/services/menuItems";
 
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "pages/api/auth/[...nextauth]";
+import { useSession } from "next-auth/react";
 
 import { getProfile } from "@/services/profile";
-import UserTableRow from "@/components/users/userTableRow"
+import UserTableRow from "@/components/users/userTableRow";
 
 export default function CreateCourse(props) {
   const { siteConfig, menuItems, initialUsers } = props;
+  const { data: session } = useSession();
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const [users] = useState(initialUsers || []);
+  const [ onDeleteUser, setOnDeleteUser ] = useState();
+  const [ users, setUsers ] = useState(initialUsers || []);
   const cancelRef = useRef();
+  const toast = useToast({
+    containerStyle: {
+      borderColor: "black",
+      border: "1px",
+      borderRadius: "md",
+      boxShadow: ".25rem .25rem 0 black",
+    },
+  });
 
   const onDelete = async (id) => {
-    await deleteUser(id, session?.user?.accessToken);
-    router.push(`/admin/users`);
+    const deleteResponse = await deleteUser(id, session?.user?.accessToken);
+    if (deleteResponse) {
+      const initialUsers = await getUsers(session?.user?.accessToken);
+      setUsers(initialUsers);
+      onClose();
+      toast({
+        title: "Usuario eliminado",
+        description: `El usuario  ${onDeleteUser?.name} ha sido eliminado correctamente`,
+        status: "success",
+        duration: 9000,
+        isClosable: true,
+      });
+      setOnDeleteUser(null);
+    }
   };
 
   return (
     <>
       <NextSeo
-        title={`${siteConfig?.title} - Editar Curso`}
-        description="Editar un curso"
+        title={`Usuarios - ${siteConfig?.title}`}
+        description="Administración de usuarios"
         canonical={`${siteConfig?.siteUrl}/edit-course`}
         openGraph={{
-          url: `${siteConfig?.siteUrl}/edit-course`,
-          title: "Editar Curso",
-          description: "Editar un curso",
+          url: `${siteConfig?.siteUrl}/admin/users`,
+          title: "Usuarios",
+          description: "Administración de usuarios",
         }}
       />
       <Layout siteConfig={siteConfig} menuItems={menuItems}>
@@ -91,6 +125,8 @@ export default function CreateCourse(props) {
                             onClose,
                             cancelRef,
                             isOpen,
+                            onDeleteUser,
+                            setOnDeleteUser,
                           }}
                         />
                       ))}
@@ -100,6 +136,50 @@ export default function CreateCourse(props) {
             )}
           </Stack>
         </Flex>
+
+        <AlertDialog
+          isOpen={isOpen}
+          leastDestructiveRef={cancelRef}
+          onClose={onClose}
+        >
+          <AlertDialogOverlay bg={"blackAlpha.400"}>
+            <AlertDialogContent
+              border="1px solid black"
+              transform="translate(-.25rem, -.25rem)"
+              boxShadow=".25rem .25rem 0 black"
+            >
+              <AlertDialogHeader fontSize="lg" fontWeight="bold">
+                <HStack>
+                  <Avatar
+                    size={"md"}
+                    name={onDeleteUser?.name}
+                    src={onDeleteUser?.image}
+                  />
+                  <Heading as="h4" size="sm">
+                    Eliminar {onDeleteUser?.name}
+                  </Heading>
+                </HStack>
+              </AlertDialogHeader>
+
+              <AlertDialogBody>
+                ¿Estás seguro? No podrás revertir esta acción después.
+              </AlertDialogBody>
+
+              <AlertDialogFooter>
+                <Button ref={cancelRef} onClick={onClose}>
+                  Cancelar
+                </Button>
+                <Button
+                  colorScheme="red"
+                  ml={3}
+                  onClick={() => onDelete(onDeleteUser?.id)}
+                >
+                  Eliminar
+                </Button>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialogOverlay>
+        </AlertDialog>
       </Layout>
     </>
   );
