@@ -4,11 +4,8 @@ import {
   Heading,
   Text,
   Img,
-  Flex,
   AspectRatio,
-  HStack,
 } from "@chakra-ui/react";
-import { BsArrowUpRight } from "react-icons/bs";
 
 export default function CourseCard(props) {
   const { name, description, thumbnail, slug, id } = props.course;
@@ -28,7 +25,7 @@ export default function CourseCard(props) {
       }}
     >
       <NextLink href={`/course/${slug}-${id}`}>
-        <AspectRatio maxW='400px' ratio={16 / 9}>
+        <AspectRatio maxW='500px' ratio={16 / 9}>
           <Img
             src={thumbnail}
             roundedTop={".25em"}
@@ -46,22 +43,6 @@ export default function CourseCard(props) {
             {description}
           </Text>
         </Box>
-        <HStack borderTop={"1px"} color="black">
-          <Flex
-            p={4}
-            alignItems="center"
-            justifyContent={"space-between"}
-            roundedBottom={"sm"}
-            cursor={"pointer"}
-            w="full"
-            h="4em"
-          >
-            <Text fontSize={"md"} fontWeight={"semibold"}>
-              Ver más
-            </Text>
-            <BsArrowUpRight />
-          </Flex>
-        </HStack>
       </NextLink>
     </Box>
   );
