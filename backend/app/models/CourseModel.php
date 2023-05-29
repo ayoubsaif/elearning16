@@ -200,7 +200,7 @@ class CourseModel
                 array_push($courses_arr, $course_item);
             }
             return array(
-                'courses' => $data,
+                'courses' => $courses_arr,
                 'pagination' => array(
                     'totalItems' => $totalRecords,
                     'currentPage' => $currentPage,
