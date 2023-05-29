@@ -174,7 +174,7 @@ class CoursesController
 
     
         $args = array();
-        $page = isset($_GET['page']) ? $_GET['page'] : 1;
+        $page = isset($_GET['page']) ? intval($_GET['page']) : 1;
         if (isset($_GET['category'])){
             $Category->getOne($_GET['category']);
         }
@@ -187,7 +187,7 @@ class CoursesController
             $args[] = "name LIKE '%{$search}%'";
         }
 
-        $records_per_page = isset($_GET['limit']) ? $_GET['limit'] : 12;
+        $records_per_page = isset($_GET['limit']) ? $_GET['limit'] : 20;
         $courses = $course->getMany($args, $page, $records_per_page);
         if ($Category->name){
             $courses['category'] = $Category;
@@ -208,7 +208,6 @@ class CoursesController
         $PermissionMiddleware = new PermissionMiddleware();
         $allowed = array('admin','teacher','student');
         $UserPermmited = $PermissionMiddleware->handle($allowed);
-
         if (!$UserPermmited) {
             return;
         }
@@ -216,7 +215,7 @@ class CoursesController
         $course = new CourseModel();
         $Category = new CategoryModel();
         $args = array();
-        $page = isset($_GET['page']) ? $_GET['page'] : 1;
+        $page = isset($_GET['page']) ? intval($_GET['page']) : 1;
         $Category->getOne($slug);
         if (!$Category->id) {
             http_response_code(404);
@@ -226,10 +225,10 @@ class CoursesController
         $search = isset($_GET['search']) ? $_GET['search'] : null;
         
         if ($search) {
-            $args[] = "name LIKE '%{$search}%'";
+            $args[] = "name LIKE '%{$search}%' OR keywords LIKE '%{$search}%'";
         }
 
-        $records_per_page = isset($_GET['limit']) ? $_GET['limit'] : 12;
+        $records_per_page = isset($_GET['limit']) ? $_GET['limit'] : 20;
         $courses = $course->getManyByCategory($Category->id, $args, $page, $records_per_page);
         $courses['canCreate'] = $UserPermmited->role == "admin" || $UserPermmited->role == "teacher" ? true : false;
         if ($Category->name){
