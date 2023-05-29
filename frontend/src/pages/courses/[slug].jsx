@@ -1,9 +1,7 @@
 import { NextSeo } from "next-seo";
 import { useRouter } from "next/router";
 import { useEffect, useState, useRef } from "react";
-import {
-  Heading,
-} from "@chakra-ui/react";
+import { Heading, VStack, Avatar, HStack, Text, Box, useBreakpointValue, Center } from "@chakra-ui/react";
 import { usePagination } from "@ajna/pagination";
 import CoursesToolbar from "../../components/dataDisplay/coursesToolbar";
 import { getSiteConfig } from "@/services/siteConfig";
@@ -19,14 +17,22 @@ import { authOptions } from "pages/api/auth/[...nextauth]";
 import { useSession } from "next-auth/react";
 
 export default function Home(props) {
-  const { siteConfig, menuItems, coursesData, paginationData, params, canCreate, category, categories } = props;
+  const {
+    siteConfig,
+    menuItems,
+    coursesData,
+    paginationData,
+    params,
+    canCreate,
+    category,
+    categories,
+  } = props;
   const { page, search } = params;
   const router = useRouter();
   const topRef = useRef(null);
   const [courses, setCourses] = useState(coursesData);
   const [pagination, setPagination] = useState(paginationData);
   const [searchBar, setSearchBar] = useState(search);
-  const [searchParams, setSearchParams] = useState(search);
   const { pagesCount, currentPage, setCurrentPage, pages } = usePagination({
     pagesCount: pagination?.pagesCount,
     initialState: { currentPage: page || 1 },
@@ -36,26 +42,28 @@ export default function Home(props) {
 
   useEffect(() => {
     let timeoutId;
-    
+
     const fetchData = async () => {
       if (currentPage && router.query.slug && session?.user?.accessToken) {
         const params = {};
-        if (currentPage !== 1) {
-          params.page = currentPage;
-        }
-        if (searchParams) {
-          params.search = searchParams;
-        }
+
         if (searchBar) {
           params.search = searchBar;
+        } else if (currentPage !== 1) {
+          params.page = currentPage;
         }
-        const data = await getCoursesByCategory(router.query.slug, session?.user?.accessToken, params);
-        
+
+        const data = await getCoursesByCategory(
+          router.query.slug,
+          session?.user?.accessToken,
+          params
+        );
+
         if (data && data.courses && data.pagination) {
           setCourses(data.courses);
           setPagination(data.pagination);
           setLoading(false);
-          
+
           router.replace({
             pathname: router.pathname,
             query: { ...router.query, ...params },
@@ -63,22 +71,27 @@ export default function Home(props) {
         }
       }
     };
-  
+
     const scrollIntoView = () => {
       if (topRef.current) {
         topRef.current.scrollIntoView({ behavior: "smooth" });
       }
     };
-  
+
     const fetchDataWithDelay = () => {
       timeoutId = setTimeout(fetchData, 200);
     };
-  
+
     scrollIntoView();
     fetchDataWithDelay();
-  
+
     return () => clearTimeout(timeoutId);
-  }, [currentPage, router.query.slug, session?.user?.accessToken, searchBar, searchParams]);
+  }, [
+    currentPage,
+    router.query.slug,
+    session?.user?.accessToken,
+    searchBar,
+  ]);
 
   return (
     <>
@@ -102,19 +115,43 @@ export default function Home(props) {
         }}
       />
       <Layout siteConfig={siteConfig} menuItems={menuItems}>
-        <Heading as="h1" size="2xl" textAlign="center" my={4}>
-          Cursos de {category?.name}
-        </Heading>
-        <CoursesToolbar categories={categories} category={category} canCreate={canCreate} searchBar={searchBar} setSearchBar={setSearchBar} setSearchParams={setSearchParams}/>
-        <CoursesGrid 
-          loading={loading}
-          courses={courses}
-          pages={pages}
-          currentPage={currentPage}
-          pagesCount={pagesCount}
-          setCurrentPage={setCurrentPage}
-          topRef={topRef}
-        />
+        <VStack width="full" my={10}>
+          <HStack width="full" my={2}>
+            {category?.image && useBreakpointValue({ base: false, md: true }) && (
+              <Avatar src={category?.image} size="lg" mr={2} />
+            )}
+            <Box width="full">
+              {category?.image && useBreakpointValue({ base: true, md: false }) && (
+                <Center>
+                  <Avatar src={category?.image} size='xl' my={2}/>
+                </Center>
+              )}
+              <Heading as="h2" size="xl">
+                Cursos de {category?.name}
+              </Heading>
+              <Text fontSize="md" w="full" color={"gray.500"} mt={2}>
+                {category?.description}
+              </Text>
+            </Box>
+          </HStack>
+          <CoursesToolbar
+            categories={categories}
+            category={category}
+            canCreate={canCreate}
+            searchBar={searchBar}
+            setSearchBar={setSearchBar}
+            totalItems={pagination?.totalItems}
+          />
+          <CoursesGrid
+            loading={loading}
+            courses={courses}
+            pages={pages}
+            currentPage={currentPage}
+            pagesCount={pagesCount}
+            setCurrentPage={setCurrentPage}
+            topRef={topRef}
+          />
+        </VStack>
       </Layout>
     </>
   );
