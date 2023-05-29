@@ -15,12 +15,16 @@ import {
   FormLabel,
   Switch,
   Button,
+  SimpleGrid,
+  Image,
+  Avatar,
+  Center
 } from "@chakra-ui/react";
 import Input from "@/components/forms/input";
 import { useFormik } from "formik";
 import { getSiteConfig } from "@/services/siteConfig";
 import { getMenuItems } from "@/services/menuItems";
-import { getUser, updateUser } from "@/services/courses";
+import { getUserById, updateUser } from "@/services/users";
 import { authOptions } from "pages/api/auth/[...nextauth]";
 import { getProfile } from "@/services/profile";
 import { getServerSession } from "next-auth/next";
@@ -35,10 +39,16 @@ export default function EditUser(props) {
   });
   const { data: session } = useSession();
 
+  const roles = [
+    {name: 'admin'},
+    {name: 'teacher'},
+    {name: 'student'},
+  ]
+
   const formik = useFormik({
     initialValues: {
-      name: user?.name || "",
-      surname: user?.surname || "",
+      firstname: user?.firstname || "",
+      lastname: user?.lastname || "",
       username: user?.username || "",
       email: user?.email || "",
       role: user?.role || "",
@@ -53,8 +63,8 @@ export default function EditUser(props) {
       console.log("Form submitted!", values);
       try {
         const formData = new FormData();
-        formData.append("name", values.name);
-        formData.append("surname", values.surname);
+        formData.append("firstname", values.firstname);
+        formData.append("lastname", values.lastname);
         formData.append("username", values.username);
         formData.append("email", values.email);
         formData.append("role", values.role);
@@ -78,13 +88,13 @@ export default function EditUser(props) {
   return (
     <>
       <NextSeo
-        title={`Editar ${user?.username} - ${siteConfig?.title}`}
+        title={`Editar ${user?.name} - ${siteConfig?.title}`}
         description="Editar los datos del usuario seleccionado"
         canonical={`${siteConfig?.siteUrl}/admin/users/${user?.id}/edit`}
         openGraph={{
           url: `${siteConfig?.siteUrl}/admin/users/${user?.id}/edit`,
-          title: `Editar ${user?.username}`,
-          description: `Editar ${user?.username}`,
+          title: `Editar ${user?.name}`,
+          description: `Editar ${user?.name}`,
         }}
       />
       <Layout siteConfig={siteConfig} menuItems={menuItems}>
@@ -104,28 +114,38 @@ export default function EditUser(props) {
                 color={"black"}
                 mt={10}
               >
-                Editar Usario {user?.username}
+                Editar Usario {user?.name}
               </Heading>
             </Stack>
             <HStack>
               <Box rounded={"md"} border={"1px solid black"} p={8} w={800}>
                 <form onSubmit={formik.handleSubmit}>
                   <Stack spacing={8}>
+                    <Center>
+                      <Avatar
+                        size={"xl"}
+                        name={user?.username}
+                        src={user?.image}
+                        width={150}
+                        height={150}
+                        objectFit="cover"
+                      />
+                    </Center>
                     <FormControl>
                       <FormLabel>Nombre del Usuario</FormLabel>
                       <Input
-                        id="name"
-                        name="name"
-                        {...formik.getFieldProps("name")}
+                        id="firstname"
+                        name="firstname"
+                        {...formik.getFieldProps("firstname")}
                       />
                       <FormErrorMessage>{formik.errors.name}</FormErrorMessage>
                     </FormControl>
                     <FormControl>
                       <FormLabel>Apellido del Usuario</FormLabel>
                       <Input
-                        id="surname"
-                        name="surname"
-                        {...formik.getFieldProps("surname")}
+                        id="lastname"
+                        name="lastname"
+                        {...formik.getFieldProps("lastname")}
                       />
                       <FormErrorMessage>{formik.errors.name}</FormErrorMessage>
                     </FormControl>
@@ -171,25 +191,6 @@ export default function EditUser(props) {
                         isChecked={...formik.getFieldProps("active")} 
                       />
                     </FormControl>
-                    <Stack spacing={10}>
-                      <FormControl>
-                        <FormLabel>Avatar del usuario</FormLabel>
-                        <HStack>
-                          <Box textAlign="center" position="relative">
-                            <Image
-                              size="xl"
-                              name={user?.name}
-                              src={user?.avatar_url}
-                              width={270}
-                              height={150}
-                              objectFit="cover"
-                              borderRadius="md"
-                              aspectRatio={16 / 9}
-                            />
-                          </Box>
-                        </HStack>
-                      </FormControl>
-                    </Stack>
                     <Stack spacing={10} pt={2}>
                       <Button
                         leftIcon={<BsSave />}
@@ -224,11 +225,10 @@ export async function getServerSideProps(context) {
   const siteConfig = await getSiteConfig();
   const menuItems = await getMenuItems(session?.user?.accessToken);
   const profileInfo = await getProfile(session?.user?.accessToken);
-  const initialData = await getUser(context?.query?.id ,session?.user?.accessToken);
+  const initialData = await getUserById(context?.query?.id ,session?.user?.accessToken);
   return {
     props: {
         initialData,
-        categories,
         siteConfig,
         menuItems,
         profileInfo,
