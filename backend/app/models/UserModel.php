@@ -230,14 +230,16 @@ class UserModel
                 while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
                     $user_item = array(
                         "id" => $row['id'],
+                        "active" => $row['active'] == 1? true : false,
+                        "name" => $row['firstname'] . " " . $row['lastname'],
                         "firstname" => $row['firstname'],
                         "lastname" => $row['lastname'],
-                        "display_name" => $row['firstname'] . " " . $row['lastname'],
                         "username" => $row['username'],
                         "email" => $row['email'],
-                        "avatar_url" => $row['avatar_url'],
+                        "image" => $row['avatar_url'],
                         "role" => $row['role'],
-                        "bio" => $row['bio']
+                        "bio" => $row['bio'],
+                        "create_date" => $row['create_date']
                     );
                     array_push($users_arr, $user_item);
                 }
