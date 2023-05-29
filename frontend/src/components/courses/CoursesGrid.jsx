@@ -26,13 +26,12 @@ export default function CoursesGrid({
     <>
       {loading ? (
         <CoursesLoading />
-      ) : courses && courses.length > 0 ? (
-        <Grid my="1em" ref={topRef}>
+      ) : (courses && courses.length > 0 ? (
+        <Grid my={"1em"} ref={topRef}>
           <Fade in={!loading}>
             <GridItem my="1em" w={"full"}>
               <Center>
                 <SimpleGrid columns={[1, 2, 2, 4]} spacing="20px">
-                  {console.log(courses.length)}
                   {courses.map((course) => (
                     <CourseCard course={course} key={course?.id} />
                   ))}
@@ -52,7 +51,7 @@ export default function CoursesGrid({
           </Center>
         </Grid>
       ) : (
-        <Grid my="1em" ref={topRef}>
+        <Grid my={10} ref={topRef}>
           <Alert
             status="warning"
             variant="subtle"
@@ -61,6 +60,7 @@ export default function CoursesGrid({
             justifyContent="center"
             textAlign="center"
             height="200px"
+            bg={"transparent"}
           >
             <AlertIcon boxSize="40px" mr={0} />
             <AlertTitle mt={4} mb={1} fontSize="lg">
@@ -71,7 +71,7 @@ export default function CoursesGrid({
             </AlertDescription>
           </Alert>
         </Grid>
-      )}
+      ))}
     </>
   );
 }
