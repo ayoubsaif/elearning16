@@ -26,6 +26,7 @@ import { useSession, signIn, signOut } from "next-auth/react";
 
 import MobileNav from "./navbar/MobileNav";
 import { DesktopNav } from "./navbar/DesktopNav";
+import ProfileMenu from "./navbar/ProfileMenu";
 
 export default function NavBar({ siteConfig, menuItems }) {
   const { isOpen, onToggle } = useDisclosure();
@@ -79,49 +80,7 @@ export default function NavBar({ siteConfig, menuItems }) {
           <Spacer display={{ base: "none", md: "flex" }} />
 
           {session?.user ? (
-            <Menu>
-              <MenuButton
-                rounded={"full"}
-                variant={"link"}
-                cursor={"pointer"}
-                minW={0}
-              >
-                <Flex direction={"row"} align={"center"} p={2}>
-                  <Avatar size={"sm"} src={session?.user?.image} />
-                  <Text ml={2} display={{ base: "none", md: "flex" }}>
-                    {session?.user?.firstname}
-                  </Text>
-                </Flex>
-              </MenuButton>
-              <MenuList
-                rounded={".25em"}
-                overflow={"hidden"}
-                bg="white"
-                border={"1px"}
-                borderColor="black"
-                boxShadow={".25rem .25rem 0 black"}
-                alignItems={"center"}
-              >
-                <Flex direction={"row"} align={"center"} p={2}>
-                  <Center>
-                    <Avatar size={"lg"} src={session?.user?.image} />
-                  </Center>
-                  <Box>
-                    <Text ml={2}>{session?.user?.name}</Text>
-                    <Text
-                      ml={2}
-                      fontSize={"sm"}
-                      color={"gray.500"}
-                    >{`@${session?.user?.username}`}</Text>
-                  </Box>
-                </Flex>
-                <MenuDivider />
-                <MenuItem as={NextLink} href={"/profile"}>
-                  Perfil
-                </MenuItem>
-                <MenuItem onClick={() => signOut()}>Cerrar sesión</MenuItem>
-              </MenuList>
-            </Menu>
+            <ProfileMenu session={session} signOut={signOut} />
           ) : (
             <ButtonGroup gap="2">
               <Button
