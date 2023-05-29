@@ -120,178 +120,180 @@ export default function EditCourse(props) {
         }}
       />
       <Layout siteConfig={siteConfig} menuItems={menuItems}>
-        <Flex
-          minH={"100%"}
-          align={"start"}
-          justify={"center"}
-          bgSize="cover"
-          bgPosition="center"
-          paddingBottom={10}
-        >
-          <Stack spacing={4} mx={"auto"} py={0} px={0}>
-            <Stack align={"center"}>
+
+        <Stack width={"80%"}
+          mx="auto"
+          border={"1px"}
+          borderColor={"black"}
+          rounded={"md"}
+          overflow={"hidden"}
+          my={5}>
+
+          <HStack>
+            <Box width={"80%"}
+              mx="auto"
+              rounded={"md"}
+              overflow={"hidden"}
+              my={5}>
               <Heading
                 fontSize={"4xl"}
                 textAlign={"center"}
                 color={"black"}
-                mt={10}
+                mb={10}
               >
-                Editar curso {course?.name}
+                Editar curso
               </Heading>
-            </Stack>
-            <HStack>
-              <Box rounded={"md"} border={"1px solid black"} p={8} w={800}>
-                <form onSubmit={formik.handleSubmit}>
-                  <Stack spacing={8}>
-                    <FormControl>
-                      <FormLabel>Nombre del Curso</FormLabel>
-                      <Input
-                        id="name"
-                        name="name"
-                        {...formik.getFieldProps("name")}
-                      />
-                      <FormErrorMessage>{formik.errors.name}</FormErrorMessage>
-                    </FormControl>
-                    <FormControl>
-                      <FormLabel>Slug del Curso</FormLabel>
-                      <HStack>
-                        <Input
-                          id="slug"
-                          name="slug"
-                          {...formik.getFieldProps("slug")}
-                        />
-                        <Button
-                          onClick={() => generateSlug(formik.values.name)}
-                          variant="primary"
-                        >
-                          Generar
-                        </Button>
-                      </HStack>
-                      <FormErrorMessage>{formik.errors.slug}</FormErrorMessage>
-                    </FormControl>
-                    <FormControl>
-                      <FormLabel>Descripción del Curso</FormLabel>
-                      <Textarea
-                        type="text"
-                        placeholder="Escriba una descripción del curso..."
-                        id="description"
-                        name="description"
-                        {...formik.getFieldProps("description")}
-                      />
-                    </FormControl>
 
-                    <FormControl>
-                      <Select
-                        placeholder="Selecciona una categoría"
-                        style={{ width: "100%" }}
-                        id="category"
-                        name="category"
-                        {...formik.getFieldProps("category")}
+              <form onSubmit={formik.handleSubmit}>
+                <Stack spacing={8}>
+                  <FormControl>
+                    <FormLabel>Nombre del Curso</FormLabel>
+                    <Input
+                      id="name"
+                      name="name"
+                      {...formik.getFieldProps("name")}
+                    />
+                    <FormErrorMessage>{formik.errors.name}</FormErrorMessage>
+                  </FormControl>
+                  <FormControl>
+                    <FormLabel>Slug del Curso</FormLabel>
+                    <HStack>
+                      <Input
+                        id="slug"
+                        name="slug"
+                        {...formik.getFieldProps("slug")}
+                      />
+                      <Button
+                        onClick={() => generateSlug(formik.values.name)}
+                        variant="primary"
                       >
-                        {categories?.map((category) => (
-                          <option
-                            key={category.id}
-                            value={category.id}
-                          >
-                            {category.name}
-                          </option>
-                        ))}
-                      </Select>
+                        Generar
+                      </Button>
+                    </HStack>
+                    <FormErrorMessage>{formik.errors.slug}</FormErrorMessage>
+                  </FormControl>
+                  <FormControl>
+                    <FormLabel>Descripción del Curso</FormLabel>
+                    <Textarea
+                      type="text"
+                      placeholder="Escriba una descripción del curso..."
+                      id="description"
+                      name="description"
+                      {...formik.getFieldProps("description")}
+                    />
+                  </FormControl>
+
+                  <FormControl>
+                    <Select
+                      placeholder="Selecciona una categoría"
+                      style={{ width: "100%" }}
+                      id="category"
+                      name="category"
+                      {...formik.getFieldProps("category")}
+                    >
+                      {categories?.map((category) => (
+                        <option
+                          key={category.id}
+                          value={category.id}
+                        >
+                          {category.name}
+                        </option>
+                      ))}
+                    </Select>
+                    <FormErrorMessage>
+                      {formik.errors.category}
+                    </FormErrorMessage>
+                  </FormControl>
+
+                  <Box>
+                    <FormControl>
+                      <FormLabel>Etiquetas del curso</FormLabel>
+                      <ChakraTagInput
+                        style={{ width: "100%" }}
+                        rounded={".25em"}
+                        border={"1px"}
+                        borderColor="gray.300"
+                        _hover={{
+                          borderColor: "black",
+                          boxShadow: "0 0 0 1px blue.300",
+                        }}
+                        _focusWithin={{
+                          outline: "2px solid",
+                          outlineColor: "blue.100",
+                          outlineOffset: "0px",
+                        }}
+                        id="keywords"
+                        name="keywords"
+                        tags={tags}
+                        onTagsChange={handleTagsChange}
+                      />
                       <FormErrorMessage>
-                        {formik.errors.category}
+                        {formik.errors.keywords}
                       </FormErrorMessage>
                     </FormControl>
-
-                    <Box>
-                      <FormControl>
-                        <FormLabel>Etiquetas del curso</FormLabel>
-                        <ChakraTagInput
-                          style={{ width: "100%" }}
-                          rounded={".25em"}
-                          border={"1px"}
-                          borderColor="gray.300"
-                          _hover={{
-                            borderColor: "black",
-                            boxShadow: "0 0 0 1px blue.300",
-                          }}
-                          _focusWithin={{
-                            outline: "2px solid",
-                            outlineColor: "blue.100",
-                            outlineOffset: "0px",
-                          }}
-                          id="keywords"
-                          name="keywords"
-                          tags={tags}
-                          onTagsChange={handleTagsChange}
-                        />
-                        <FormErrorMessage>
-                          {formik.errors.keywords}
-                        </FormErrorMessage>
-                      </FormControl>
-                    </Box>
-                    <Stack spacing={10}>
-                      <FormControl isInvalid={formik.errors.image}>
-                        <FormLabel>Imagen del curso (Usar Imágenes en 16/9)</FormLabel>
-                        <HStack>
-                          <Box textAlign="center" position="relative">
-                            <Image
-                              size="xl"
-                              name={course?.name}
-                              src={course?.thumbnail}
-                              width={270}
-                              height={150}
-                              objectFit="cover"
-                              borderRadius="md"
-                              aspectRatio={16 / 9}
+                  </Box>
+                  <Stack spacing={10}>
+                    <FormControl isInvalid={formik.errors.image}>
+                      <FormLabel>Imagen del curso (Usar Imágenes en 16/9)</FormLabel>
+                      <HStack>
+                        <Box textAlign="center" position="relative">
+                          <Image
+                            size="xl"
+                            name={course?.name}
+                            src={course?.thumbnail}
+                            width={270}
+                            height={150}
+                            objectFit="cover"
+                            borderRadius="md"
+                            aspectRatio={16 / 9}
+                          />
+                          <Box
+                            position="absolute"
+                            inset={-2}
+                            display="flex"
+                            alignItems="end"
+                            justifyContent="end"
+                          >
+                            <input
+                              id="thumbnail"
+                              name="thumbnail"
+                              type="file"
+                              accept=".jpg,.jpeg,.png"
+                              onChange={(e) => {
+                                handleImageChange(e);
+                              }}
+                              style={{ display: "none" }}
                             />
-                            <Box
-                              position="absolute"
-                              inset={-2}
-                              display="flex"
-                              alignItems="end"
-                              justifyContent="end"
-                            >
-                              <input
-                                id="thumbnail"
-                                name="thumbnail"
-                                type="file"
-                                accept=".jpg,.jpeg,.png"
-                                onChange={(e) => {
-                                  handleImageChange(e);
-                                }}
-                                style={{ display: "none" }}
-                              />
-                              <IconButton
-                                icon={<BsPencilSquare />}
-                                aria-label="Change course Image"
-                                rounded={"full"}
-                                onClick={() =>
-                                  document.getElementById("thumbnail").click()
-                                }
-                              />
-                            </Box>
-                            <FormErrorMessage>
-                              {formik.errors.thumbnail}
-                            </FormErrorMessage>
+                            <IconButton
+                              icon={<BsPencilSquare />}
+                              aria-label="Change course Image"
+                              rounded={"full"}
+                              onClick={() =>
+                                document.getElementById("thumbnail").click()
+                              }
+                            />
                           </Box>
-                        </HStack>
-                      </FormControl>
-                    </Stack>
-                    <Stack spacing={10} pt={2}>
-                      <Button
-                        leftIcon={<BsSave />}
-                        variant="primary"
-                        type="submit"
-                      >
-                        Guardar cambios
-                      </Button>
-                    </Stack>
+                          <FormErrorMessage>
+                            {formik.errors.thumbnail}
+                          </FormErrorMessage>
+                        </Box>
+                      </HStack>
+                    </FormControl>
                   </Stack>
-                </form>
-              </Box>
-            </HStack>
-          </Stack>
-        </Flex>
+                  <Stack spacing={10} pt={2}>
+                    <Button
+                      leftIcon={<BsSave />}
+                      variant="primary"
+                      type="submit"
+                    >
+                      Guardar cambios
+                    </Button>
+                  </Stack>
+                </Stack>
+              </form>
+            </Box>
+          </HStack>
+        </Stack>
       </Layout>
     </>
   );
@@ -312,14 +314,14 @@ export async function getServerSideProps(context) {
   const menuItems = await getMenuItems(session?.user?.accessToken);
   const profileInfo = await getProfile(session?.user?.accessToken);
   const categories = await getCategories(session?.user?.accessToken);
-  const initialData = await getCourse(context?.query?.slug ,session?.user?.accessToken);
+  const initialData = await getCourse(context?.query?.slug, session?.user?.accessToken);
   return {
     props: {
-        initialData,
-        categories,
-        siteConfig,
-        menuItems,
-        profileInfo,
+      initialData,
+      categories,
+      siteConfig,
+      menuItems,
+      profileInfo,
     },
   };
 }
