@@ -18,7 +18,7 @@ import {
   SimpleGrid,
   Text,
   Avatar,
-  Center
+  Center,
 } from "@chakra-ui/react";
 import Input from "@/components/forms/input";
 import { useFormik } from "formik";
@@ -33,16 +33,13 @@ import { useRouter } from "next/router";
 
 export default function EditUser(props) {
   const { siteConfig, menuItems, initialData } = props;
+  const router = useRouter();
   const [user, setUser] = useState({
-    ...initialData
+    ...initialData,
   });
   const { data: session } = useSession();
 
-  const roles = [
-    {name: 'admin'},
-    {name: 'teacher'},
-    {name: 'student'},
-  ]
+  const roles = [{ name: "admin" }, { name: "teacher" }, { name: "student" }];
 
   const formik = useFormik({
     initialValues: {
@@ -74,8 +71,7 @@ export default function EditUser(props) {
           session?.user?.accessToken
         );
         if (newUserData) {
-          console.log("User updated:", newUserData);
-          //router.push(`/admin/users`);
+          router.push(`/admin/users`);
         }
       } catch (error) {
         console.error("Error creating course:", error);
@@ -117,42 +113,54 @@ export default function EditUser(props) {
               </Heading>
             </Stack>
             <HStack>
-              <Box rounded={"md"} border={"1px solid black"} p={8} w={800}>
+              <Box rounded={"md"} border={"1px solid black"} p={8} >
                 <form onSubmit={formik.handleSubmit}>
                   <Stack spacing={8}>
-                    <Center>
-                      <Avatar
-                        size={"xl"}
-                        name={user?.name}
-                        src={user?.image}
-                        width={150}
-                        height={150}
-                        objectFit="cover"
-                      />
-                    </Center>
-                    {user?.bio &&
-                      <Text fontSize={"md"} textAlign={"center"} color={"gray.500"}>
+                    <Flex gap={4} flexDirection={{base: 'column', md: 'row'}}>
+                      <Center>
+                        <Avatar
+                          size={"xl"}
+                          name={user?.name}
+                          src={user?.image}
+                          width={150}
+                          height={150}
+                          objectFit="cover"
+                        />
+                      </Center>
+                      <HStack spacing={4}>
+                        <FormControl>
+                          <FormLabel>Nombre</FormLabel>
+                          <Input
+                            id="firstname"
+                            name="firstname"
+                            {...formik.getFieldProps("firstname")}
+                          />
+                          <FormErrorMessage>
+                            {formik.errors.firstname}
+                          </FormErrorMessage>
+                        </FormControl>
+                        <FormControl>
+                          <FormLabel>Apellido/s</FormLabel>
+                          <Input
+                            id="lastname"
+                            name="lastname"
+                            {...formik.getFieldProps("lastname")}
+                          />
+                          <FormErrorMessage>
+                            {formik.errors.lastname}
+                          </FormErrorMessage>
+                        </FormControl>
+                      </HStack>
+                    </Flex>
+                    {user?.bio && (
+                      <Text
+                        fontSize={"md"}
+                        textAlign={"center"}
+                        color={"gray.500"}
+                      >
                         {user?.bio}
                       </Text>
-                    }
-                    <FormControl>
-                      <FormLabel>Nombre</FormLabel>
-                      <Input
-                        id="firstname"
-                        name="firstname"
-                        {...formik.getFieldProps("firstname")}
-                      />
-                      <FormErrorMessage>{formik.errors.firstname}</FormErrorMessage>
-                    </FormControl>
-                    <FormControl>
-                      <FormLabel>Apellido/s</FormLabel>
-                      <Input
-                        id="lastname"
-                        name="lastname"
-                        {...formik.getFieldProps("lastname")}
-                      />
-                      <FormErrorMessage>{formik.errors.lastname}</FormErrorMessage>
-                    </FormControl>
+                    )}
                     <FormControl>
                       <FormLabel>Nombre de usuario</FormLabel>
                       <Input
@@ -178,21 +186,18 @@ export default function EditUser(props) {
                         {...formik.getFieldProps("role")}
                       >
                         {roles?.map((rol) => (
-                          <option
-                            key={rol.name}
-                            value={rol.name}
-                          >
+                          <option key={rol.name} value={rol.name}>
                             {rol.name}
                           </option>
                         ))}
                       </Select>
                     </FormControl>
                     <FormControl as={SimpleGrid} columns={{ base: 2, lg: 4 }}>
-                      <FormLabel htmlFor='isChecked'>Activo</FormLabel>
-                      <Switch 
-                        id='active'
-                        name='active'
-                        {...formik.getFieldProps("active")} 
+                      <FormLabel htmlFor="isChecked">Activo</FormLabel>
+                      <Switch
+                        id="active"
+                        name="active"
+                        {...formik.getFieldProps("active")}
                       />
                     </FormControl>
                     <Stack spacing={10} pt={2}>
@@ -229,13 +234,16 @@ export async function getServerSideProps(context) {
   const siteConfig = await getSiteConfig();
   const menuItems = await getMenuItems(session?.user?.accessToken);
   const profileInfo = await getProfile(session?.user?.accessToken);
-  const initialData = await getUserById(context?.query?.id ,session?.user?.accessToken);
+  const initialData = await getUserById(
+    context?.query?.id,
+    session?.user?.accessToken
+  );
   return {
     props: {
-        initialData,
-        siteConfig,
-        menuItems,
-        profileInfo,
+      initialData,
+      siteConfig,
+      menuItems,
+      profileInfo,
     },
   };
 }

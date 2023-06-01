@@ -104,6 +104,7 @@ export default function Home(props) {
             searchBar={searchBar}
             setSearchBar={setSearchBar}
             totalItems={pagination?.totalItems}
+            topRef={topRef}
           />
           <CoursesGrid
             w="full"
@@ -113,7 +114,6 @@ export default function Home(props) {
             currentPage={currentPage}
             pagesCount={pagesCount}
             setCurrentPage={setCurrentPage}
-            topRef={topRef}
           />
         </VStack>
       </Layout>
@@ -124,15 +124,6 @@ export default function Home(props) {
 // get static props with page info from backend
 export async function getServerSideProps({ query, req, res }) {
   const session = await getServerSession(req, res, authOptions);
-  if (!session || session.expires * 1000 < Date.now()) {
-    return {
-      redirect: {
-        destination: "/auth/login",
-        permanent: false,
-      },
-    };
-  }
-  const siteConfig = await getSiteConfig();
   const menuItems = await getMenuItems(session?.user?.accessToken);
   const categories = await getCategories(session?.user?.accessToken);
 
@@ -150,7 +141,6 @@ export async function getServerSideProps({ query, req, res }) {
   return {
     props: {
       categories,
-      siteConfig,
       menuItems,
       coursesData: coursesItems?.courses || [],
       paginationData: coursesItems?.pagination || {},

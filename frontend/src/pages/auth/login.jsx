@@ -23,6 +23,9 @@ import Input from "@/components/forms/input";
 import { getSiteConfig } from "@/services/siteConfig";
 import { Link } from "@chakra-ui/next-js";
 
+import { getServerSession } from "next-auth/next";
+import { authOptions } from "pages/api/auth/[...nextauth]";
+
 export default function Login(props) {
   const router = useRouter();
   const { error } = router.query;
@@ -181,7 +184,16 @@ export default function Login(props) {
   );
 }
 
-export async function getStaticProps() {
+export async function getServerSideProps({ req, res }) {
+  const session = await getServerSession(req, res, authOptions);
+  if (session) {
+    return {
+      redirect: {
+        destination: "/",
+        permanent: false,
+      },
+    };
+  }
   const siteConfig = await getSiteConfig();
   const signInProviders = await getProviders();
   return {
