@@ -16,10 +16,19 @@ export default function App({Component, pageProps: { session, ...pageProps }}) {
 
 // get static props with page info from backend
 App.getInitialProps = async (req) => {
-  const siteConfig = await getSiteConfig();
-  return {
-    pageProps: {
-      siteConfig,
-    },
-  };
+  try {
+    const siteConfig = await getSiteConfig();
+    return {
+      pageProps: {
+        siteConfig,
+      },
+    };
+  } catch (error) {
+    console.error(error);
+    return {
+      pageProps: {
+        siteConfig: {},
+      },
+    };
+  }
 }

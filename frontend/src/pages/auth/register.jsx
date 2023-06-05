@@ -23,7 +23,6 @@ import { FcGoogle } from "react-icons/fc";
 
 import Input from "@/components/forms/input";
 
-import { getSiteConfig } from "@/services/siteConfig";
 import { Link } from "@chakra-ui/next-js";
 
 export default function Register(props) {
@@ -232,11 +231,9 @@ export default function Register(props) {
 }
 
 export async function getStaticProps() {
-  const siteConfig = await getSiteConfig();
   const signInProviders = await getProviders();
   return {
     props: {
-      siteConfig,
       signInProviders,
     },
   };

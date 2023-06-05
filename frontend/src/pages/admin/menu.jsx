@@ -5,7 +5,6 @@ import { DragDropContext } from "react-beautiful-dnd";
 
 const Column = dynamic(() => import("@/components/Column"), { ssr: false });
 
-import { getSiteConfig } from "@/services/siteConfig";
 import { getMenuItems } from "@/services/menuItems";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "pages/api/auth/[...nextauth]";
@@ -180,11 +179,9 @@ export async function getServerSideProps({ query, req, res }) {
       },
     };
   }
-  const siteConfig = await getSiteConfig();
   const menuItems = await getMenuItems(session?.user?.accessToken);
   return {
     props: {
-      siteConfig,
       menuItems,
     },
   };

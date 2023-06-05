@@ -22,7 +22,6 @@ import ChakraTagInput from "@/components/forms/ChakraTagInput";
 import Input from "@/components/forms/input";
 import { useFormik } from "formik";
 import { createCourse } from "@/services/courses";
-import { getSiteConfig } from "@/services/siteConfig";
 import { getMenuItems } from "@/services/menuItems";
 import { authOptions } from "pages/api/auth/[...nextauth]";
 import { getProfile } from "@/services/profile";
@@ -310,14 +309,12 @@ export async function getServerSideProps(context) {
     };
   }
 
-  const siteConfig = await getSiteConfig();
   const menuItems = await getMenuItems(session?.user?.accessToken);
   const profileInfo = await getProfile(session?.user?.accessToken);
   const categories = await getCategories(session?.user?.accessToken);
   return {
     props: {
       categories,
-      siteConfig,
       menuItems,
       profileInfo,
     },

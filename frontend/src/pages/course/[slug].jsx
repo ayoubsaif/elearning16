@@ -18,7 +18,12 @@ import {
   AlertDialogHeader,
   AlertDialogContent,
   AlertDialogOverlay,
-  useDisclosure
+  useDisclosure,
+  Alert,
+  AlertTitle,
+  AlertDescription,
+  AlertIcon,
+  AspectRatio,
 } from "@chakra-ui/react";
 import { ChevronRightIcon } from "@chakra-ui/icons";
 import { BsTrash3, BsPencilSquare, BsPlusLg } from "react-icons/bs";
@@ -28,7 +33,6 @@ import ContentCard from "@/components/dataDisplay/contentCard";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "pages/api/auth/[...nextauth]";
 import { useSession } from "next-auth/react";
-import { getSiteConfig } from "@/services/siteConfig";
 import { getMenuItems } from "@/services/menuItems";
 import { getCourse, deleteCourse } from "@/services/courses";
 import { useRouter } from "next/router";
@@ -37,8 +41,8 @@ import Link from "next/link";
 
 export default function CourseLandingPage(props) {
   const { siteConfig, menuItems, course } = props;
-  const { isOpen, onOpen, onClose } = useDisclosure()
-  const cancelRef = useRef()
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const cancelRef = useRef();
   const router = useRouter();
 
   const { data: session } = useSession();
@@ -48,11 +52,11 @@ export default function CourseLandingPage(props) {
   const onDelete = async () => {
     await deleteCourse(course?.id, session?.user?.accessToken);
     router.push("/courses");
-  }
+  };
 
   return (
     <>
-    <NextSeo
+      <NextSeo
         title={`${course?.name} - ${siteConfig?.title}`}
         description={`${course?.description}`}
         canonical={`${siteConfig?.siteUrl}/course/${course?.slug}`}
@@ -77,6 +81,12 @@ export default function CourseLandingPage(props) {
               </Link>
             </BreadcrumbItem>
 
+            <BreadcrumbItem>
+              <Link href={`/courses/${course.category.slug}`}>
+                <Text>{course.category.name}</Text>
+              </Link>
+            </BreadcrumbItem>
+
             <BreadcrumbItem isCurrentPage>
               <Text>{course?.name}</Text>
             </BreadcrumbItem>
@@ -88,21 +98,21 @@ export default function CourseLandingPage(props) {
             <Heading as="h1" fontSize={{ base: "3xl", md: "4xl" }} my={4}>
               {course?.name}
             </Heading>
-            {course?.canEdit &&
+            {course?.canEdit && (
               <>
                 <Link href={`/course/${router?.query?.slug}/edit`}>
                   <IconButton
                     icon={<BsPencilSquare />}
                     aria-label="Edit course"
                     rounded={"full"}
-                    variant={'outlined'}
+                    variant={"outlined"}
                   />
                 </Link>
                 <IconButton
                   icon={<BsTrash3 />}
                   aria-label="Delete course"
                   rounded={"full"}
-                  variant={'red'}
+                  variant={"red"}
                   onClick={onOpen}
                 />
                 <AlertDialog
@@ -112,11 +122,11 @@ export default function CourseLandingPage(props) {
                 >
                   <AlertDialogOverlay>
                     <AlertDialogContent
-                      border='1px solid black'
+                      border="1px solid black"
                       transform="translate(-.25rem, -.25rem)"
                       boxShadow=".25rem .25rem 0 black"
                     >
-                      <AlertDialogHeader fontSize='lg' fontWeight='bold'>
+                      <AlertDialogHeader fontSize="lg" fontWeight="bold">
                         Eliminar curso {course?.name}
                       </AlertDialogHeader>
 
@@ -128,7 +138,7 @@ export default function CourseLandingPage(props) {
                         <Button ref={cancelRef} onClick={onClose}>
                           Cancelar
                         </Button>
-                        <Button colorScheme='red' onClick={onDelete} ml={3}>
+                        <Button colorScheme="red" onClick={onDelete} ml={3}>
                           Eliminar
                         </Button>
                       </AlertDialogFooter>
@@ -136,60 +146,89 @@ export default function CourseLandingPage(props) {
                   </AlertDialogOverlay>
                 </AlertDialog>
               </>
-            }
+            )}
           </HStack>
-          {course?.create_uid &&
+          {course?.create_uid && (
             <Text fontSize={{ base: "md", md: "lg" }} mb={4}>
               Creado por <strong>{course?.create_uid?.name}</strong>
             </Text>
-          }
-          <Flex direction={isMobile ? "column" : "row"} align="flex-start" mb={8}>
-            <Box
-              w={isMobile ? "full" : 400}
-              h={isMobile ? "auto" : 225}
-              bg="gray.200"
-              rounded="md"
-              overflow="hidden"
-              mr={isMobile ? 0 : 4}
-              mb={isMobile ? 4 : 0}
-            >
+          )}
+          <Box display={{ md: "flex" }}>
+            <AspectRatio ratio={16 / 9} 
+                width={{ md: 80 }} flexShrink={0}>
               <Image
+                borderRadius="md"
                 src={course?.thumbnail}
                 alt={course?.name}
-                w="full"
-                h="full"
                 objectFit="cover"
               />
+            </AspectRatio>
+            <Box mt={{ base: 4, md: 0 }} ml={{ md: 6 }}>
+              <Text fontSize={{ base: "md", md: "lg" }}>
+                {course?.description}
+              </Text>
             </Box>
-            <VStack align="flex-start" spacing={4} mb={4} flex="1">
-              <Text fontSize={{ base: "md", md: "lg" }}>{course?.description}</Text>
-            </VStack>
-          </Flex>
+          </Box>
 
           <Box>
             <HStack spacing={4} mb={4}>
               <Heading as="h2" fontSize={{ base: "xl", md: "2xl" }} my={4}>
                 Contenidos del curso
               </Heading>
-              {course?.canEdit &&
+              {course?.canEdit && (
                 <Link href={`/course/${router?.query?.slug}/content/create`}>
                   <IconButton
                     icon={<BsPlusLg />}
                     aria-label="Create content"
                     rounded={"full"}
-                    variant={'outlined'}
+                    variant={"outlined"}
                   />
                 </Link>
-              }
+              )}
             </HStack>
-            <VStack spacing={5} maxWidth={'100%'}>
-              {course?.courseContents?.map((content, i) => (
-                <ContentCard
-                  key={i}
-                  slug={router?.query?.slug}
-                  {...content}
-                />
-              ))}
+            <VStack spacing={5} maxWidth={"100%"}>
+              {course?.courseContents?.length > 0 ? (
+                course?.courseContents?.map((content, i) => (
+                  <ContentCard
+                    key={i}
+                    slug={router?.query?.slug}
+                    {...content}
+                  />
+                ))
+              ) : (
+                <Alert
+                  status="warning"
+                  variant="subtle"
+                  flexDirection="column"
+                  alignItems="center"
+                  justifyContent="center"
+                  textAlign="center"
+                  height="200px"
+                  bg="transparent"
+                >
+                  <AlertIcon boxSize="40px" mr={0} />
+                  <AlertTitle mt={4} mb={1} fontSize="lg">
+                    No hay contenidos de cursos
+                  </AlertTitle>
+                  {course?.canEdit && (
+                    <AlertDescription maxWidth="sm">
+                      Añada contenidos pulsando el siguiente boton:{" "}
+                      <Link
+                        href={`/course/${router?.query?.slug}/content/create`}
+                      >
+                        <Button
+                          leftIcon={<BsPlusLg />}
+                          aria-label="Create content"
+                          rounded={"full"}
+                          variant={"outlined"}
+                        >
+                          Añadir Contenido al Curso
+                        </Button>
+                      </Link>
+                    </AlertDescription>
+                  )}
+                </Alert>
+              )}
             </VStack>
           </Box>
         </Box>
@@ -197,7 +236,6 @@ export default function CourseLandingPage(props) {
     </>
   );
 }
-
 
 // get static props with page info from backend
 export async function getServerSideProps({ query, req, res }) {
@@ -210,12 +248,10 @@ export async function getServerSideProps({ query, req, res }) {
       },
     };
   }
-  const siteConfig = await getSiteConfig();
   const menuItems = await getMenuItems(session?.user?.accessToken);
   const course = await getCourse(query?.slug, session?.user?.accessToken);
   return {
     props: {
-      siteConfig,
       menuItems,
       course,
     },

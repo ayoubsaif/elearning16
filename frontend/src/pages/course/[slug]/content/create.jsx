@@ -23,7 +23,6 @@ import {
 import Input from "@/components/forms/input";
 import { useFormik } from "formik";
 import { createContent } from "@/services/courseContent";
-import { getSiteConfig } from "@/services/siteConfig";
 import { getMenuItems } from "@/services/menuItems";
 import { authOptions } from "pages/api/auth/[...nextauth]";
 import { getProfile } from "@/services/profile";
@@ -33,7 +32,7 @@ import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 
 export default function CreateCourseContent(props) {
-  const { siteConfig, menuItems, course  } = props;
+  const { siteConfig, menuItems, course } = props;
 
   const router = useRouter();
   const [content, setContent] = useState({
@@ -113,140 +112,133 @@ export default function CreateCourseContent(props) {
         }}
       />
       <Layout siteConfig={siteConfig} menuItems={menuItems}>
-      
-
-<Stack width={"80%"}
-          mx="auto"
-          border={"1px"}
-          borderColor={"black"}
-          rounded={"md"}
-          overflow={"hidden"}
-          my={5}>
-          <HStack>
-            <Box width={"80%"}
-              mx="auto"
-              rounded={"md"}
-              overflow={"hidden"}
-              my={5}>
-              <Heading
-                fontSize={"4xl"}
-                textAlign={"center"}
-                color={"black"}
-                mb={10}
-              >
-                Nuevo contenido para "{course?.name}"
-              </Heading>
-              
-                <form onSubmit={formik.handleSubmit}>
-                  <Stack spacing={8}>
-                    <FormControl>
-                      <FormLabel>Nombre del Contenido</FormLabel>
-                      <Input
-                        id="name"
-                        name="name"
-                        {...formik.getFieldProps("name")}
+        <Stack
+            border={"1px"}
+            borderColor={"black"}
+            rounded={"md"}
+            overflow={"hidden"}
+            my={5}
+            p={10}
+            spacing={5}>
+          <Box>
+            <Heading as="h3" fontSize="lg" textAlign="center" color="black">
+              Nuevo contenido
+            </Heading>
+            <Heading
+              as="h4"
+              fontSize="md"
+              textAlign="center"
+              color="gray.500"
+              mb={10}
+            >
+              {course?.name}
+            </Heading>
+            </Box>
+            <form onSubmit={formik.handleSubmit}>
+              <Stack spacing={5}>
+                <Flex direction={{ base: "column", md: "row" }} gap={4}>
+                  <Box textAlign="center" position="relative">
+                    <AspectRatio ratio={16 / 9} width={270} height={150}>
+                      <Image
+                        size="xl"
+                        name={content?.name}
+                        src={content?.image}
+                        objectFit="cover"
+                        borderRadius="md"
+                        aspectRatio={16 / 9}
                       />
-                      <FormErrorMessage>{formik.errors.name}</FormErrorMessage>
-                    </FormControl>
-                    <FormControl>
-                      <FormLabel>Descripción del contenido</FormLabel>
-                      <Textarea
-                        type="text"
-                        placeholder="Escriba una descripción del curso..."
-                        id="description"
-                        name="description"
-                        {...formik.getFieldProps("description")}
+                    </AspectRatio>
+                    <Box
+                      position="absolute"
+                      inset={-2}
+                      display="flex"
+                      alignItems="end"
+                      justifyContent="end"
+                    >
+                      <input
+                        id="thumbnail"
+                        name="thumbnail"
+                        type="file"
+                        accept=".jpg,.jpeg,.png"
+                        onChange={(e) => {
+                          handleImageChange(e);
+                        }}
+                        style={{ display: "none" }}
                       />
-                      <FormErrorMessage>{formik.errors.description}</FormErrorMessage>
-                    </FormControl>
-                    <FormControl>
-                      <FormLabel>Curso del Contenido</FormLabel>
-                      <Input
-                        id="course"
-                        name="course"
-                        disabled
-                        {...formik.getFieldProps("course")}
+                      <IconButton
+                        icon={<BsPencilSquare />}
+                        aria-label="Change content Image"
+                        rounded={"full"}
+                        onClick={() =>
+                          document.getElementById("thumbnail").click()
+                        }
                       />
-                    </FormControl>
-                    <FormControl>
-                      <FormLabel>Url del video</FormLabel>
-                      <Input
-                        id="iframe"
-                        name="iframe"
-                        {...formik.getFieldProps("iframe")}
-                      />
-                      <FormErrorMessage>{formik.errors.iframe}</FormErrorMessage>
-                    </FormControl>
-                    {formik.getFieldProps("iframe").value && 
-                      <AspectRatio maxW="100%" ratio={16 / 9}>
-                        <ReactPlayer
-                          ref={playerRef}
-                          url={formik.getFieldProps("iframe").value}
-                          controls
-                          width={"full"}
-                          height={"full"}
-                        />
-                      </AspectRatio>
-                    }
-                    <Stack spacing={10}>
-                      <FormControl>
-                        <FormLabel>Miniatrura del contenido (Usar Imágenes en 16/9)</FormLabel>
-                        <HStack>
-                          <Box textAlign="center" position="relative">
-                            <Image
-                              size="xl"
-                              name={content?.name}
-                              src={content?.image}
-                              width={270}
-                              height={150}
-                              objectFit="cover"
-                              borderRadius="md"
-                              aspectRatio={16 / 9}
-                            />
-                            <Box
-                              position="absolute"
-                              inset={-2}
-                              display="flex"
-                              alignItems="end"
-                              justifyContent="end"
-                            >
-                              <input
-                                id="thumbnail"
-                                name="thumbnail"
-                                type="file"
-                                accept=".jpg,.jpeg,.png"
-                                onChange={(e) => {
-                                  handleImageChange(e);
-                                }}
-                                style={{ display: "none" }}
-                              />
-                              <IconButton
-                                icon={<BsPencilSquare />}
-                                aria-label="Change content Image"
-                                rounded={"full"}
-                                onClick={() =>
-                                  document.getElementById("thumbnail").click()
-                                }
-                              />
-                            </Box>
-                          </Box>
-                        </HStack>
-                      </FormControl>
-                    </Stack>
-                    <Stack spacing={10} pt={2}>
-                      <Button
-                        leftIcon={<BsPlusLg />}
-                        variant="primary"
-                        type="submit"
-                      >
-                        Crear contenido
-                      </Button>
-                    </Stack>
-                  </Stack>
-                </form>
-              </Box>
-            </HStack>
-          </Stack>
+                    </Box>
+                  </Box>
+                  <FormControl>
+                    <FormLabel>Nombre del Contenido</FormLabel>
+                    <Input
+                      id="name"
+                      name="name"
+                      {...formik.getFieldProps("name")}
+                    />
+                    <FormErrorMessage>{formik.errors.name}</FormErrorMessage>
+                  </FormControl>
+                </Flex>
+                <FormControl>
+                  <FormLabel>Descripción del contenido</FormLabel>
+                  <Textarea
+                    type="text"
+                    placeholder="Escriba una descripción del curso..."
+                    id="description"
+                    name="description"
+                    {...formik.getFieldProps("description")}
+                  />
+                  <FormErrorMessage>
+                    {formik.errors.description}
+                  </FormErrorMessage>
+                </FormControl>
+                <FormControl>
+                  <FormLabel>Curso</FormLabel>
+                  <Input
+                    id="course"
+                    name="course"
+                    disabled
+                    {...formik.getFieldProps("course")}
+                  />
+                </FormControl>
+                <FormControl>
+                  <FormLabel>Url del video</FormLabel>
+                  <Input
+                    id="iframe"
+                    name="iframe"
+                    {...formik.getFieldProps("iframe")}
+                  />
+                  <FormErrorMessage>{formik.errors.iframe}</FormErrorMessage>
+                </FormControl>
+                {formik.getFieldProps("iframe").value && (
+                  <AspectRatio maxW="100%" ratio={16 / 9}>
+                    <ReactPlayer
+                      ref={playerRef}
+                      url={formik.getFieldProps("iframe").value}
+                      controls
+                      width={"full"}
+                      height={"full"}
+                    />
+                  </AspectRatio>
+                )}
+                <Stack spacing={10} pt={2}>
+                  <Button
+                    leftIcon={<BsPlusLg />}
+                    variant="primary"
+                    type="submit"
+                  >
+                    Crear contenido
+                  </Button>
+                </Stack>
+              </Stack>
+            </form>
+        </Stack>
       </Layout>
     </>
   );
@@ -263,14 +255,15 @@ export async function getServerSideProps(context) {
     };
   }
 
-  const siteConfig = await getSiteConfig();
   const menuItems = await getMenuItems(session?.user?.accessToken);
   const profileInfo = await getProfile(session?.user?.accessToken);
-  const course = await getCourse(context?.query?.slug ,session?.user?.accessToken);
+  const course = await getCourse(
+    context?.query?.slug,
+    session?.user?.accessToken
+  );
   return {
     props: {
       course,
-      siteConfig,
       menuItems,
       profileInfo,
     },

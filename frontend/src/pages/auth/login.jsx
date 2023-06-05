@@ -20,7 +20,6 @@ import { Formik, Form, Field } from "formik";
 import { FcGoogle } from "react-icons/fc";
 import Input from "@/components/forms/input";
 
-import { getSiteConfig } from "@/services/siteConfig";
 import { Link } from "@chakra-ui/next-js";
 
 import { getServerSession } from "next-auth/next";
@@ -110,7 +109,7 @@ export default function Login(props) {
                   actions.setErrors({
                     email: "Correo electrónico o contraseña incorrectos",
                   });
-                } else if (ssignInStatus?.ok) {
+                } else if (signInStatus?.ok) {
                   router.push(signInStatus?.url);
                 }
                 actions.setSubmitting(false);
@@ -194,11 +193,9 @@ export async function getServerSideProps({ req, res }) {
       },
     };
   }
-  const siteConfig = await getSiteConfig();
   const signInProviders = await getProviders();
   return {
     props: {
-      siteConfig,
       signInProviders,
     },
   };

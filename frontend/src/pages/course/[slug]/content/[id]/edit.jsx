@@ -23,7 +23,6 @@ import {
 import Input from "@/components/forms/input";
 import { useFormik } from "formik";
 import { updateContent } from "@/services/courseContent";
-import { getSiteConfig } from "@/services/siteConfig";
 import { getMenuItems } from "@/services/menuItems";
 import { authOptions } from "pages/api/auth/[...nextauth]";
 import { getProfile } from "@/services/profile";
@@ -262,7 +261,6 @@ export async function getServerSideProps(context) {
     };
   }
 
-  const siteConfig = await getSiteConfig();
   const menuItems = await getMenuItems(session?.user?.accessToken);
   const profileInfo = await getProfile(session?.user?.accessToken);
   const course = await getCourse(context?.query?.slug ,session?.user?.accessToken);
@@ -271,7 +269,6 @@ export async function getServerSideProps(context) {
     props: {
         initialValues,
         course,
-        siteConfig,
         menuItems,
         profileInfo,
     },

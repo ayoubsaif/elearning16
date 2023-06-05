@@ -4,7 +4,6 @@ import { useEffect, useState, useRef } from "react";
 import { Heading, VStack, Avatar, HStack, Text, Box, useBreakpointValue, Center } from "@chakra-ui/react";
 import { usePagination } from "@ajna/pagination";
 import CoursesToolbar from "../../components/dataDisplay/coursesToolbar";
-import { getSiteConfig } from "@/services/siteConfig";
 import { getMenuItems } from "@/services/menuItems";
 import { getCategories } from "@/services/category";
 import { getCoursesByCategory } from "@/services/courses";
@@ -168,7 +167,6 @@ export async function getServerSideProps({ query, req, res }) {
       },
     };
   }
-  const siteConfig = await getSiteConfig();
   const menuItems = await getMenuItems(session?.user?.accessToken);
   const categories = await getCategories(session?.user?.accessToken);
 
@@ -193,7 +191,6 @@ export async function getServerSideProps({ query, req, res }) {
 
   return {
     props: {
-      siteConfig,
       menuItems,
       coursesData: coursesItems?.courses || [],
       category: coursesItems?.category || null,

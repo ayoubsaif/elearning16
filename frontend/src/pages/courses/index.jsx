@@ -3,7 +3,6 @@ import { useEffect, useState, useRef } from "react";
 import Link from "next/link";
 import { Heading, Text, VStack } from "@chakra-ui/react";
 
-import { getSiteConfig } from "@/services/siteConfig";
 import { getMenuItems } from "@/services/menuItems";
 import { getCourses, getCoursesFromServer } from "@/services/courses";
 import { getCategories } from "@/services/category";

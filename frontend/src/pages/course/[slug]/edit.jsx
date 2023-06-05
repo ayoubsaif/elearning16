@@ -7,8 +7,10 @@ import {
   Flex,
   Box,
   FormControl,
+  FormHelperText,
   HStack,
   Stack,
+  VStack,
   Heading,
   FormErrorMessage,
   Select,
@@ -17,15 +19,14 @@ import {
   Button,
   Image,
   IconButton,
+  AspectRatio,
 } from "@chakra-ui/react";
 import ChakraTagInput from "@/components/forms/ChakraTagInput";
 import Input from "@/components/forms/input";
 import { useFormik } from "formik";
-import { getSiteConfig } from "@/services/siteConfig";
 import { getMenuItems } from "@/services/menuItems";
 import { getCourse, updateCourse } from "@/services/courses";
 import { authOptions } from "pages/api/auth/[...nextauth]";
-import { getProfile } from "@/services/profile";
 import { getCategories } from "@/services/category";
 import { getServerSession } from "next-auth/next";
 import { useSession } from "next-auth/react";
@@ -35,7 +36,7 @@ export default function EditCourse(props) {
   const { siteConfig, menuItems, categories, initialData } = props;
   const router = useRouter();
   const [course, setCourse] = useState({
-    ...initialData
+    ...initialData,
   });
   const [tags, setTags] = useState(course?.keywords || []);
   const { data: session } = useSession();
@@ -120,180 +121,187 @@ export default function EditCourse(props) {
         }}
       />
       <Layout siteConfig={siteConfig} menuItems={menuItems}>
-
-        <Stack width={"80%"}
+        <HStack
+          w={"full"}
           mx="auto"
           border={"1px"}
           borderColor={"black"}
           rounded={"md"}
-          overflow={"hidden"}
-          my={5}>
+          my={5}
+          p={{base: 5, md: 10}}
+        >
+          <Box w={"full"} mx="auto" rounded={"md"} overflow={"hidden"}>
+            <Heading
+              as="h3" fontSize="lg"
+              textAlign={"center"}
+              color={"black"}
+              mb={10}
+            >
+              Editar curso
+            </Heading>
 
-          <HStack>
-            <Box width={"80%"}
-              mx="auto"
-              rounded={"md"}
-              overflow={"hidden"}
-              my={5}>
-              <Heading
-                fontSize={"4xl"}
-                textAlign={"center"}
-                color={"black"}
-                mb={10}
-              >
-                Editar curso
-              </Heading>
-
-              <form onSubmit={formik.handleSubmit}>
-                <Stack spacing={8}>
-                  <FormControl>
-                    <FormLabel>Nombre del Curso</FormLabel>
-                    <Input
-                      id="name"
-                      name="name"
-                      {...formik.getFieldProps("name")}
-                    />
-                    <FormErrorMessage>{formik.errors.name}</FormErrorMessage>
-                  </FormControl>
-                  <FormControl>
-                    <FormLabel>Slug del Curso</FormLabel>
-                    <HStack>
-                      <Input
-                        id="slug"
-                        name="slug"
-                        {...formik.getFieldProps("slug")}
-                      />
-                      <Button
-                        onClick={() => generateSlug(formik.values.name)}
-                        variant="primary"
-                      >
-                        Generar
-                      </Button>
-                    </HStack>
-                    <FormErrorMessage>{formik.errors.slug}</FormErrorMessage>
-                  </FormControl>
-                  <FormControl>
-                    <FormLabel>Descripción del Curso</FormLabel>
-                    <Textarea
-                      type="text"
-                      placeholder="Escriba una descripción del curso..."
-                      id="description"
-                      name="description"
-                      {...formik.getFieldProps("description")}
-                    />
-                  </FormControl>
-
-                  <FormControl>
-                    <Select
-                      placeholder="Selecciona una categoría"
-                      style={{ width: "100%" }}
-                      id="category"
-                      name="category"
-                      {...formik.getFieldProps("category")}
+            <form onSubmit={formik.handleSubmit}>
+              <Stack spacing={8}>
+                <Box display={{ md: "flex" }} gap={5}>
+                  <FormControl 
+                    width={{ md: 80 }} 
+                    flexShrink={0}
+                    mb={{ base: 5, md: 0 }}
                     >
-                      {categories?.map((category) => (
-                        <option
-                          key={category.id}
-                          value={category.id}
-                        >
-                          {category.name}
-                        </option>
-                      ))}
-                    </Select>
-                    <FormErrorMessage>
-                      {formik.errors.category}
-                    </FormErrorMessage>
-                  </FormControl>
-
-                  <Box>
-                    <FormControl>
-                      <FormLabel>Etiquetas del curso</FormLabel>
-                      <ChakraTagInput
-                        style={{ width: "100%" }}
-                        rounded={".25em"}
-                        border={"1px"}
-                        borderColor="gray.300"
-                        _hover={{
-                          borderColor: "black",
-                          boxShadow: "0 0 0 1px blue.300",
-                        }}
-                        _focusWithin={{
-                          outline: "2px solid",
-                          outlineColor: "blue.100",
-                          outlineOffset: "0px",
-                        }}
-                        id="keywords"
-                        name="keywords"
-                        tags={tags}
-                        onTagsChange={handleTagsChange}
-                      />
-                      <FormErrorMessage>
-                        {formik.errors.keywords}
-                      </FormErrorMessage>
-                    </FormControl>
-                  </Box>
-                  <Stack spacing={10}>
-                    <FormControl isInvalid={formik.errors.image}>
-                      <FormLabel>Imagen del curso (Usar Imágenes en 16/9)</FormLabel>
-                      <HStack>
-                        <Box textAlign="center" position="relative">
+                    <AspectRatio
+                      ratio={16 / 9}
+                      flexShrink={0}
+                      overflow="hidden"
+                      rounded="md"
+                    >
+                      <Box
+                        textAlign="center"
+                        position="relative"
+                      >
+                        {course.thumbnail ? (
                           <Image
-                            size="xl"
                             name={course?.name}
                             src={course?.thumbnail}
-                            width={270}
-                            height={150}
+                            bg="black"
                             objectFit="cover"
                             borderRadius="md"
-                            aspectRatio={16 / 9}
                           />
-                          <Box
-                            position="absolute"
-                            inset={-2}
-                            display="flex"
-                            alignItems="end"
-                            justifyContent="end"
-                          >
+                        ) : (
+                          <Skeleton height="20px" />
+                        )}
+                        <Box
+                          position="absolute"
+                          inset={4}
+                          display="flex"
+                          alignItems="end"
+                          justifyContent="end"
+                        >
+                          <label htmlFor="thumbnail">
                             <input
                               id="thumbnail"
                               name="thumbnail"
+                              style={{ display: "none" }}
                               type="file"
                               accept=".jpg,.jpeg,.png"
-                              onChange={(e) => {
-                                handleImageChange(e);
-                              }}
-                              style={{ display: "none" }}
+                              onChange={handleImageChange}
                             />
                             <IconButton
                               icon={<BsPencilSquare />}
                               aria-label="Change course Image"
-                              rounded={"full"}
+                              rounded="full"
                               onClick={() =>
                                 document.getElementById("thumbnail").click()
                               }
                             />
-                          </Box>
-                          <FormErrorMessage>
-                            {formik.errors.thumbnail}
-                          </FormErrorMessage>
+                          </label>
                         </Box>
-                      </HStack>
+                        <FormErrorMessage>
+                          {formik.errors.thumbnail}
+                        </FormErrorMessage>
+                      </Box>
+                    </AspectRatio>
+                    <FormHelperText>
+                      Imagen del curso (Aspect Ratio 16/9)
+                    </FormHelperText>
+                  </FormControl>
+
+                  <VStack w="full">
+                    <FormControl>
+                      <FormLabel>Nombre del Curso</FormLabel>
+                      <Input
+                        id="name"
+                        name="name"
+                        {...formik.getFieldProps("name")}
+                      />
+                      <FormErrorMessage>{formik.errors.name}</FormErrorMessage>
                     </FormControl>
-                  </Stack>
-                  <Stack spacing={10} pt={2}>
-                    <Button
-                      leftIcon={<BsSave />}
-                      variant="primary"
-                      type="submit"
-                    >
-                      Guardar cambios
-                    </Button>
-                  </Stack>
+
+                    <FormControl>
+                      <FormLabel>Slug del Curso</FormLabel>
+                      <HStack>
+                        <Input
+                          id="slug"
+                          name="slug"
+                          {...formik.getFieldProps("slug")}
+                        />
+                        <Button
+                          onClick={() => generateSlug(formik.values.name)}
+                          variant="primary"
+                        >
+                          Generar
+                        </Button>
+                      </HStack>
+                      <FormErrorMessage>{formik.errors.slug}</FormErrorMessage>
+                    </FormControl>
+
+                    <FormControl>
+                      <FormLabel>Categoría</FormLabel>
+                      <Select
+                        placeholder="Selecciona una categoría"
+                        id="category"
+                        name="category"
+                        {...formik.getFieldProps("category")}
+                      >
+                        {categories?.map((category) => (
+                          <option key={category.id} value={category.id}>
+                            {category.name}
+                          </option>
+                        ))}
+                      </Select>
+                      <FormErrorMessage>
+                        {formik.errors.category}
+                      </FormErrorMessage>
+                    </FormControl>
+                  </VStack>
+                </Box>
+
+                <FormControl>
+                  <FormLabel>Descripción del Curso</FormLabel>
+                  <Textarea
+                    type="text"
+                    placeholder="Escriba una descripción del curso..."
+                    id="description"
+                    name="description"
+                    rows={5}
+                    {...formik.getFieldProps("description")}
+                  />
+                </FormControl>
+
+                <Box>
+                  <FormControl>
+                    <FormLabel>Etiquetas del curso</FormLabel>
+                    <ChakraTagInput
+                      rounded={".25em"}
+                      border={"1px"}
+                      borderColor="gray.300"
+                      _hover={{
+                        borderColor: "black",
+                        boxShadow: "0 0 0 1px blue.300",
+                      }}
+                      _focusWithin={{
+                        outline: "2px solid",
+                        outlineColor: "blue.100",
+                        outlineOffset: "0px",
+                      }}
+                      id="keywords"
+                      name="keywords"
+                      tags={tags}
+                      onTagsChange={handleTagsChange}
+                    />
+                    <FormErrorMessage>
+                      {formik.errors.keywords}
+                    </FormErrorMessage>
+                  </FormControl>
+                </Box>
+                <Stack spacing={10} pt={2} p={1}>
+                  <Button leftIcon={<BsSave />} variant="primary" type="submit">
+                    Guardar cambios
+                  </Button>
                 </Stack>
-              </form>
-            </Box>
-          </HStack>
-        </Stack>
+              </Stack>
+            </form>
+          </Box>
+        </HStack>
       </Layout>
     </>
   );
@@ -310,18 +318,17 @@ export async function getServerSideProps(context) {
     };
   }
 
-  const siteConfig = await getSiteConfig();
   const menuItems = await getMenuItems(session?.user?.accessToken);
-  const profileInfo = await getProfile(session?.user?.accessToken);
   const categories = await getCategories(session?.user?.accessToken);
-  const initialData = await getCourse(context?.query?.slug, session?.user?.accessToken);
+  const initialData = await getCourse(
+    context?.query?.slug,
+    session?.user?.accessToken
+  );
   return {
     props: {
       initialData,
       categories,
-      siteConfig,
       menuItems,
-      profileInfo,
     },
   };
 }

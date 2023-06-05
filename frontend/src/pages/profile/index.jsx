@@ -27,7 +27,6 @@ import { getServerSession } from "next-auth/next";
 
 import Input from "@/components/forms/input";
 
-import { getSiteConfig } from "@/services/siteConfig";
 import { getMenuItems } from "@/services/menuItems";
 import { getProfile, updateProfile } from "@/services/profile";
 
@@ -341,12 +340,10 @@ export async function getServerSideProps(context) {
       },
     };
   }
-  const siteConfig = await getSiteConfig();
   const menuItems = await getMenuItems(session?.user?.accessToken);
   const profileInfo = await getProfile(session?.user?.accessToken);
   return {
     props: {
-      siteConfig,
       menuItems,
       profileInfo,
     },

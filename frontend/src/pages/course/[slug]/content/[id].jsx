@@ -26,7 +26,6 @@ import { ChevronRightIcon } from "@chakra-ui/icons";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "pages/api/auth/[...nextauth]";
 import Layout from "@/layout/Layout";
-import { getSiteConfig } from "@/services/siteConfig";
 import { getMenuItems } from "@/services/menuItems";
 import { getCourseContentById, deleteContent } from "@/services/courseContent";
 import { formatDistanceToNow } from "date-fns";
@@ -215,7 +214,6 @@ export async function getServerSideProps({ query, req, res }) {
       },
     };
   }
-  const siteConfig = await getSiteConfig();
   const menuItems = await getMenuItems(session?.user?.accessToken);
   const content = await getCourseContentById(
     query?.id,
@@ -223,7 +221,6 @@ export async function getServerSideProps({ query, req, res }) {
   );
   return {
     props: {
-      siteConfig,
       menuItems,
       content,
     },

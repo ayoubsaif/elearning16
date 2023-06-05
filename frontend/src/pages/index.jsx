@@ -14,7 +14,6 @@ import {
 } from "@chakra-ui/react";
 import { BsSearch } from "react-icons/bs";
 
-import { getSiteConfig } from "@/services/siteConfig";
 import { useSession } from "next-auth/react";
 import { NextSeo } from "next-seo";
 import Layout from "@/layout/Layout";
@@ -65,7 +64,7 @@ export default function Home(props) {
               </Text>
               <br />
               <Text as={"span"} color={"blue.300"}>
-                {user?.name}
+                {user?.firstname}
               </Text>
             </Heading>
             <Text color={"gray.500"}>{siteConfig?.heroDescription}</Text>
@@ -158,12 +157,10 @@ export async function getServerSideProps({ query, req, res }) {
       },
     };
   }
-  const siteConfig = await getSiteConfig();
   if (session) {
     const menuItems = await getMenuItems(session?.user?.accessToken);
     return {
       props: {
-        siteConfig,
         menuItems,
       },
     };

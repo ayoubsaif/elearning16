@@ -25,7 +25,6 @@ import {
   useToast
 } from "@chakra-ui/react";
 import { getUsers, deleteUser } from "@/services/users";
-import { getSiteConfig } from "@/services/siteConfig";
 import { getMenuItems } from "@/services/menuItems";
 
 import { getServerSession } from "next-auth/next";
@@ -196,14 +195,12 @@ export async function getServerSideProps(context) {
     };
   }
 
-  const siteConfig = await getSiteConfig();
   const menuItems = await getMenuItems(session?.user?.accessToken);
   const profileInfo = await getProfile(session?.user?.accessToken);
   const initialUsers = await getUsers(session?.user?.accessToken);
   return {
     props: {
       initialUsers,
-      siteConfig,
       menuItems,
       profileInfo,
     },

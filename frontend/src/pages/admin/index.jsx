@@ -20,7 +20,6 @@ import {
 import NextSeo from "next-seo";
 import Layout from "@/layout/Layout";
 
-import { getSiteConfig } from "@/services/siteConfig";
 import { getMenuItems } from "@/services/menuItems";
 
 import { authOptions } from "pages/api/auth/[...nextauth]";
@@ -68,11 +67,9 @@ export async function getServerSideProps(context) {
       },
     };
   }
-  const siteConfig = await getSiteConfig();
   const menuItems = await getMenuItems(session?.user?.accessToken);
   return {
     props: {
-      siteConfig,
       menuItems,
     },
   };

@@ -22,7 +22,6 @@ import {
 } from "@chakra-ui/react";
 import Input from "@/components/forms/input";
 import { useFormik } from "formik";
-import { getSiteConfig } from "@/services/siteConfig";
 import { getMenuItems } from "@/services/menuItems";
 import { getUserById, updateUser } from "@/services/users";
 import { authOptions } from "pages/api/auth/[...nextauth]";
@@ -231,7 +230,6 @@ export async function getServerSideProps(context) {
     };
   }
 
-  const siteConfig = await getSiteConfig();
   const menuItems = await getMenuItems(session?.user?.accessToken);
   const profileInfo = await getProfile(session?.user?.accessToken);
   const initialData = await getUserById(
@@ -241,7 +239,6 @@ export async function getServerSideProps(context) {
   return {
     props: {
       initialData,
-      siteConfig,
       menuItems,
       profileInfo,
     },

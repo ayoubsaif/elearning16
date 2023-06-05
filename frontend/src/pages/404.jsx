@@ -10,7 +10,6 @@ import {
 import { NextSeo } from "next-seo";
 import NextLink from "next/link";
 
-import { getSiteConfig } from "@/services/siteConfig";
 import Footer from '@/layout/Footer';
 
 export default function CallToActionWithIllustration(props) {
@@ -57,13 +56,4 @@ export default function CallToActionWithIllustration(props) {
       <Footer siteConfig={siteConfig} />
     </>
   );
-}
-
-export async function getStaticProps() {
-  const siteConfig = await getSiteConfig();
-  return {
-    props: {
-      siteConfig,
-    },
-  };
 }
