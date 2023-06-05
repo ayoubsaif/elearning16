@@ -168,7 +168,7 @@ class CategoryModel
     }
 
     
-    function getOneByID($id)
+    function getOneById($id)
     {
         $query = "SELECT * FROM categories WHERE id = :id LIMIT 1";
         $stmt = $this->conn->prepare($query);
