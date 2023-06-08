@@ -212,11 +212,12 @@ export default function CourseLandingPage(props) {
                   </AlertTitle>
                   {course?.canEdit && (
                     <AlertDescription maxWidth="sm">
-                      Añada contenidos pulsando el siguiente boton:{" "}
+                      <Text>Añada contenidos pulsando el siguiente boton:</Text>
                       <Link
                         href={`/course/${router?.query?.slug}/content/create`}
                       >
                         <Button
+                          my={4}
                           leftIcon={<BsPlusLg />}
                           aria-label="Create content"
                           rounded={"full"}

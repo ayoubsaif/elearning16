@@ -153,7 +153,6 @@ export default function Profile(props) {
           border={"1px"}
           borderColor={"black"}
           rounded={"md"}
-          overflow={"hidden"}
           my={5}
         >
           <form onSubmit={formik.handleSubmit}>

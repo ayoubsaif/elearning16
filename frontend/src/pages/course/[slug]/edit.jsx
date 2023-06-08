@@ -130,7 +130,7 @@ export default function EditCourse(props) {
           my={5}
           p={{base: 5, md: 10}}
         >
-          <Box w={"full"} mx="auto" rounded={"md"} overflow={"hidden"}>
+          <Box w="full" mx="auto" rounded="md">
             <Heading
               as="h3" fontSize="lg"
               textAlign={"center"}
@@ -167,7 +167,7 @@ export default function EditCourse(props) {
                             borderRadius="md"
                           />
                         ) : (
-                          <Skeleton height="20px" />
+                          <Box bg="gray.200" height="full" w="full" />
                         )}
                         <Box
                           position="absolute"
@@ -189,6 +189,7 @@ export default function EditCourse(props) {
                               icon={<BsPencilSquare />}
                               aria-label="Change course Image"
                               rounded="full"
+                              variant="outlined"
                               onClick={() =>
                                 document.getElementById("thumbnail").click()
                               }

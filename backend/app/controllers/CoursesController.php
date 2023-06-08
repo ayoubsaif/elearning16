@@ -270,7 +270,7 @@ class CoursesController
                 $CreateUid = new UserModel();
                 $CreateUid->getOne($course->create_uid);
                 $Category = new CategoryModel();
-                $Category->getOne($course->category);
+                $Category->getOneById($course->category);
                 $CourseContent = new CourseContentModel();
                 $CourseContent->course = $course->id;
                 $course->courseContents = $CourseContent->getMany();
@@ -280,6 +280,7 @@ class CoursesController
                     "name" => $course->name,
                     "slug" => $course->slug."-".$course->id,
                     "description" => $course->description,
+                    "category_id" => $course->category,
                     "category" => !is_null($Category->id) ? array(
                         'id' => $Category->id,
                         'name' => $Category->name,

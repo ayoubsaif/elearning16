@@ -19,6 +19,7 @@ import {
   Button,
   Image,
   IconButton,
+  FormHelperText
 } from "@chakra-ui/react";
 import Input from "@/components/forms/input";
 import { useFormik } from "formik";
@@ -37,7 +38,6 @@ export default function CreateCourseContent(props) {
   const router = useRouter();
   const [content, setContent] = useState({
     ...Box,
-    image: "/img/empty_course.png",
   });
 
   const { data: session } = useSession();
@@ -50,7 +50,7 @@ export default function CreateCourseContent(props) {
       description: content?.description || "",
       course: course?.id || "",
       iframe: content?.iframe || "",
-      thumbnail: null,
+      image: null,
     },
     validationSchema: Yup.object({
       name: Yup.string().required("Nombre es obligatorio"),
@@ -88,6 +88,7 @@ export default function CreateCourseContent(props) {
         ...prevProfile,
         image: imageSrc,
       }));
+      console.log(content?.image)
     };
     reader.readAsDataURL(file);
     formik.setFieldValue("thumbnail", file);
@@ -112,15 +113,16 @@ export default function CreateCourseContent(props) {
         }}
       />
       <Layout siteConfig={siteConfig} menuItems={menuItems}>
-        <Stack
-            border={"1px"}
-            borderColor={"black"}
-            rounded={"md"}
-            overflow={"hidden"}
-            my={5}
-            p={10}
-            spacing={5}>
-          <Box>
+        <HStack
+          w={"full"}
+          mx="auto"
+          border={"1px"}
+          borderColor={"black"}
+          rounded={"md"}
+          my={5}
+          p={{ base: 5, md: 10 }}
+        >
+          <Box w="full" mx="auto" rounded="md">
             <Heading as="h3" fontSize="lg" textAlign="center" color="black">
               Nuevo contenido
             </Heading>
@@ -133,58 +135,93 @@ export default function CreateCourseContent(props) {
             >
               {course?.name}
             </Heading>
-            </Box>
             <form onSubmit={formik.handleSubmit}>
               <Stack spacing={5}>
-                <Flex direction={{ base: "column", md: "row" }} gap={4}>
-                  <Box textAlign="center" position="relative">
-                    <AspectRatio ratio={16 / 9} width={270} height={150}>
-                      <Image
-                        size="xl"
-                        name={content?.name}
-                        src={content?.image}
-                        objectFit="cover"
-                        borderRadius="md"
-                        aspectRatio={16 / 9}
-                      />
-                    </AspectRatio>
-                    <Box
-                      position="absolute"
-                      inset={-2}
-                      display="flex"
-                      alignItems="end"
-                      justifyContent="end"
+                <Box display={{ md: "flex" }} gap={5}>
+                <FormControl 
+                    width={{ md: 80 }} 
+                    flexShrink={0}
+                    mb={{ base: 5, md: 0 }}
                     >
-                      <input
-                        id="thumbnail"
-                        name="thumbnail"
-                        type="file"
-                        accept=".jpg,.jpeg,.png"
-                        onChange={(e) => {
-                          handleImageChange(e);
-                        }}
-                        style={{ display: "none" }}
-                      />
-                      <IconButton
-                        icon={<BsPencilSquare />}
-                        aria-label="Change content Image"
-                        rounded={"full"}
-                        onClick={() =>
-                          document.getElementById("thumbnail").click()
-                        }
-                      />
-                    </Box>
-                  </Box>
-                  <FormControl>
-                    <FormLabel>Nombre del Contenido</FormLabel>
-                    <Input
-                      id="name"
-                      name="name"
-                      {...formik.getFieldProps("name")}
-                    />
-                    <FormErrorMessage>{formik.errors.name}</FormErrorMessage>
+                    <AspectRatio
+                      ratio={16 / 9}
+                      flexShrink={0}
+                      overflow="hidden"
+                      rounded="md"
+                    >
+                      <Box
+                        textAlign="center"
+                        position="relative"
+                      >
+                        {content.image ? (
+                          <Image
+                            name={content?.name}
+                            src={content?.image}
+                            bg="black"
+                            objectFit="cover"
+                            borderRadius="md"
+                            w="full"
+                          />
+                        ) : (
+                          <Box bg="gray.200" height="full" w="full" />
+                        )}
+                        <Box
+                          position="absolute"
+                          inset={4}
+                          display="flex"
+                          alignItems="end"
+                          justifyContent="end"
+                        >
+                          <label htmlFor="thumbnail">
+                            <input
+                              id="thumbnail"
+                              name="thumbnail"
+                              style={{ display: "none" }}
+                              type="file"
+                              accept=".jpg,.jpeg,.png"
+                              onChange={handleImageChange}
+                            />
+                            <IconButton
+                              icon={<BsPencilSquare />}
+                              aria-label="Cambiar la imagen del contenido del curso"
+                              rounded="full"
+                              variant="outlined"
+                              onClick={() =>
+                                document.getElementById("thumbnail").click()
+                              }
+                            />
+                          </label>
+                        </Box>
+                        <FormErrorMessage>
+                          {formik.errors.thumbnail}
+                        </FormErrorMessage>
+                      </Box>
+                    </AspectRatio>
+                    <FormHelperText>
+                      Imagen del curso (Aspect Ratio 16/9)
+                    </FormHelperText>
                   </FormControl>
-                </Flex>
+                  <Box w="full">
+                    <FormControl>
+                      <FormLabel>Nombre del Contenido</FormLabel>
+                      <Input
+                        id="name"
+                        name="name"
+                        {...formik.getFieldProps("name")}
+                      />
+                      <FormErrorMessage>{formik.errors.name}</FormErrorMessage>
+                    </FormControl>
+                    <FormControl>
+                      <FormLabel>Curso</FormLabel>
+                      <Input
+                        id="course"
+                        name="course"
+                        disabled
+                        {...formik.getFieldProps("course")}
+                      />
+                    </FormControl>
+                  </Box>
+                </Box>
                 <FormControl>
                   <FormLabel>Descripción del contenido</FormLabel>
                   <Textarea
@@ -197,15 +234,6 @@ export default function CreateCourseContent(props) {
                   <FormErrorMessage>
                     {formik.errors.description}
                   </FormErrorMessage>
-                </FormControl>
-                <FormControl>
-                  <FormLabel>Curso</FormLabel>
-                  <Input
-                    id="course"
-                    name="course"
-                    disabled
-                    {...formik.getFieldProps("course")}
-                  />
                 </FormControl>
                 <FormControl>
                   <FormLabel>Url del video</FormLabel>
@@ -238,7 +266,8 @@ export default function CreateCourseContent(props) {
                 </Stack>
               </Stack>
             </form>
-        </Stack>
+          </Box>
+        </HStack>
       </Layout>
     </>
   );
