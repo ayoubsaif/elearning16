@@ -15,7 +15,7 @@ export default function Layout({ children, siteConfig, menuItems }) {
         <NavBar siteConfig={siteConfig} menuItems={menuItems} />
       </GridItem>
 
-      <GridItem area={"main"}>
+      <GridItem area={"main"} pt={16}>
         <Container centerContent maxW="1200px">
           {children}
         </Container>
