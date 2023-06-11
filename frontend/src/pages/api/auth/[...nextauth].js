@@ -40,21 +40,36 @@ export const authOptions = {
     },
     async jwt({ token, user, trigger, session }) {
       if (trigger === "update" && session?.user) {
-        user = {...user, ...session.user};
+        user = { ...user, ...session.user };
       }
-      return { ...token, ...user }
+      return { ...token, ...user };
     },
     async session({ session, token }) {
-      session.user = {
-        firstname: token.firstname,
-        name: token.name,
-        email: token.email,
-        picture: token.image,
-        image: token.image,
-        username: token.username,
-        role: token.role,
-        accessToken: token.accessToken,
-      };
+      // Verify token with backend
+      const response = await axios.get(
+        `${process.env.NEXT_PUBLIC_API}/auth/verify-token`,
+        {
+          headers: {
+            Authorization: `Bearer ${token.accessToken}`,
+          },
+        }
+      );
+      if (response.data.valid) {
+        session.user = {
+          firstname: token.firstname,
+          name: token.name,
+          email: token.email,
+          picture: token.image,
+          image: token.image,
+          username: token.username,
+          role: token.role,
+          accessToken: token.accessToken,
+        };
+      } else {
+        // Token is invalid or expired, clear session
+        session = null;
+      }
+
       return session;
     },
   },

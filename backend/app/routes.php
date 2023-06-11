@@ -12,6 +12,7 @@ $router->put('/api/menu', 'MenuController@update');
 # Auth
 $router->post('/auth/login', 'UserController@login');
 $router->post('/auth/register', 'UserController@register');
+$router->get('/auth/verify-token', 'UserController@verifyToken');
 # Auth > Google
 $router->post('/auth/google', 'UserController@googleAuth');
 
@@ -47,7 +48,6 @@ $router->post('/api/category', 'CategoriesController@create');
 $router->options('/api/course-content', 'CourseContentController@getSuccessResponse');
 $router->post('/api/course-content', 'CourseContentController@create');
 $router->get('/api/course-content', 'CourseContentController@getAll');
-
 
 $router->options('/api/course-content/:id', 'CourseContentController@getSuccessResponse');
 $router->get('/api/course-content/:id', 'CourseContentController@getOne');
