@@ -2,14 +2,14 @@ import {
   Box,
   chakra,
   Container,
-  Link,
   Stack,
   Text,
   useColorModeValue,
   VisuallyHidden,
+  Button,
 } from "@chakra-ui/react";
 import { FaInstagram, FaTwitter, FaYoutube } from "react-icons/fa";
-import { ReactNode } from "react";
+import { useColorMode } from "@chakra-ui/color-mode";
 
 const Logo = (props) => {
   return (
@@ -56,6 +56,7 @@ const SocialButton = ({ children, label, href }) => {
 };
 
 export default function Footer({ siteConfig }) {
+  const { colorMode, toggleColorMode } = useColorMode()
   return (
     <Box color={"black"} borderTop={"1px solid black"}>
       <Container
@@ -71,6 +72,9 @@ export default function Footer({ siteConfig }) {
           © {new Date().getFullYear()} {siteConfig?.title}
         </Text>
         <Stack direction={"row"} spacing={6}>
+          <Button onClick={toggleColorMode} variant="second">
+            Tema {colorMode === "light" ? "Oscuro" : "Claro"}
+          </Button>
           <SocialButton label={"Twitter"} href={"#"}>
             <FaTwitter />
           </SocialButton>
