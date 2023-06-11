@@ -103,17 +103,18 @@ class CoursesController
             echo json_encode(array("message" => "Course not found"));
             return;
         }
+        
+        $setClouse = [];
+        
         if (isset($_FILES["thumbnail"])) {
             $Media = new MediaController();
             $Media->uploadImage($_FILES["thumbnail"], 'courses', $course->id, 800, 450);
             if(isset($Media->fileUrl)) {
-                $course->thumbnail_url = $Media->fileUrl;
-            } else {
-                $course->thumbnail_url = $Media->fileUrl;
+                $course->thumbnail_url = htmlspecialchars(strip_tags($Media->fileUrl));                
+                $setClouse[] = "thumbnail_url = '{$course->thumbnail_url}'";
             }
         }
 
-        $setClouse = [];
         if (isset($data['name']) && $data['name'] !== $course->name) {
             $course->name = htmlspecialchars(strip_tags($data['name']));
             $setClouse[] = "name = '{$course->name}'";
@@ -158,7 +159,6 @@ class CoursesController
             return;
         }
     }
-
 
     public function getMany()
     {
