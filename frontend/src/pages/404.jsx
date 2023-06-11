@@ -10,8 +10,6 @@ import {
 import { NextSeo } from "next-seo";
 import NextLink from "next/link";
 
-import Footer from '@/layout/Footer';
-
 export default function CallToActionWithIllustration(props) {
   const { siteConfig } = props;
   return (
@@ -48,12 +46,11 @@ export default function CallToActionWithIllustration(props) {
               </Button>
             </NextLink>
           </Stack>
-          <Flex w={"full"}>
+          <Flex w={"md"}>
             <Image src={"/assets/404.svg"} alt={"404"} />
           </Flex>
         </Stack>
       </Container>
-      <Footer siteConfig={siteConfig} />
     </>
   );
 }
