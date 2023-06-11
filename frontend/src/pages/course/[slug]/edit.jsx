@@ -2,7 +2,7 @@ import { useState, useCallback } from "react";
 import { NextSeo } from "next-seo";
 import * as Yup from "yup";
 import Layout from "@/layout/Layout";
-import { BsSave, BsPencilSquare } from "react-icons/bs";
+import { BsSave } from "react-icons/bs";
 import {
   Flex,
   Box,
@@ -18,20 +18,21 @@ import {
   Textarea,
   Button,
   Image,
-  IconButton,
-  AspectRatio,
-  Text,
 } from "@chakra-ui/react";
-import ChakraTagInput from "@/components/forms/ChakraTagInput";
-import Input from "@/components/forms/input";
 import { useFormik } from "formik";
-import { getMenuItems } from "@/services/menuItems";
-import { getCourse, updateCourse } from "@/services/courses";
-import { authOptions } from "pages/api/auth/[...nextauth]";
-import { getCategories } from "@/services/category";
-import { getServerSession } from "next-auth/next";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
+
+import ChakraTagInput from "@/components/forms/ChakraTagInput";
+import Input from "@/components/forms/input";
+import ImageDragAndDrop from "@/components/forms/imageDragAndDrop";
+
+import { getMenuItems } from "@/services/menuItems";
+import { getCourse, updateCourse } from "@/services/courses";
+import { getCategories } from "@/services/category";
+
+import { authOptions } from "pages/api/auth/[...nextauth]";
+import { getServerSession } from "next-auth/next";
 
 export default function EditCourse(props) {
   const { siteConfig, menuItems, categories, initialData } = props;
@@ -165,75 +166,13 @@ export default function EditCourse(props) {
                   flexShrink={0}
                   mb={{ base: 5, md: 0 }}
                 >
-                  <AspectRatio
-                    ratio={16 / 9}
-                    flexShrink={0}
-                    overflow="hidden"
-                    rounded="md"
-                    border={isDraggingOver ? "2px dashed black" : "2px solid transparent"}
-                  >
-                    <Box
-                      textAlign="center"
-                      position="relative"
-                      onDrop={handleDrop}
-                      onDragOver={(e) => {
-                        e.preventDefault();
-                        setIsDraggingOver(true);
-                      }}
-                      onDragLeave={() => setIsDraggingOver(false)}
-                    >
-                      {course.thumbnail ? (
-                        <Image
-                          name={course?.name}
-                          src={course?.thumbnail}
-                          bg="black"
-                          objectFit="cover"
-                          borderRadius="md"
-                          alt={course?.name}
-                        />
-                      ) : (
-                        <Box bg="gray.200" height="full" w="full" />
-                      )}
-                      <Box
-                        position="absolute"
-                        inset={4}
-                        display="flex"
-                        alignItems="end"
-                        justifyContent="end"
-                        bg={isDraggingOver ? "rgba(0,0,0,0.5)" : "blackAlpha.100"}
-                      >
-                        <Text
-                          position="absolute"
-                          top="50%"
-                          left="50%"
-                          transform="translate(-50%, -50%)"
-                          color="white"
-                          textShadow="0 0 10px black"
-                          fontWeight={600}
-                        >
-                          Drag and drop your image here
-                        </Text>
-                        <input
-                          id="thumbnail"
-                          name="thumbnail"
-                          style={{ display: "none" }}
-                          type="file"
-                          accept=".jpg,.jpeg,.png"
-                          onChange={handleImageChange}
-                        />
-                        <IconButton
-                          icon={<BsPencilSquare />}
-                          aria-label="Change Image"
-                          rounded="full"
-                          variant="outlined"
-                          display={isDraggingOver ? "none" : "inherit"}
-                          onClick={() =>
-                            document.getElementById("thumbnail").click()
-                          }
-                        />
-                      </Box>
-                    </Box>
-                  </AspectRatio>
+                  <ImageDragAndDrop 
+                    course={course}
+                    handleImageChange={handleImageChange}
+                    isDraggingOver={isDraggingOver}
+                    setIsDraggingOver={setIsDraggingOver}
+                    handleDrop={handleDrop}
+                  />
                   <FormHelperText>
                     Imagen del curso (Aspect Ratio 16/9)
                   </FormHelperText>
