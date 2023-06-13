@@ -23,6 +23,10 @@ eLearning consist in a application for schools, teams or companys to organize th
     ```bash
     cd ./backend && composer install
     ```
+    Remove comments in your Apache server in `php.ini` for the next values:
+    ```ini
+    extension=gd
+    ```
 
 2. Install the requirements for frontend application
 
@@ -35,7 +39,7 @@ eLearning consist in a application for schools, teams or companys to organize th
     cd ./frontend && yarn install
     ```
 
-3. Import database using the file ```database.sql``` at root of this project
+3. Import database using the file ```elearning_16.sql``` at root of this project
    1. Import it using PhpMyAdmin: [http://localhost/phpmyadmin]("http://localhost/phpmyadmin")
     ![]("word/phpmyadmin_import_sql.png")
 
@@ -55,6 +59,16 @@ eLearning consist in a application for schools, teams or companys to organize th
     SetEnv DB_PASS database_password
     SetEnv DB_NAME database_name
     ```
+    Add JWT secret key:
+    ```txt
+    SetEnv JWT_SECRET_KEY your_secret_key
+    ```
+
+    Set hostname to use it in logic of media management:
+
+    ```txt
+    SetEnv HOST http://localhost/
+    ```
 5. Run Frontend using the next commands:
    
    Access to frontend folder
@@ -65,5 +79,3 @@ eLearning consist in a application for schools, teams or companys to organize th
    ```bash
    npm start
    ```
-
-   

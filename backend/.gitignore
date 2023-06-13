@@ -1,2 +1,5 @@
 vendor
 logs/*
+.htaccess
+/uploads/*/*.*
+!/uploads/*/.gitkeep
