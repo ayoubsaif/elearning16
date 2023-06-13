@@ -16,21 +16,23 @@ const theme = extendTheme({
   },
   components: {
     Button: {
-      baseStyle: {
+      baseStyle: ({ colorMode }) => ({
+        bg: colorMode === "dark" ? "blue.300" : "blue.500",
+        color: colorMode === "dark" ? "black" : "black",
         rounded: "md",
         border: "1px",
-        borderColor: "black",
+        borderColor: colorMode === "dark" ? "wihte" : "black",
         _hover: {
           transform: "translate(-.25rem, -.25rem)",
-          boxShadow: ".25rem .25rem 0 black",
+          boxShadow: colorMode === "dark" ? ".25rem .25rem 0 white" : ".25rem .25rem 0 black",
         },
         _active: {
           transform: "none",
           boxShadow: "none",
         },
-      },
+      }),
       variants: {
-        primary: {
+        primary: ({ colorMode }) => ({
           color: "white",
           bg: "blue.300",
           _hover: {
@@ -41,7 +43,7 @@ const theme = extendTheme({
             bg: "blue.400",
             color: "white",
           },
-        },
+        }),
         secondary: {
           color: "white",
           bg: "blue.300",
@@ -52,9 +54,9 @@ const theme = extendTheme({
             bg: "black",
           },
         },
-        outlined: {
+        outlined: ({ colorMode }) => ({
           color: "black",
-          bg: "white",
+          bg: colorMode === "dark" ? "blue.400" : "white",
           _hover: {
             bg: "blue.300",
             color: "white",
@@ -63,7 +65,7 @@ const theme = extendTheme({
             color: "white",
             bg: "blue.400",
           },
-        },
+        }),
         red: {
           color: "black",
           bg: "red.100",

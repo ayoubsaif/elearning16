@@ -154,8 +154,7 @@ export default function CourseLandingPage(props) {
             </Text>
           )}
           <Box display={{ md: "flex" }}>
-            <AspectRatio ratio={16 / 9} 
-                width={{ md: 80 }} flexShrink={0}>
+            <AspectRatio ratio={16 / 9} width={{ md: 80 }} flexShrink={0}>
               <Image
                 borderRadius="md"
                 src={course?.thumbnail}
@@ -163,11 +162,19 @@ export default function CourseLandingPage(props) {
                 objectFit="cover"
               />
             </AspectRatio>
-            <Box mt={{ base: 4, md: 0 }} ml={{ md: 6 }}>
-              <Text fontSize={{ base: "md", md: "lg" }}>
-                {course?.description}
-              </Text>
-            </Box>
+            {course?.description && (
+              <Box
+                mt={{ base: 4, md: 0 }}
+                ml={{ md: 6 }} w="full"
+                bg="gray.50"
+                p={4}
+                rounded="md"
+              >
+                <Text fontSize={{ base: "md", md: "lg" }}>
+                  {course?.description}
+                </Text>
+              </Box>
+            )}
           </Box>
 
           <Box>

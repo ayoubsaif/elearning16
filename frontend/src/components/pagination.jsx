@@ -40,21 +40,7 @@ export default function ChakraPagination(props) {
       onPageChange={setCurrentPage}
     >
       <PaginationContainer>
-        <PaginationPrevious
-          rounded={"md"}
-          border={"1px"}
-          borderColor="black"
-          bg="white"
-          _hover={{
-            transform: `translate(-.25rem, -.25rem)`,
-            boxShadow: ".25rem .25rem 0 black",
-          }}
-          _active={{
-            transform: `none`,
-            boxShadow: "none",
-          }}
-          mr=".50em"
-        >
+        <PaginationPrevious mr=".50em">
           <BsArrowLeft />
         </PaginationPrevious>
         <PaginationPageGroup spacing={2} alignItems={"center"}>
@@ -91,26 +77,12 @@ export default function ChakraPagination(props) {
           {pages.slice(start - 1, maxPages).map((page) => (
             <PaginationPage
               minWidth="2.5em"
-              rounded={"md"}
-              border={"1px"}
-              borderColor="black"
-              bg="white"
-              _hover={{
-                transform: `translate(-.25rem, -.25rem)`,
-                boxShadow: ".25rem .25rem 0 black",
-              }}
-              _active={{
-                transform: `none`,
-                boxShadow: "none",
-              }}
               _current={{
-                w: 7,
-                bg: "blue.300",
-                color: "white",
-                _hover: {
-                  bg: "blue.500",
-                  color: "white",
-                },
+                variant: "primary",
+                _hover : {
+                  transform: `none`,
+                  boxShadow: "none",
+                }
               }}
               key={`pagination_page_${page}`}
               page={page}
@@ -121,25 +93,8 @@ export default function ChakraPagination(props) {
               <BsIndent />
               <PaginationPage
                 minWidth="2.5em"
-                rounded={"md"}
-                border={"1px"}
-                borderColor="black"
-                bg="white"
-                _hover={{
-                  transform: `translate(-.25rem, -.25rem)`,
-                  boxShadow: ".25rem .25rem 0 black",
-                }}
-                _active={{
-                  transform: `none`,
-                  boxShadow: "none",
-                }}
                 _current={{
-                  bg: "blue.300",
-                  color: "white",
-                  _hover: {
-                    bg: "blue.500",
-                    color: "white",
-                  },
+                  variant: "primary",
                 }}
                 key="pagination_page_last"
                 page={pagesCount}
@@ -147,21 +102,7 @@ export default function ChakraPagination(props) {
             </>
           )}
         </PaginationPageGroup>
-        <PaginationNext
-          rounded={"md"}
-          border={"1px"}
-          borderColor="black"
-          bg="white"
-          _hover={{
-            transform: `translate(-.25rem, -.25rem)`,
-            boxShadow: ".25rem .25rem 0 black",
-          }}
-          _active={{
-            transform: `none`,
-            boxShadow: "none",
-          }}
-          ml=".50em"
-        >
+        <PaginationNext ml=".50em">
           <BsArrowRight />
         </PaginationNext>
       </PaginationContainer>

@@ -57,8 +57,9 @@ const SocialButton = ({ children, label, href }) => {
 
 export default function Footer({ siteConfig }) {
   const { colorMode, toggleColorMode } = useColorMode()
+  const color = useColorModeValue("gray.700", "gray.200");
   return (
-    <Box color={"black"} borderTop={"1px solid black"}>
+    <Box color={color} borderTop={"1px"} borderColor={color}>
       <Container
         as={Stack}
         maxW={"6xl"}
@@ -72,7 +73,7 @@ export default function Footer({ siteConfig }) {
           © {new Date().getFullYear()} {siteConfig?.title}
         </Text>
         <Stack direction={"row"} spacing={6}>
-          <Button onClick={toggleColorMode} variant="second">
+          <Button onClick={toggleColorMode}>
             Tema {colorMode === "light" ? "Oscuro" : "Claro"}
           </Button>
           <SocialButton label={"Twitter"} href={"#"}>
