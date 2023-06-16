@@ -31,7 +31,7 @@ export default function CallToActionWithIllustration(props) {
             lineHeight={"110%"}
           >
             Página{" "}
-            <Text as={"span"} color={"blue.400"}>
+            <Text as={"span"} color={"brand.400"}>
               no encontrada
             </Text>
           </Heading>

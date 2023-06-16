@@ -16,7 +16,7 @@ import {
   Slide 
 } from "@chakra-ui/react";
 
-import { GrMenu, GrClose } from "react-icons/gr";
+import { BsList as MenuIcon, BsXLg as CloseIcon } from "react-icons/bs";
 import { useSession, signIn, signOut } from "next-auth/react";
 
 import MobileNav from "./navbar/MobileNav";
@@ -52,7 +52,6 @@ export default function NavBar({ siteConfig, menuItems }) {
           px={{ base: 4 }}
           borderBottom={1}
           borderStyle={"solid"}
-          borderColor={"black"}
           align={"center"}
         >
           <Flex
@@ -63,9 +62,9 @@ export default function NavBar({ siteConfig, menuItems }) {
             <Flex display={{ base: "flex", md: "none" }}>
               <IconButton
                 onClick={onToggle}
-                icon={isOpen ? <GrClose w={3} h={3} /> : <GrMenu w={5} h={5} />}
-                variant={"ghost"}
-                border={0}
+                color={useColorModeValue("black", "white")}
+                icon={isOpen ? <CloseIcon w={5} h={5} /> : <MenuIcon w={5} h={5} />}
+                variant="ghost"
                 aria-label={"Toggle Navigation"}
               />
             </Flex>

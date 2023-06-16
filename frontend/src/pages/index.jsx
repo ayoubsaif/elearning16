@@ -56,14 +56,14 @@ export default function Home(props) {
                   position: "absolute",
                   bottom: 1,
                   left: 0,
-                  bg: "blue.50",
+                  bg: "brand.50",
                   zIndex: -1,
                 }}
               >
                 Bienvenid@
               </Text>
               <br />
-              <Text as={"span"} color={"blue.300"}>
+              <Text as={"span"} color={"brand.300"}>
                 {user?.firstname}
               </Text>
             </Heading>
@@ -99,7 +99,7 @@ export default function Home(props) {
               position={"absolute"}
               left={0}
               zIndex={-1}
-              color={useColorModeValue("blue.50", "blue.100")}
+              color={useColorModeValue("brand.50", "brand.100")}
             />
             <Box
               position={"relative"}

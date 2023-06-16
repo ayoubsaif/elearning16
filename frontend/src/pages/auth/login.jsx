@@ -159,7 +159,7 @@ export default function Login(props) {
                     </Button>
                     <Text align={"center"}>
                       ¿No tienes cuenta?{" "}
-                      <Link color={"blue.400"} href={"/auth/register"}>
+                      <Link color={"brand.400"} href={"/auth/register"}>
                         ¡Registrate ahora!
                       </Link>
                     </Text>

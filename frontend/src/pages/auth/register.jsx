@@ -206,7 +206,7 @@ export default function Register(props) {
                       color="white"
                       _hover={{
                         color: "white",
-                        bg: "blue.300",
+                        bg: "brand.300",
                       }}
                       isLoading={props.isSubmitting}
                       type="submit"
@@ -215,7 +215,7 @@ export default function Register(props) {
                     </Button>
                     <Text align={"center"}>
                       ¿Ya tienes cuenta?{" "}
-                      <Link color={"blue.400"} href={"/auth/login"}>
+                      <Link color={"brand.400"} href={"/auth/login"}>
                         Inicia sesión
                       </Link>
                     </Text>

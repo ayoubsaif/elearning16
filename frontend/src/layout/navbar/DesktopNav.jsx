@@ -83,13 +83,13 @@ export const DesktopSubNav = ({ label, url, subLabel }) => {
       display={"block"}
       p={4}
       rounded={"sm"}
-      _hover={{ bg: useColorModeValue("blue.50", "gray.900") }}
+      _hover={{ bg: useColorModeValue("brand.50", "gray.900") }}
     >
       <Stack direction={"row"} align={"center"}>
         <Box>
           <Text
             transition={"all .3s ease"}
-            _groupHover={{ color: "blue.400" }}
+            _groupHover={{ color: "brand.400" }}
             fontWeight={500}
           >
             {label}
@@ -105,7 +105,7 @@ export const DesktopSubNav = ({ label, url, subLabel }) => {
           align={"center"}
           flex={1}
         >
-          <Icon color={"blue.400"} w={5} h={5} as={GrFormNextLink} />
+          <Icon color={"brand.400"} w={5} h={5} as={GrFormNextLink} />
         </Flex>
       </Stack>
     </Link>

@@ -9,7 +9,7 @@ import {
   Collapse,
 } from "@chakra-ui/react";
 
-import { GrDown } from "react-icons/gr";
+import { BsChevronDown as ChevronDown } from "react-icons/bs";
 
 const MobileNav = ({ menuItems }) => {
   return (
@@ -48,7 +48,7 @@ const MobileNavItem = ({ label, children, url }) => {
         </Text>
         {children && (
           <Icon
-            as={GrDown}
+            as={ChevronDown}
             transition={"all .25s ease-in-out"}
             transform={isOpen ? "rotate(180deg)" : ""}
             w={6}

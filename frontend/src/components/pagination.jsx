@@ -61,10 +61,10 @@ export default function ChakraPagination(props) {
                   boxShadow: "none",
                 }}
                 _current={{
-                  bg: "blue.300",
+                  bg: "brand.300",
                   color: "white",
                   _hover: {
-                    bg: "blue.500",
+                    bg: "brand.500",
                     color: "white",
                   },
                 }}

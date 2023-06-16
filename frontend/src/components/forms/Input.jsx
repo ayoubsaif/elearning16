@@ -9,11 +9,11 @@ export default function Input({ ...attributes }) {
         borderColor="gray.300"
         _hover={{
             borderColor: "black",
-            boxShadow: "0 0 0 1px blue.300",
+            boxShadow: "0 0 0 1px brand.300",
         }}
         _focusWithin={{
             outline: "2px solid",
-            outlineColor: "blue.100",
+            outlineColor: "brand.100",
             outlineOffset: "0px",
         }}
     />

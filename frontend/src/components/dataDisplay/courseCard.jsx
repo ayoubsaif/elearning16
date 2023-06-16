@@ -5,24 +5,16 @@ import {
   Text,
   Img,
   AspectRatio,
+  Card
 } from "@chakra-ui/react";
 
 export default function CourseCard(props) {
   const { name, description, thumbnail, slug, id } = props.course;
   return (
-    <Box
+    <Card
       w={"full"}
       width={"275px"}
-      rounded={"md"}
-      overflow={"hidden"}
-      bg="white"
-      border={"1px"}
-      borderColor="black"
-      transition="all .2s ease-in-out"
-      _hover={{
-        transform: "translate(-.25rem, -.25rem)",
-        boxShadow: ".25rem .25rem 0 black",
-      }}
+      variant="outline"
     >
       <NextLink href={`/course/${slug}-${id}`}>
         <AspectRatio maxW='500px' ratio={16 / 9}>
@@ -36,7 +28,7 @@ export default function CourseCard(props) {
           />
         </AspectRatio>
         <Box p={4} minHeight={"8em"} maxHeight="10em">
-          <Heading color={"black"} fontSize={"2xl"} noOfLines={1} lineHeight={1.5}>
+          <Heading color={"inherit"} fontSize={"2xl"} noOfLines={1} lineHeight={1.5}>
             {name}
           </Heading>
           <Text color={"gray.500"} noOfLines={2}>
@@ -44,6 +36,6 @@ export default function CourseCard(props) {
           </Text>
         </Box>
       </NextLink>
-    </Box>
+    </Card >
   );
 }

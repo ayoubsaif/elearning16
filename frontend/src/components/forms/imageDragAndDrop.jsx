@@ -10,7 +10,7 @@ import {
 import { BsPencilSquare, BsBoxArrowInDown } from "react-icons/bs";
 
 export default function ImageDragAndDrop({
-  course,
+  image,
   handleImageChange,
   isDraggingOver,
   setIsDraggingOver,
@@ -25,14 +25,14 @@ export default function ImageDragAndDrop({
       border={isDraggingOver ? "2px dashed black" : "2px solid transparent"}
     >
       <Box textAlign="center" position="relative" onDrop={handleDrop}>
-        {course?.thumbnail ? (
+        {image?.image ? (
           <Image
-            name={course?.name}
-            src={course?.thumbnail}
+            name={image?.name}
+            src={image?.image}
             bg="black"
             objectFit="cover"
             borderRadius="md"
-            alt={course?.name}
+            alt={image?.name}
           />
         ) : (
           <Box bg="gray.200" height="full" w="full" />
@@ -69,8 +69,8 @@ export default function ImageDragAndDrop({
             </Center>
           </Box>
           <input
-            id="thumbnail"
-            name="thumbnail"
+            id="image-input"
+            name={image?.name}
             style={{ display: "none" }}
             type="file"
             accept=".jpg,.jpeg,.png"
@@ -82,7 +82,7 @@ export default function ImageDragAndDrop({
             rounded="full"
             variant="outlined"
             display={isDraggingOver ? "none" : "inherit"}
-            onClick={() => document.getElementById("thumbnail").click()}
+            onClick={() => document.getElementById("image-input").click()}
           />
         </Box>
       </Box>

@@ -34,49 +34,40 @@ import { getCategories } from "@/services/category";
 import { authOptions } from "pages/api/auth/[...nextauth]";
 import { getServerSession } from "next-auth/next";
 
-export default function EditCourse(props) {
-  const { siteConfig, menuItems, categories, initialData } = props;
+export default function EditSiteConfig(props) {
+  const { siteConfig, menuItems } = props;
   const router = useRouter();
-  const [course, setCourse] = useState({
-    ...initialData,
-  });
-  const [tags, setTags] = useState(course?.keywords || []);
+  const [tags, setTags] = useState(siteConfig?.keywords || []);
   const { data: session } = useSession();
   const [isDraggingOver, setIsDraggingOver] = useState(false);
 
   const formik = useFormik({
     initialValues: {
-      name: course?.name || "",
-      slug: course?.slug || "",
-      description: course?.description || "",
-      category: course?.category?.id || "",
+      title: siteConfig?.name || "",
+      description: siteConfig?.description || "",
       keywords: tags,
-      thumbnail: null,
+      image: null,
     },
     validationSchema: Yup.object({
-      name: Yup.string().required("Nombre es obligatorio"),
+      title: Yup.string().required("Nombre es obligatorio"),
       description: Yup.string().required("Descripción es obligatorio"),
-      category: Yup.number().required("Categoría es obligatorio"),
       keywords: Yup.array(),
     }),
     onSubmit: async (values) => {
       console.log("Form submitted!", values);
       try {
         const formData = new FormData();
-        formData.append("name", values.name);
-        formData.append("slug", values.slug);
+        formData.append("title", values.title);
         formData.append("description", values.description);
-        formData.append("category", values.category);
         formData.append("keywords", tags.join(","));
-        formData.append("thumbnail", values.thumbnail);
+        formData.append("image", values.image);
 
-        const newCourse = await updateCourse(
-          course?.id,
+        const siteConfigReq = await updateSiteConfig(
           formData,
           session?.user?.accessToken
         );
-        if (newCourse) {
-          router.push(`/course/${course?.slug}`);
+        if (siteConfigReq) {
+          router.push(`/`);
         }
       } catch (error) {
         console.error("Error creating course:", error);
@@ -89,14 +80,6 @@ export default function EditCourse(props) {
     formik.setFieldValue("keywords", tags);
   }, []);
 
-  const generateSlug = (name) => {
-    let slug = name
-      .toLowerCase()
-      .replace(/ /g, "-")
-      .replace(/[^\w-]+/g, "");
-    formik.setFieldValue("slug", slug);
-  };
-
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     const reader = new FileReader();
@@ -104,11 +87,11 @@ export default function EditCourse(props) {
       const imageSrc = e.target.result;
       setCourse((prevProfile) => ({
         ...prevProfile,
-        thumbnail: imageSrc,
+        image: imageSrc,
       }));
     };
     reader.readAsDataURL(file);
-    formik.setFieldValue("thumbnail", file);
+    formik.setFieldValue("image", file);
   };
 
   const handleDrop = (e) => {
@@ -120,11 +103,11 @@ export default function EditCourse(props) {
       const imageSrc = e.target.result;
       setCourse((prevProfile) => ({
         ...prevProfile,
-        thumbnail: imageSrc,
+        image: imageSrc,
       }));
     };
     reader.readAsDataURL(file);
-    formik.setFieldValue("thumbnail", file);
+    formik.setFieldValue("image", file);
   };
 
   return (
@@ -144,6 +127,7 @@ export default function EditCourse(props) {
           as="h3"
           fontSize="lg"
           textAlign={"center"}
+          color={"black"}
           my={10}
         >
           Editar curso
@@ -153,6 +137,7 @@ export default function EditCourse(props) {
           mx="auto"
           rounded={"md"}
           border={"1px"}
+          borderColor={"black"}
           mb={5}
           p={{ base: 5, md: 10 }}
         >
@@ -165,73 +150,36 @@ export default function EditCourse(props) {
                   mb={{ base: 5, md: 0 }}
                 >
                   <ImageDragAndDrop 
-                    image={{image: course?.thumbnail, name: course?.name}}
+                    course={course}
                     handleImageChange={handleImageChange}
                     isDraggingOver={isDraggingOver}
                     setIsDraggingOver={setIsDraggingOver}
                     handleDrop={handleDrop}
                   />
                   <FormHelperText>
-                    Imagen del curso (Aspect Ratio 16/9)
+                    Imagen del Sitio
                   </FormHelperText>
-                  <FormErrorMessage>{formik.errors.thumbnail}</FormErrorMessage>
+                  <FormErrorMessage>{formik.errors.image}</FormErrorMessage>
                 </FormControl>
 
                 <VStack w="full">
                   <FormControl>
-                    <FormLabel>Nombre del Curso</FormLabel>
+                    <FormLabel>Titulo del sitio</FormLabel>
                     <Input
-                      id="name"
-                      name="name"
+                      id="title"
+                      name="title"
                       {...formik.getFieldProps("name")}
                     />
                     <FormErrorMessage>{formik.errors.name}</FormErrorMessage>
-                  </FormControl>
-
-                  <FormControl>
-                    <FormLabel>Slug del Curso</FormLabel>
-                    <HStack>
-                      <Input
-                        id="slug"
-                        name="slug"
-                        {...formik.getFieldProps("slug")}
-                      />
-                      <Button
-                        onClick={() => generateSlug(formik.values.slug)}
-                        variant="primary"
-                      >
-                        Generar
-                      </Button>
-                    </HStack>
-                    <FormErrorMessage>{formik.errors.slug}</FormErrorMessage>
-                  </FormControl>
-
-                  <FormControl>
-                    <FormLabel>Categoría</FormLabel>
-                    <Select
-                      placeholder="Selecciona una categoría"
-                      id="category"
-                      name="category"
-                      {...formik.getFieldProps("category")}
-                    >
-                      {categories?.map((category) => (
-                        <option key={category.id} value={category.id}>
-                          {category.name}
-                        </option>
-                      ))}
-                    </Select>
-                    <FormErrorMessage>
-                      {formik.errors.category}
-                    </FormErrorMessage>
                   </FormControl>
                 </VStack>
               </Box>
 
               <FormControl>
-                <FormLabel>Descripción del Curso</FormLabel>
+                <FormLabel>Descripción SEO</FormLabel>
                 <Textarea
                   type="text"
-                  placeholder="Escriba una descripción del curso..."
+                  placeholder="Escriba una descripción del sitio para SEO..."
                   id="description"
                   name="description"
                   rows={5}
@@ -244,7 +192,7 @@ export default function EditCourse(props) {
 
               <Box>
                 <FormControl>
-                  <FormLabel>Etiquetas del curso</FormLabel>
+                  <FormLabel>Etiquetas del sitio</FormLabel>
                   <ChakraTagInput
                     rounded={".25em"}
                     border={"1px"}
@@ -291,17 +239,9 @@ export async function getServerSideProps(context) {
       },
     };
   }
-
   const menuItems = await getMenuItems(session?.user?.accessToken);
-  const categories = await getCategories(session?.user?.accessToken);
-  const initialData = await getCourse(
-    context?.query?.slug,
-    session?.user?.accessToken
-  );
   return {
     props: {
-      initialData,
-      categories,
       menuItems,
     },
   };

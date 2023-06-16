@@ -28,7 +28,6 @@ export default function ProfileMenu({ session, signOut }) {
       <MenuList
         rounded={".25em"}
         overflow={"hidden"}
-        bg="white"
         border={"1px"}
         borderColor="black"
         boxShadow={".25rem .25rem 0 black"}

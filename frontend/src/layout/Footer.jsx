@@ -7,8 +7,10 @@ import {
   useColorModeValue,
   VisuallyHidden,
   Button,
+  IconButton,
 } from "@chakra-ui/react";
 import { FaInstagram, FaTwitter, FaYoutube } from "react-icons/fa";
+import { BsFillMoonFill, BsSun } from "react-icons/bs";
 import { useColorMode } from "@chakra-ui/color-mode";
 
 const Logo = (props) => {
@@ -31,16 +33,16 @@ const Logo = (props) => {
   );
 };
 
-const SocialButton = ({ children, label, href }) => {
+const SocialButton = ({ label, children, ...attributes }) => {
   return (
     <chakra.button
+      {...attributes}
       bg={useColorModeValue("blackAlpha.100", "whiteAlpha.100")}
       rounded={"full"}
       w={8}
       h={8}
       cursor={"pointer"}
       as={"a"}
-      href={href}
       display={"inline-flex"}
       alignItems={"center"}
       justifyContent={"center"}
@@ -73,17 +75,8 @@ export default function Footer({ siteConfig }) {
           © {new Date().getFullYear()} {siteConfig?.title}
         </Text>
         <Stack direction={"row"} spacing={6}>
-          <Button onClick={toggleColorMode}>
-            Tema {colorMode === "light" ? "Oscuro" : "Claro"}
-          </Button>
-          <SocialButton label={"Twitter"} href={"#"}>
-            <FaTwitter />
-          </SocialButton>
-          <SocialButton label={"YouTube"} href={"#"}>
-            <FaYoutube />
-          </SocialButton>
-          <SocialButton label={"Instagram"} href={"#"}>
-            <FaInstagram />
+          <SocialButton rounded="full" onClick={toggleColorMode}>
+            {colorMode === "light" ? <BsFillMoonFill /> : <BsSun />}
           </SocialButton>
         </Stack>
       </Container>

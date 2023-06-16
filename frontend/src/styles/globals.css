@@ -82,7 +82,7 @@
 
 ::selection { 
   color:white;
-  background: var(--chakra-colors-blue-300);
+  background: var(--chakra-colors-brand-300);
 }
 
 html,

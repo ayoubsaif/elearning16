@@ -156,7 +156,7 @@ export default function Profile(props) {
           my={5}
         >
           <form onSubmit={formik.handleSubmit}>
-            <Box p={4} bg={"blue.100"}>
+            <Box p={4} bg={"brand.100"}>
               {editMode ? (
                 <Stack spacing={4}>
                   <HStack>
@@ -284,7 +284,7 @@ export default function Profile(props) {
                   )}
                 </Box>
                 {editMode ? (
-                  <Button variant={"primary"} type="submit" colorScheme="blue">
+                  <Button variant={"primary"} type="submit" colorScheme="brand">
                     Guardar
                   </Button>
                 ) : (
@@ -294,7 +294,7 @@ export default function Profile(props) {
                       e.preventDefault();
                       setEditMode(true);
                     }}
-                    colorScheme="blue"
+                    colorScheme="brand"
                   >
                     Editar perfil
                   </Button>

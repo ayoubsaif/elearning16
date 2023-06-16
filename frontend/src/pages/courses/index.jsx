@@ -123,6 +123,14 @@ export default function Home(props) {
 // get static props with page info from backend
 export async function getServerSideProps({ query, req, res }) {
   const session = await getServerSession(req, res, authOptions);
+  if (!session || session.expires * 1000 < Date.now()) {
+    return {
+      redirect: {
+        destination: "/auth/login",
+        permanent: false,
+      },
+    };
+  }
   const menuItems = await getMenuItems(session?.user?.accessToken);
   const categories = await getCategories(session?.user?.accessToken);
 
