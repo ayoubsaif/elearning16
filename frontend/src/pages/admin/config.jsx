@@ -18,6 +18,7 @@ import {
   Textarea,
   Button,
   Image,
+  useToast
 } from "@chakra-ui/react";
 import { useFormik } from "formik";
 import { useSession } from "next-auth/react";
@@ -28,8 +29,7 @@ import Input from "@/components/forms/input";
 import ImageDragAndDrop from "@/components/forms/imageDragAndDrop";
 
 import { getMenuItems } from "@/services/menuItems";
-import { getCourse, updateCourse } from "@/services/courses";
-import { getCategories } from "@/services/category";
+import { updateSiteConfig } from "@/services/siteConfig";
 
 import { authOptions } from "pages/api/auth/[...nextauth]";
 import { getServerSession } from "next-auth/next";
@@ -37,13 +37,15 @@ import { getServerSession } from "next-auth/next";
 export default function EditSiteConfig(props) {
   const { siteConfig, menuItems } = props;
   const router = useRouter();
-  const [tags, setTags] = useState(siteConfig?.keywords || []);
+  const [tags, setTags] = useState(siteConfig?.keywords.split(",") || []);
   const { data: session } = useSession();
   const [isDraggingOver, setIsDraggingOver] = useState(false);
+  const [ config, setConfig ] = useState(siteConfig);
+  const toast = useToast()
 
   const formik = useFormik({
     initialValues: {
-      title: siteConfig?.name || "",
+      title: siteConfig?.title || "",
       description: siteConfig?.description || "",
       keywords: tags,
       image: null,
@@ -67,10 +69,24 @@ export default function EditSiteConfig(props) {
           session?.user?.accessToken
         );
         if (siteConfigReq) {
+          toast({
+            title: "Configuración del sitio actualizada",
+            description: `La configuración del sitio se ha actualizado correctamente`,
+            status: "success",
+            duration: 5000,
+            isClosable: true,
+          });
           router.push(`/`);
         }
       } catch (error) {
         console.error("Error creating course:", error);
+        toast({
+          title: "Error",
+          description: `Error al actualizar la configuración del sitio ${error.message}`,
+          status: "error",
+          duration: 3000,
+          isClosable: true,
+        });
       }
     },
   });
@@ -85,7 +101,7 @@ export default function EditSiteConfig(props) {
     const reader = new FileReader();
     reader.onload = (e) => {
       const imageSrc = e.target.result;
-      setCourse((prevProfile) => ({
+      setConfig((prevProfile) => ({
         ...prevProfile,
         image: imageSrc,
       }));
@@ -101,7 +117,7 @@ export default function EditSiteConfig(props) {
 
     reader.onload = (e) => {
       const imageSrc = e.target.result;
-      setCourse((prevProfile) => ({
+      setConfig((prevProfile) => ({
         ...prevProfile,
         image: imageSrc,
       }));
@@ -113,13 +129,13 @@ export default function EditSiteConfig(props) {
   return (
     <>
       <NextSeo
-        title={`Editar ${course?.name} - ${siteConfig?.title}`}
+        title={`Admin - Configuración del Sitio - ${siteConfig?.title}`}
         description="Crea tu propio curso"
-        canonical={`${siteConfig?.siteUrl}/course/${course?.slug}/edit`}
+        canonical={`${siteConfig?.siteUrl}/admin/config`}
         openGraph={{
-          url: `${siteConfig?.siteUrl}/course/${course?.slug}/edit`,
-          title: `Editar ${course?.name}`,
-          description: `Editar ${course?.name}`,
+          url: `${siteConfig?.siteUrl}/admin/config`,
+          title: `Admin - Configuración del Sitio - ${siteConfig?.title}`,
+          description: `Configuración del Sitio`,
         }}
       />
       <Layout siteConfig={siteConfig} menuItems={menuItems}>
@@ -127,17 +143,15 @@ export default function EditSiteConfig(props) {
           as="h3"
           fontSize="lg"
           textAlign={"center"}
-          color={"black"}
           my={10}
         >
-          Editar curso
+          Editar configuración del sitio
         </Heading>
         <Box
           w={"full"}
           mx="auto"
           rounded={"md"}
           border={"1px"}
-          borderColor={"black"}
           mb={5}
           p={{ base: 5, md: 10 }}
         >
@@ -150,7 +164,7 @@ export default function EditSiteConfig(props) {
                   mb={{ base: 5, md: 0 }}
                 >
                   <ImageDragAndDrop 
-                    course={course}
+                    image={{image: config?.image, name: config?.name}}
                     handleImageChange={handleImageChange}
                     isDraggingOver={isDraggingOver}
                     setIsDraggingOver={setIsDraggingOver}
@@ -168,9 +182,9 @@ export default function EditSiteConfig(props) {
                     <Input
                       id="title"
                       name="title"
-                      {...formik.getFieldProps("name")}
+                      {...formik.getFieldProps("title")}
                     />
-                    <FormErrorMessage>{formik.errors.name}</FormErrorMessage>
+                    <FormErrorMessage>{formik.errors.title}</FormErrorMessage>
                   </FormControl>
                 </VStack>
               </Box>
@@ -196,7 +210,6 @@ export default function EditSiteConfig(props) {
                   <ChakraTagInput
                     rounded={".25em"}
                     border={"1px"}
-                    borderColor="gray.300"
                     _hover={{
                       borderColor: "black",
                       boxShadow: "0 0 0 1px brand.300",
