@@ -37,7 +37,7 @@ import { getServerSession } from "next-auth/next";
 export default function EditSiteConfig(props) {
   const { siteConfig, menuItems } = props;
   const router = useRouter();
-  const [tags, setTags] = useState(siteConfig?.keywords.split(",") || []);
+  const [tags, setTags] = useState(siteConfig?.keywords?.split(",") || []);
   const { data: session } = useSession();
   const [isDraggingOver, setIsDraggingOver] = useState(false);
   const [ config, setConfig ] = useState(siteConfig);
