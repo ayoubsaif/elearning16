@@ -54,6 +54,7 @@ export default function EditSiteConfig(props) {
       title: Yup.string().required("Nombre es obligatorio"),
       description: Yup.string().required("Descripción es obligatorio"),
       keywords: Yup.array(),
+      image: Yup.mixed().required("Imagen es obligatorio"),
     }),
     onSubmit: async (values) => {
       console.log("Form submitted!", values);
@@ -173,7 +174,7 @@ export default function EditSiteConfig(props) {
                   <FormHelperText>
                     Imagen del Sitio
                   </FormHelperText>
-                  <FormErrorMessage>{formik.errors.image}</FormErrorMessage>
+                  <FormErrorMessage>{formik.touched.image && formik.errors.image}</FormErrorMessage>
                 </FormControl>
 
                 <VStack w="full">

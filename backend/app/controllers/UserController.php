@@ -330,6 +330,10 @@ class UserController
                 $user->username = htmlspecialchars(strip_tags($data['username']));
                 $updateProfileValues[] = "username = '{$user->username}'";
             }
+            if ($data['role'] !== $user->role) {
+                $user->role = htmlspecialchars(strip_tags($data['role']));
+                $updateProfileValues[] = "role = '{$user->role}'";
+            }
 
             if ($user->updateProfile($updateProfileValues)) {
                 http_response_code(200);

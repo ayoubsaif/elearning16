@@ -4,7 +4,6 @@ import * as Yup from "yup";
 import Layout from "@/layout/Layout";
 import { BsSave } from "react-icons/bs";
 import {
-  Flex,
   Box,
   FormControl,
   FormHelperText,
@@ -13,12 +12,19 @@ import {
   VStack,
   Heading,
   FormErrorMessage,
-  Select,
   FormLabel,
   Textarea,
   Button,
-  Image,
+  Avatar,
+  Text
 } from "@chakra-ui/react";
+import {
+  AutoComplete,
+  AutoCompleteInput,
+  AutoCompleteItem,
+  AutoCompleteList,
+} from "@choc-ui/chakra-autocomplete";
+
 import { useFormik } from "formik";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
@@ -127,6 +133,35 @@ export default function EditCourse(props) {
     formik.setFieldValue("thumbnail", file);
   };
 
+  const handleCategoryChange = (value) => {
+    formik.setFieldValue("category", value);
+  };
+  const categoryMockup = [
+    {
+      id: 1,
+      name: 'Desarrollo',
+      slug: 'desarrollo',
+      description: 'Categoria de desarrollo de aplicacion web y multiplataforma',
+      image: 'https://img.freepik.com/vector-premium/desarrollo-software-lenguaje-programacion-codificacion_284092-33.jpg',
+      keywords: 'desarrollo,desarrollo web,python,javascript,html,js,react,framworks,css,chrome,firefox,html5,django,angular,reactjs,script,api'
+    },
+    {
+      id: 2,
+      name: 'Diseño',
+      slug: 'diseno',
+      description: 'Diseño de Interface, Videojuegos y Arte',
+      image: 'https://image.com/1.jpg',
+      keywords: 'diseño,arte,dibujo'
+    },
+    {
+      id: 3,
+      name: 'Videojuegos',
+      slug: 'videojuegos',
+      description: 'Videojuegos',
+      image: 'https://image.com/1.jpg',
+      keywords: 'diseño,arte,dibujo'
+    }
+  ];
   return (
     <>
       <NextSeo
@@ -140,12 +175,7 @@ export default function EditCourse(props) {
         }}
       />
       <Layout siteConfig={siteConfig} menuItems={menuItems}>
-        <Heading
-          as="h3"
-          fontSize="lg"
-          textAlign={"center"}
-          my={10}
-        >
+        <Heading as="h3" fontSize="lg" textAlign={"center"} my={10}>
           Editar curso
         </Heading>
         <Box
@@ -164,8 +194,8 @@ export default function EditCourse(props) {
                   flexShrink={0}
                   mb={{ base: 5, md: 0 }}
                 >
-                  <ImageDragAndDrop 
-                    image={{image: course?.thumbnail, name: course?.name}}
+                  <ImageDragAndDrop
+                    image={{ image: course?.thumbnail, name: course?.name }}
                     handleImageChange={handleImageChange}
                     isDraggingOver={isDraggingOver}
                     setIsDraggingOver={setIsDraggingOver}
@@ -206,20 +236,33 @@ export default function EditCourse(props) {
                     <FormErrorMessage>{formik.errors.slug}</FormErrorMessage>
                   </FormControl>
 
-                  <FormControl>
+                  <FormControl isInvalid={formik.errors.category} mt={4}>
                     <FormLabel>Categoría</FormLabel>
-                    <Select
-                      placeholder="Selecciona una categoría"
-                      id="category"
-                      name="category"
-                      {...formik.getFieldProps("category")}
-                    >
-                      {categories?.map((category) => (
-                        <option key={category.id} value={category.id}>
-                          {category.name}
-                        </option>
-                      ))}
-                    </Select>
+                    <AutoComplete openOnFocus
+                        onChange={handleCategoryChange}
+                        value={formik.values.category}>
+                      <AutoCompleteInput
+                        id="category"
+                        name="category"
+                        placeholder="Selecciona una categoría"
+                      />
+                      <AutoCompleteList>
+                        {categoryMockup.map((category, oid) => (
+                          <AutoCompleteItem
+                            key={`option-${oid}`}
+                            value={category.id}
+                            align="center"
+                          >
+                            <Avatar
+                              size="sm"
+                              name={category.name}
+                              src={category.image}
+                            />
+                            <Text ml="4">{category.name}</Text>
+                          </AutoCompleteItem>
+                        ))}
+                      </AutoCompleteList>
+                    </AutoComplete>
                     <FormErrorMessage>
                       {formik.errors.category}
                     </FormErrorMessage>
@@ -301,7 +344,7 @@ export async function getServerSideProps(context) {
   return {
     props: {
       initialData,
-      categories,
+      categories: categories?.categories,
       menuItems,
     },
   };

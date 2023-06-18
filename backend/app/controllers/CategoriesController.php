@@ -8,9 +8,9 @@ class CategoriesController
     public function create()
     {
         $data = json_decode(file_get_contents("php://input"));
-        
+
         $PermissionMiddleware = new PermissionMiddleware();
-        $allowed = array('admin','teacher');
+        $allowed = array('admin', 'teacher');
         $UserPermmited = $PermissionMiddleware->handle($allowed);
         if (!$UserPermmited) {
             return;
@@ -39,9 +39,9 @@ class CategoriesController
     public function update($id)
     {
         $data = json_decode(file_get_contents("php://input"));
-        
+
         $PermissionMiddleware = new PermissionMiddleware();
-        $allowed = array('admin','teacher');
+        $allowed = array('admin', 'teacher');
         $UserPermmited = $PermissionMiddleware->handle($allowed);
         if (!$UserPermmited) {
             return;
@@ -71,7 +71,7 @@ class CategoriesController
     public function delete($id)
     {
         $PermissionMiddleware = new PermissionMiddleware();
-        $allowed = array('admin','teacher');
+        $allowed = array('admin', 'teacher');
         $UserPermmited = $PermissionMiddleware->handle($allowed);
         if (!$UserPermmited) {
             return;
@@ -93,28 +93,34 @@ class CategoriesController
 
     public function getAll()
     {
-        if ($_SERVER['REQUEST_METHOD'] == 'GET') {
+        $PermissionMiddleware = new PermissionMiddleware();
+        $allowed = array('admin','teacher');
+        $UserPermmited = $PermissionMiddleware->handle($allowed);
+        if (!$UserPermmited) {
+            return;
+        }
+        $category = new CategoryModel();
 
-            $category = new CategoryModel();
+        if (isset($_GET['offset']) && isset($_GET['limit'])) {
+            $from_record_num = $_GET['offset'];
+            $records_per_page = $_GET['limit'];
+        } else {
+            $from_record_num = 0;
+            $records_per_page = 10;
+        }
+        $categories = $category->getAll($from_record_num, $records_per_page);
 
-            if (isset($_GET['offset']) && isset($_GET['limit'])) {
-                $from_record_num = $_GET['offset'];
-                $records_per_page = $_GET['limit'];
-            } else {
-                $from_record_num = 0;
-                $records_per_page = 10;
-            }
-            $categories = $category->getAll($from_record_num, $records_per_page);
-
-            if ($categories) {
-                http_response_code(200);
-                echo json_encode($categories);
-                return;
-            } else {
-                http_response_code(404);
-                echo json_encode(array("message" => "No category found"));
-                return;
-            }
+        if ($categories) {
+            http_response_code(200);
+            echo json_encode(array(
+                "categories" => $categories,
+                "canCreate" => $UserPermmited->role == 'admin' ? true : false
+            ));
+            return;
+        } else {
+            http_response_code(404);
+            echo json_encode(array("message" => "No category found"));
+            return;
         }
     }
 
@@ -123,7 +129,7 @@ class CategoriesController
         $data = json_decode(file_get_contents("php://input"));
 
         $PermissionMiddleware = new PermissionMiddleware();
-        $allowed = array('admin','teacher');
+        $allowed = array('admin', 'teacher');
         $UserPermmited = $PermissionMiddleware->handle($allowed);
         if (!$UserPermmited) {
             return;
@@ -136,12 +142,12 @@ class CategoriesController
                 echo json_encode(array(
                     "id" => $category->id,
                     "name" => $category->name,
-                    "slug" => $category-> slug,
-                    "description" => $category-> description,
-                    "image_url" => $category-> image_url,
-                    "parent_cat" => $category-> parent_cat,
-                    "keywords" => $category-> keywords,
-                    "create_uid" => $category-> create_uid
+                    "slug" => $category->slug,
+                    "description" => $category->description,
+                    "image_url" => $category->image_url,
+                    "parent_cat" => $category->parent_cat,
+                    "keywords" => $category->keywords,
+                    "create_uid" => $category->create_uid
                 ));
                 return;
             } else {
@@ -156,7 +162,8 @@ class CategoriesController
         }
     }
 
-    function getSuccessResponse(){
+    function getSuccessResponse()
+    {
         http_response_code(200);
         echo json_encode(array("message" => "Category was updated"));
         return;
