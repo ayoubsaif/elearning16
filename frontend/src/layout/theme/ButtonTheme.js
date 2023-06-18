@@ -62,15 +62,28 @@ const variants = {
   }),
   ghost: ({ colorMode }) => ({
     color: colorMode === "dark" ? "white" : "black",
+    bg: colorMode === "dark" ? "whiteAlpha.100" : "blackAlpha.100",
+    border: 0,
+    _hover: {
+      bg: colorMode === "dark" ? "whiteAlpha.200" : "blackAlpha.200",
+      transform: "none",
+      boxShadow: "none"
+    },
+    _active: {
+      color: "white",
+      bg: colorMode === "dark" ? "whiteAlpha.300" : "blackAlpha.300",
+    },
+  }),
+  transparent: ({ colorMode }) => ({
+    color: colorMode === "dark" ? "white" : "black",
     bg: "transparent",
     border: 0,
     _hover: {
-      bg: "brand.300",
+      bg: "transparent",
       transform: "none",
       boxShadow: "none",
     },
     _active: {
-      color: "white",
       bg: colorMode === "dark" ? "whiteAlpha.100" : "blackAlpha.100",
     },
   }),
