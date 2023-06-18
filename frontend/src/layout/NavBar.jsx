@@ -64,7 +64,7 @@ export default function NavBar({ siteConfig, menuItems }) {
                 onClick={onToggle}
                 color={useColorModeValue("black", "white")}
                 icon={isOpen ? <CloseIcon w={5} h={5} /> : <MenuIcon w={5} h={5} />}
-                variant="ghost"
+                variant="transparent"
                 aria-label={"Toggle Navigation"}
               />
             </Flex>
