@@ -47,7 +47,15 @@ class siteConfigModel
             if ($stmt->execute()) {
                 return true;
             } else {
-                return false;
+                $query = "INSERT INTO site_config SET variable = :variable, value = :value";
+                $stmt = $this->conn->prepare($query);
+                $stmt->bindParam(':variable', $this->variable);
+                $stmt->bindParam(':value', $this->value);
+                if ($stmt->execute()) {
+                    return true;
+                } else {
+                    return false;
+                }
             }
         }
     }

@@ -32,7 +32,28 @@ class SiteConfigController
             if (!$UserPermmited) {
                 return;
             }
-            $data = json_decode(file_get_contents("php://input"));
+            $data = $_POST;
+            # loop in all port array to conver it to object
+            foreach ($_POST as $key => $value) {
+                $data[$key] = $value;
+            }
+
+            if (isset($_FILES["image"])) {
+                $Media = new MediaController();
+                $Media->uploadImage($_FILES["image"], 'siteconfig', 1, 800, 450);
+                if(isset($Media->fileUrl)) {
+                    $data['image'] = $Media->fileUrl;
+                } else {
+                    http_response_code(503);
+                    echo json_encode(array("message" => "Unable to upload thumbnail"));
+                    return;
+                }
+            }else{
+                http_response_code(401);
+                echo json_encode(array("message" => "You need to upload a thumbnail"));
+                return;
+            }
+
             $update_state = [];
             foreach ($data as $key => $value) {
                 $siteConfig = new SiteConfigModel();
@@ -61,4 +82,8 @@ class SiteConfigController
         }
     }
 
+    function getSuccessResponse(){
+        http_response_code(200);
+        echo json_encode(array("message" => "Success"));
+    }
 }
