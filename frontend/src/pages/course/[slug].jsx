@@ -24,6 +24,7 @@ import {
   AlertDescription,
   AlertIcon,
   AspectRatio,
+  useColorModeValue
 } from "@chakra-ui/react";
 import { ChevronRightIcon } from "@chakra-ui/icons";
 import { BsTrash3, BsPencilSquare, BsPlusLg } from "react-icons/bs";
@@ -105,14 +106,14 @@ export default function CourseLandingPage(props) {
                     icon={<BsPencilSquare />}
                     aria-label="Edit course"
                     rounded={"full"}
-                    variant={"outlined"}
+                    variant="ghost"
                   />
                 </Link>
                 <IconButton
                   icon={<BsTrash3 />}
                   aria-label="Delete course"
                   rounded={"full"}
-                  variant={"red"}
+                  variant="ghost"
                   onClick={onOpen}
                 />
                 <AlertDialog
@@ -126,7 +127,7 @@ export default function CourseLandingPage(props) {
                       transform="translate(-.25rem, -.25rem)"
                       boxShadow=".25rem .25rem 0 black"
                     >
-                      <AlertDialogHeader fontSize="lg" fontWeight="bold">
+                      <AlertDialogHeader fontSize="lg" fontWeight="bold" >
                         Eliminar curso {course?.name}
                       </AlertDialogHeader>
 
@@ -135,7 +136,7 @@ export default function CourseLandingPage(props) {
                       </AlertDialogBody>
 
                       <AlertDialogFooter>
-                        <Button ref={cancelRef} onClick={onClose}>
+                        <Button ref={cancelRef} onClick={onClose} variant="transparent">
                           Cancelar
                         </Button>
                         <Button colorScheme="red" onClick={onDelete} ml={3}>
@@ -166,7 +167,7 @@ export default function CourseLandingPage(props) {
               <Box
                 mt={{ base: 4, md: 0 }}
                 ml={{ md: 6 }} w="full"
-                bg="gray.50"
+                bg={useColorModeValue("blackAlpha.100", "whiteAlpha.100")}
                 p={4}
                 rounded="md"
               >
@@ -188,7 +189,7 @@ export default function CourseLandingPage(props) {
                     icon={<BsPlusLg />}
                     aria-label="Create content"
                     rounded={"full"}
-                    variant={"outlined"}
+                    variant="ghost"
                   />
                 </Link>
               )}
