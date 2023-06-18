@@ -1,8 +1,9 @@
 <?php
 
 # SiteConfig
-$router->get('/api/site-config', 'SiteConfigController@get');
-$router->put('/api/site-config', 'SiteConfigController@update');
+$router->options('/api/siteconfig', 'SiteConfigController@getSuccessResponse');
+$router->get('/api/siteconfig', 'SiteConfigController@get');
+$router->post('/api/siteconfig', 'SiteConfigController@update');
 
 # Menu
 $router->options('/api/menu', 'MenuController@getSuccessResponse');
