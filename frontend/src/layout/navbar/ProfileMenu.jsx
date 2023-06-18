@@ -52,6 +52,9 @@ export default function ProfileMenu({ session, signOut }) {
             <MenuItem as={NextLink} href={"/admin/users"}>
               Usuarios
             </MenuItem>
+            <MenuItem as={NextLink} href={"/admin/config"}>
+              Configuración
+            </MenuItem>
           </MenuGroup>
         )}
         <MenuGroup title="Perfil">
