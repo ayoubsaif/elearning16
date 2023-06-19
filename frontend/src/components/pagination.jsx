@@ -1,4 +1,4 @@
-import { useBreakpointValue } from "@chakra-ui/react";
+import { useBreakpointValue, useStyleConfig  } from "@chakra-ui/react";
 import {
   Pagination,
   PaginationNext,
@@ -17,22 +17,22 @@ import { isMobile } from "react-device-detect";
 
 export default function ChakraPagination(props) {
   const { pages, currentPage, setCurrentPage, pagesCount } = props;
-  let pagesToShow =
-    isMobile || useBreakpointValue({ base: true, md: false }) ? 3 : 9;
-  let start = currentPage - 2;
-  let maxPages = start + pagesToShow;
-
-  if (maxPages > pagesCount) {
-    maxPages = pagesCount;
-    start = Math.max(maxPages - pagesToShow, 1);
-  } else if (start < 1) {
-    start = 1;
-    maxPages = Math.min(start + pagesToShow, pagesCount);
+  const pagesToShow = isMobile || useBreakpointValue({ base: true, md: false }) ? 4 : 9;
+  
+  let start = Math.max(currentPage - Math.floor(pagesToShow / 2), 1);
+  let end = start + pagesToShow - 1;
+  
+  if (end > pagesCount) {
+    end = pagesCount;
+    start = Math.max(end - pagesToShow + 1, 1);
   }
-
+  
+  const pageRange = pages.slice(start - 1, end);
   const hasFirst = start > 1;
-  const hasLast = maxPages < pagesCount;
+  const hasLast = end < pagesCount;
 
+  const outlineButton = useStyleConfig('Button', { variant: "outline" })
+  const activeButton = useStyleConfig('Button', { variant: "active" })
   return (
     <Pagination
       pagesCount={pagesCount}
@@ -40,7 +40,7 @@ export default function ChakraPagination(props) {
       onPageChange={setCurrentPage}
     >
       <PaginationContainer>
-        <PaginationPrevious mr=".50em">
+        <PaginationPrevious display={useBreakpointValue({ base: "none", md: "block"})} mr=".50em" __css={outlineButton}>
           <BsArrowLeft />
         </PaginationPrevious>
         <PaginationPageGroup spacing={2} alignItems={"center"}>
@@ -48,25 +48,9 @@ export default function ChakraPagination(props) {
             <>
               <PaginationPage
                 minWidth="2.5em"
-                rounded={"md"}
-                border={"1px"}
-                borderColor="black"
-                bg="white"
-                _hover={{
-                  transform: `translate(-.25rem, -.25rem)`,
-                  boxShadow: ".25rem .25rem 0 black",
-                }}
-                _active={{
-                  transform: `none`,
-                  boxShadow: "none",
-                }}
+                __css={outlineButton}
                 _current={{
-                  bg: "brand.300",
-                  color: "white",
-                  _hover: {
-                    bg: "brand.500",
-                    color: "white",
-                  },
+                  __css: activeButton,
                 }}
                 key="pagination_page_first"
                 page={1}
@@ -74,15 +58,13 @@ export default function ChakraPagination(props) {
               <BsUnindent />
             </>
           )}
-          {pages.slice(start - 1, maxPages).map((page) => (
+          {pages.slice(start - 1, end).map((page) => (
             <PaginationPage
+              variant="transparent"
               minWidth="2.5em"
+              __css={outlineButton}
               _current={{
-                variant: "primary",
-                _hover : {
-                  transform: `none`,
-                  boxShadow: "none",
-                }
+                __css: activeButton,
               }}
               key={`pagination_page_${page}`}
               page={page}
@@ -93,8 +75,9 @@ export default function ChakraPagination(props) {
               <BsIndent />
               <PaginationPage
                 minWidth="2.5em"
+                __css={outlineButton}
                 _current={{
-                  variant: "primary",
+                  __css: activeButton,
                 }}
                 key="pagination_page_last"
                 page={pagesCount}
@@ -102,7 +85,7 @@ export default function ChakraPagination(props) {
             </>
           )}
         </PaginationPageGroup>
-        <PaginationNext ml=".50em">
+        <PaginationNext display={useBreakpointValue({ base: "none", md: "block"})} ml=".50em" __css={outlineButton}>
           <BsArrowRight />
         </PaginationNext>
       </PaginationContainer>

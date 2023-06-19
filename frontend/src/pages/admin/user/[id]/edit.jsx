@@ -105,14 +105,13 @@ export default function EditUser(props) {
                 as={"h3"}
                 fontSize={"lg"}
                 textAlign={"center"}
-                color={"black"}
                 mt={10}
               >
                 Editar usuario {user?.name}
               </Heading>
             </Stack>
             <HStack>
-              <Box rounded={"md"} border={"1px solid black"} p={8} >
+              <Box rounded={"md"} border={"1px solid"} p={8} >
                 <form onSubmit={formik.handleSubmit}>
                   <Stack spacing={8}>
                     <Flex gap={4} flexDirection={{base: 'column', md: 'row'}}>

@@ -136,32 +136,8 @@ export default function EditCourse(props) {
   const handleCategoryChange = (value) => {
     formik.setFieldValue("category", value);
   };
-  const categoryMockup = [
-    {
-      id: 1,
-      name: 'Desarrollo',
-      slug: 'desarrollo',
-      description: 'Categoria de desarrollo de aplicacion web y multiplataforma',
-      image: 'https://img.freepik.com/vector-premium/desarrollo-software-lenguaje-programacion-codificacion_284092-33.jpg',
-      keywords: 'desarrollo,desarrollo web,python,javascript,html,js,react,framworks,css,chrome,firefox,html5,django,angular,reactjs,script,api'
-    },
-    {
-      id: 2,
-      name: 'Diseño',
-      slug: 'diseno',
-      description: 'Diseño de Interface, Videojuegos y Arte',
-      image: 'https://image.com/1.jpg',
-      keywords: 'diseño,arte,dibujo'
-    },
-    {
-      id: 3,
-      name: 'Videojuegos',
-      slug: 'videojuegos',
-      description: 'Videojuegos',
-      image: 'https://image.com/1.jpg',
-      keywords: 'diseño,arte,dibujo'
-    }
-  ];
+  const getValue = (item) => item.name;
+
   return (
     <>
       <NextSeo
@@ -240,17 +216,19 @@ export default function EditCourse(props) {
                     <FormLabel>Categoría</FormLabel>
                     <AutoComplete openOnFocus
                         onChange={handleCategoryChange}
-                        value={formik.values.category}>
+                        value={course?.category}
+                        getValue={getValue}
+                    >
                       <AutoCompleteInput
                         id="category"
                         name="category"
                         placeholder="Selecciona una categoría"
                       />
                       <AutoCompleteList>
-                        {categoryMockup.map((category, oid) => (
+                        {categories.map((category, oid) => (  
                           <AutoCompleteItem
                             key={`option-${oid}`}
-                            value={category.id}
+                            value={category}
                             align="center"
                           >
                             <Avatar

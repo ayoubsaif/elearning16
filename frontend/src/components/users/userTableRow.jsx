@@ -27,14 +27,14 @@ export default function userTableRow({
               icon={<BsPencilSquare />}
               aria-label="Edit user"
               rounded={"full"}
-              variant={"outlined"}
+              variant={"ghost"}
             />
           </Link>
           <IconButton
             icon={<BsTrash3 />}
             aria-label="Delete user"
             rounded={"full"}
-            variant={"red"}
+            variant={"ghost"}
             onClick={() => {
               setOnDeleteUser(user);
               onOpen();

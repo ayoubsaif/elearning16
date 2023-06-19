@@ -92,7 +92,6 @@ export default function CreateCourse(props) {
               <Heading
                 fontSize={"4xl"}
                 textAlign={"center"}
-                color={"black"}
                 mt={10}
               >
                 Administración de usuarios
@@ -106,11 +105,11 @@ export default function CreateCourse(props) {
                       <Th>Avatar</Th>
                       <Th>Nombre</Th>
                       <Th>Apellido</Th>
-                      <Th>UserName</Th>
+                      <Th>Nombre de usuario</Th>
                       <Th>Email</Th>
-                      <Th>Fecha de Creación</Th>
+                      <Th>Desde</Th>
                       <Th>Rol</Th>
-                      <Th>Acciones</Th>
+                      <Th></Th>
                     </Tr>
                   </Thead>
                   <Tbody>

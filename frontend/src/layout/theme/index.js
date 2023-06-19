@@ -1,6 +1,6 @@
 import { extendTheme } from "@chakra-ui/react";
-import { cardTheme } from "./CardTheme";
-import { buttonTheme } from "./ButtonTheme";
+import { cardTheme } from "./components/Card";
+import { buttonTheme } from "./components/Button";
 
 const theme = extendTheme({
   colors: {

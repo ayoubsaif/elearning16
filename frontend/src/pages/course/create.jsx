@@ -126,7 +126,6 @@ export default function CreateCourse(props) {
           as="h3"
           fontSize="lg"
           textAlign={"center"}
-          color={"black"}
           my={10}
         >
           Crear nuevo curso
@@ -136,7 +135,6 @@ export default function CreateCourse(props) {
           mx="auto"
           rounded={"md"}
           border={"1px"}
-          borderColor={"black"}
           mb={5}
           p={{ base: 5, md: 10 }}
         >
@@ -319,7 +317,7 @@ export async function getServerSideProps(context) {
   const categories = await getCategories(session?.user?.accessToken);
   return {
     props: {
-      categories,
+      categories: categories?.categories,
       menuItems,
       profileInfo,
     },

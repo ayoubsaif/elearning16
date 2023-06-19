@@ -29,7 +29,6 @@ export default function ImageDragAndDrop({
           <Image
             name={image?.name}
             src={image?.image}
-            bg="black"
             objectFit="cover"
             borderRadius="md"
             alt={image?.name}

@@ -3,16 +3,6 @@ const baseStyle = ({ colorMode }) => ({
   color: "black",
   rounded: "md",
   border: "1px",
-  borderColor: colorMode === "dark" ? "white" : "black",
-  _hover: {
-    transform: "translate(-.25rem, -.25rem)",
-    boxShadow:
-      colorMode === "dark" ? ".25rem .25rem 0 white" : ".25rem .25rem 0 black",
-  },
-  _active: {
-    transform: "none",
-    boxShadow: "none",
-  },
 });
 const variants = {
   primary: ({ colorMode }) => ({
@@ -21,6 +11,7 @@ const variants = {
     _hover: {
       bg: "white",
       color: "black",
+      transform: "translate(-.25rem, -.25rem)",
       boxShadow:
         colorMode === "dark"
           ? ".25rem .25rem 0 var(--chakra-colors-brand-300)"
@@ -29,6 +20,8 @@ const variants = {
     _active: {
       bg: "brand.400",
       color: "white",
+      transform: "none",
+      boxShadow: "none",
     },
   }),
   secondary: ({ colorMode }) => ({
@@ -49,15 +42,13 @@ const variants = {
     color: colorMode === "dark" ? "white" : "black",
     bg: colorMode === "dark" ? "whiteAlpha.100" : "blackAlpha.100",
     _hover: {
-      bg: "brand.300",
-      color: "white",
+      bg: colorMode === "dark" ? "whiteAlpha.300" : "blackAlpha.300",
       transform: "none",
       boxShadow: "none",
-      borderColor: colorMode === "dark" ? "white" : "black",
     },
     _active: {
       color: "white",
-      bg: "brand.400",
+      bg: colorMode === "dark" ? "blackAlpha.500" : "blackAlpha.500",
     },
   }),
   ghost: ({ colorMode }) => ({
@@ -85,6 +76,16 @@ const variants = {
     },
     _active: {
       bg: colorMode === "dark" ? "whiteAlpha.100" : "blackAlpha.100",
+    },
+  }),
+  active: ({ colorMode }) => ({
+    color: colorMode === "dark" ? "black" : "white",
+    bg: colorMode === "dark" ? "white" : "black",
+    _hover: {
+      color: colorMode === "dark" ? "black" : "white",
+      bg: colorMode === "dark" ? "white" : "black",
+      transform: "none",
+      boxShadow: "none",
     },
   }),
   red: {

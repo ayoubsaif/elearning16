@@ -23,7 +23,6 @@ export default function ContentCard(props) {
           bg="white"
           width={"100%"}
           border={"1px"}
-          borderColor="black"
           transition="all .2s ease-in-out"
           _hover={{
             transform: "translate(-.25rem, -.25rem)",
@@ -44,7 +43,6 @@ export default function ContentCard(props) {
               <Stack spacing={1} width={"full"} p={2}>
                 <Box>
                   <Heading
-                    color={"black"}
                     fontSize={"1xm"}
                     noOfLines={1}
                     lineHeight={1.5}
