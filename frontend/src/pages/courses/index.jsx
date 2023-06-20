@@ -22,7 +22,6 @@ export default function Home(props) {
     menuItems,
     coursesData,
     paginationData,
-    categories,
     canCreate,
     params,
   } = props;
@@ -132,7 +131,6 @@ export async function getServerSideProps({ query, req, res }) {
     };
   }
   const menuItems = await getMenuItems(session?.user?.accessToken);
-  const categories = await getCategories(session?.user?.accessToken);
 
   const { page, search } = query;
   const params = {
@@ -147,7 +145,6 @@ export async function getServerSideProps({ query, req, res }) {
 
   return {
     props: {
-      categories,
       menuItems,
       coursesData: coursesItems?.courses || [],
       paginationData: coursesItems?.pagination || {},

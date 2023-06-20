@@ -16,7 +16,8 @@ import {
   Textarea,
   Button,
   Avatar,
-  Text
+  Text,
+  Select
 } from "@chakra-ui/react";
 import {
   AutoComplete,
@@ -212,35 +213,20 @@ export default function EditCourse(props) {
                     <FormErrorMessage>{formik.errors.slug}</FormErrorMessage>
                   </FormControl>
 
-                  <FormControl isInvalid={formik.errors.category} mt={4}>
+                  <FormControl>
                     <FormLabel>Categoría</FormLabel>
-                    <AutoComplete openOnFocus
-                        onChange={handleCategoryChange}
-                        value={course?.category}
-                        getValue={getValue}
+                    <Select
+                      placeholder="Selecciona una categoría"
+                      id="category"
+                      name="category"
+                      {...formik.getFieldProps("category")}
                     >
-                      <AutoCompleteInput
-                        id="category"
-                        name="category"
-                        placeholder="Selecciona una categoría"
-                      />
-                      <AutoCompleteList>
-                        {categories.map((category, oid) => (  
-                          <AutoCompleteItem
-                            key={`option-${oid}`}
-                            value={category}
-                            align="center"
-                          >
-                            <Avatar
-                              size="sm"
-                              name={category.name}
-                              src={category.image}
-                            />
-                            <Text ml="4">{category.name}</Text>
-                          </AutoCompleteItem>
-                        ))}
-                      </AutoCompleteList>
-                    </AutoComplete>
+                      {categories?.map((category) => (
+                        <option key={category.id} value={category.id}>
+                          {category.name}
+                        </option>
+                      ))}
+                    </Select>
                     <FormErrorMessage>
                       {formik.errors.category}
                     </FormErrorMessage>

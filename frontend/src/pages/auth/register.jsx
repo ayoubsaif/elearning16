@@ -22,6 +22,7 @@ import { Formik, Form, Field } from "formik";
 import { FcGoogle } from "react-icons/fc";
 
 import Input from "@/components/forms/input";
+import { newUser } from "@/services/users";
 
 import { Link } from "@chakra-ui/next-js";
 
@@ -107,20 +108,33 @@ export default function Register(props) {
             <Divider />
 
             <Formik
-              initialValues={{ email: "", password: "" }}
+              initialValues={{firstname: "", lastname: "", email: "", password: "" }}
               onSubmit={async (values, actions) => {
-                const signInStatus = await newUser("credentials", {
+                const signInStatus = await newUser({
+                  firstname: values.firstname,
+                  lastname: values.lastname,
                   email: values.email,
                   password: values.password,
-                  redirect: false,
-                  callbackUrl: "/courses",
                 });
-                if (signInStatus?.error) {
-                  actions.setErrors({
-                    email: "Correo electrónico o contraseña incorrectos",
+                if (signInStatus?.status === 201) {
+                  toast({
+                    title: "Cuenta creada",
+                    description: "¡Hemos creado tu cuenta correctamente!",
+                    status: "success",
+                    duration: 3000,
+                    isClosable: true,
                   });
-                } else if (signInStatus?.ok) {
-                  router.push(signInStatus?.url);
+                  router.push("/auth/login");
+                } else {
+                  console.log(signInStatus)
+                  toast({
+                    title: "Error al crear la cuenta",
+                    description: `Error: ${signInStatus?.message}. Vuelve a intentarlo más tarde. `,
+                    status: "warning",
+                    duration: 3000,
+                    isClosable: true,
+                  })
+
                 }
                 actions.setSubmitting(false);
               }}
@@ -138,7 +152,7 @@ export default function Register(props) {
                             isRequired
                           >
                             <FormLabel>Nombre</FormLabel>
-                            <Input type="text" />
+                            <Input type="text" {...field}/>
                             <FormErrorMessage>
                               {form.errors.firstname}
                             </FormErrorMessage>
@@ -156,7 +170,7 @@ export default function Register(props) {
                             isRequired
                           >
                             <FormLabel>Apellidos</FormLabel>
-                            <Input type="text" />
+                            <Input type="text" {...field}/>
                             <FormErrorMessage>
                               {form.errors.lastname}
                             </FormErrorMessage>

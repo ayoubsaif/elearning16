@@ -31,21 +31,21 @@ class UserController
 
             if ($user->emailExists()) {
                 http_response_code(400);
-                echo json_encode(array("message" => "Email already exists"));
+                echo json_encode(array("message" => "El correo electrónico ya existe"));
                 return;
             }
 
             if ($user->create()) {
                 http_response_code(201);
-                echo json_encode(array("message" => "User was created"));
+                echo json_encode(array("message" => "Usuario creado correctamente"));
                 return;
             }
 
             http_response_code(503);
-            echo json_encode(array("message" => "Unable to create user"));
+            echo json_encode(array("message" => "No se puede crear el usuario"));
         } catch (Exception $e) {
             http_response_code(401);
-            echo json_encode(array("message" => "Unauthorized"));
+            echo json_encode(array("message" => "No autorizado"));
         }
     }
 

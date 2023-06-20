@@ -12,7 +12,10 @@ $router->put('/api/menu', 'MenuController@update');
 
 # Auth
 $router->post('/auth/login', 'UserController@login');
+
+$router->options('/auth/register', 'UserController@getSuccessResponse');
 $router->post('/auth/register', 'UserController@register');
+
 $router->get('/auth/verify-token', 'UserController@verifyToken');
 # Auth > Google
 $router->post('/auth/google', 'UserController@googleAuth');

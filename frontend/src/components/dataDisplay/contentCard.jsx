@@ -9,6 +9,7 @@ import {
   AspectRatio,
   HStack,
   Stack,
+  Card
 } from "@chakra-ui/react";
 
 export default function ContentCard(props) {
@@ -17,17 +18,11 @@ export default function ContentCard(props) {
   return (
     <>
       {name && thumbnail && id && slug && (
-        <Box
+        <Card
           rounded={"md"}
           overflow={"hidden"}
-          bg="white"
           width={"100%"}
-          border={"1px"}
-          transition="all .2s ease-in-out"
-          _hover={{
-            transform: "translate(-.25rem, -.25rem)",
-            boxShadow: ".25rem .25rem 0 black",
-          }}
+          variant="outline"
         >
           <Link href={`/course/${slug}/content/${id}`}>
             <HStack spacing={2}>
@@ -50,7 +45,6 @@ export default function ContentCard(props) {
                     {name}
                   </Heading>
                   <Text
-                    color={"gray.500"}
                     fontSize={"sm"}
                     noOfLines={1}
                   >
@@ -60,7 +54,7 @@ export default function ContentCard(props) {
               </Stack>
             </HStack>
           </Link>
-        </Box>
+        </Card>
       )}
     </>
   );

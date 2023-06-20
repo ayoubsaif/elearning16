@@ -19,6 +19,14 @@ export async function getUsers(accessToken) {
   }
 }
 
+export async function newUser(data) {
+  try {
+    return await axios.post(`${API_PUBLIC_URL}/auth/register`, data);
+  } catch (error) {
+    return error?.response?.data;
+  }
+}
+
 export async function getUserById(id, accessToken) {
   try {
     const options = {

@@ -183,10 +183,11 @@ class CoursesController
         if ($Category->id) {
             $args[] = "category = '{$Category->id}'";
         }
-        if ($search) {
-            $args[] = "name LIKE '%{$search}%'";
-        }
 
+        if ($search) {
+            $args[] = "name LIKE '%{$search}%' OR keywords LIKE '%{$search}%'";
+        }
+        
         $records_per_page = isset($_GET['limit']) ? $_GET['limit'] : 20;
         $courses = $course->getMany($args, $page, $records_per_page);
         if ($Category->name){
