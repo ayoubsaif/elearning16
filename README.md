@@ -1,5 +1,5 @@
 # eLearning16 - Linkia FP Group 16 DAW22-23
-eLearning consist in a application for schools, teams or companys to organize their courses or tutorials using iframes to embed theis videos or presentations.
+eLearning consist in a application for schools, teams or companies to organize their courses and tutorials using iframes to embed the videos or presentations.
 
 ## Requirements
 - ### 🤖 Backend
